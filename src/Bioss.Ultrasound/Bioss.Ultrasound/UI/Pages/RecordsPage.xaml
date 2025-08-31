@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:lang="clr-namespace:Bioss.Ultrasound.Resources.Localization" 
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             x:Class="Bioss.Ultrasound.UI.Pages.RecordsPage"
+             Title="{x:Static lang:AppStrings.Records_Title}">
+
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding AppearingCommand}"/>
+
+        <xct:EventToCommandBehavior
+            EventName="Disappearing"
+            Command="{Binding DisappearingCommand}"/>
+    </ContentPage.Behaviors>
+
+    <CollectionView
+        SelectionMode="Single"
+        ItemsSource="{Binding Records}"
+        SelectedItem="{Binding SelectedRecord}"
+        SelectionChangedCommand="{Binding SelectedRecordCommand}">
+
+        <CollectionView.EmptyView>
+            <Grid>
+                <Label Text="{x:Static lang:AppStrings.Records_EmptyList}"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Margin="16"
+                    HorizontalTextAlignment="Center"
+                    TextColor="Gray"/>
+            </Grid>
+        </CollectionView.EmptyView>
+
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid Padding="20, 10">
+                        <StackLayout Spacing="0">
+                            <Label Text="{Binding StartTime, StringFormat='{0:dd MMM yyyy HH:mm}'}"/>
+                            <Label Text="{Binding RecordingTime}" TextColor="DarkSlateGray"/>
+                        </StackLayout>
+                    </Grid>
+                    <BoxView Grid.Row="0" VerticalOptions="End" HeightRequest="1" BackgroundColor="LightGray"
+                             Margin="20,0,0,0"/>
+                </Grid>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
+        
+    </CollectionView>
+</ContentPage>

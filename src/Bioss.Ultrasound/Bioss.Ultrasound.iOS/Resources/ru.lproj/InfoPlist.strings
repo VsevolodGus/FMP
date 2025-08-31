@@ -1,0 +1,3 @@
+﻿CFBundleDisplayName = "ФМП";
+NSBluetoothPeripheralUsageDescription = "Это приложение использует блютуз для подключения к устройству мониторинга плода.";
+NSBluetoothAlwaysUsageDescription = "Это приложение использует блютуз для подключения к устройству мониторинга плода.";

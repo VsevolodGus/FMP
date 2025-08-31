@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:lang="clr-namespace:Bioss.Ultrasound.Resources.Localization"
+             xmlns:sv="clr-namespace:AiForms.Renderers;assembly=SettingsView"
+             x:Class="Bioss.Ultrasound.UI.Pages.SettingsPage"
+             Title="{x:Static lang:AppStrings.Settings_Title}">
+
+    <sv:SettingsView HasUnevenRows="True">
+
+        <sv:Section Title="TOCO">
+            <sv:SwitchCell
+                        Title="{x:Static lang:AppStrings.Settings_AutoToco}"
+                        On="{Binding IsAutoToco}"/>
+        </sv:Section>
+
+        <sv:Section Title="{x:Static lang:AppStrings.Settings_Connection}">
+            <sv:SwitchCell
+                        Title="{x:Static lang:AppStrings.Settings_AutoConnect}"
+                        On="{Binding IsAutoConnect}"
+                        Description="{x:Static lang:AppStrings.Settings_AutoConnectDescription}"/>
+        </sv:Section>
+
+        <sv:Section Title="{x:Static lang:AppStrings.Settings_Monitor}">
+            <sv:SwitchCell
+                        Title="{x:Static lang:AppStrings.Settings_AutoMonitor}"
+                        On="{Binding IsAutoRecordTime}"/>
+
+            <sv:PickerCell
+                        Title="{x:Static lang:AppStrings.Settings_MonitorFinishTimes}"
+                        PageTitle="{x:Static lang:AppStrings.Settings_MonitorFinishTimes}"
+                        SelectionMode="Single"
+                        KeepSelectedUntilBack="True"
+                        ValueTextFontSize="Body"
+                        ItemsSource="{Binding AutoRecordTimes}"
+                        DisplayMember="Name"
+                        SelectedItem="{Binding AutoRecordTime}"
+                        IsVisible="{Binding IsAutoRecordTime}"/>
+
+            <sv:SwitchCell
+                        Title="{x:Static lang:AppStrings.Settings_MonitorConfirmRecordCompletion}"
+                        Description="{x:Static lang:AppStrings.Settings_MonitorConfirmRecordCompletionDescription}"
+                        On="{Binding ConfirmRecordCompleated}"
+                        IsVisible="{Binding IsAutoRecordTime}"/>
+
+            <sv:SwitchCell
+                        Title="{x:Static lang:AppStrings.Settings_MonitorSoundBatteryLow}"
+                        On="{Binding IsBatteryLowSound}"/>
+
+            <sv:SwitchCell
+                        Title="{x:Static lang:AppStrings.Settings_MonitorSoundLossData}"
+                        On="{Binding IsLossDataSound}"/>
+
+            <sv:CustomCell>
+                <Grid ColumnDefinitions="*, Auto, Auto">
+
+                    <Label Text="{x:Static lang:AppStrings.Settings_MonitorSoundLevel}"
+                           VerticalOptions="Center"/>
+
+                    <Label Grid.Column="1"
+                           VerticalOptions="Center"
+                           Text="{Binding AlarmVolume}"/>
+
+                    <Stepper Grid.Column="2"
+                            VerticalOptions="Center"
+                            Increment="1"
+                            Minimum="1"
+                            Maximum="10"
+                            Value="{Binding AlarmVolume}"/>
+                </Grid>
+            </sv:CustomCell>
+        </sv:Section>
+
+        <sv:Section Title="{x:Static lang:AppStrings.Settings_SectionChart}">
+            <sv:PickerCell
+                        Title="{x:Static lang:AppStrings.Settings_ChartScale}"
+                        PageTitle="{x:Static lang:AppStrings.Settings_ChartScalePageTitle}"
+                        SelectionMode="Single"
+                        KeepSelectedUntilBack="True"
+                        ValueTextFontSize="Body"
+                        ItemsSource="{Binding ChartXScales}"
+                        DisplayMember="Name"
+                        SelectedItem="{Binding ChartXScale}"/>
+
+            <sv:PickerCell
+                        Title="{x:Static lang:AppStrings.Settings_ChartFHRArea}"
+                        PageTitle="{x:Static lang:AppStrings.Settings_ChartFHRArea}"
+                        SelectionMode="Single"
+                        KeepSelectedUntilBack="True"
+                        ValueTextFontSize="Body"
+                        ItemsSource="{Binding ChartYScales}"
+                        DisplayMember="Name"
+                        SelectedItem="{Binding ChartYScale}"/>
+        </sv:Section>
+
+        <sv:Section Title="{x:Static lang:AppStrings.Settings_SectionInfo}">
+
+            <sv:EntryCell
+                        Title="{x:Static lang:AppStrings.Settings_Organization}"
+                        Placeholder="{x:Static lang:AppStrings.Settings_OrganizationPlaceholder}"
+                        ValueText="{Binding Organization}"
+                        ValueTextFontSize="Body"/>
+
+            <sv:EntryCell
+                        Title="{x:Static lang:AppStrings.Settings_Doctor}"
+                        Placeholder="{x:Static lang:AppStrings.Settings_DoctorPlaceholder}"
+                        ValueText="{Binding Doctor}"
+                        ValueTextFontSize="Body"/>
+
+            <sv:SwitchCell
+                        Title="{x:Static lang:AppStrings.Settings_IsPersonal}"
+                        On="{Binding IsPersonalDevice}"
+                        Description="{x:Static lang:AppStrings.Settings_IsPersonalDescription}"/>
+
+            <sv:EntryCell
+                        Title="{x:Static lang:AppStrings.Settings_UserName}"
+                        Placeholder="{x:Static lang:AppStrings.Settings_UserNamePlaceholder}"
+                        ValueText="{Binding Patient}"
+                        ValueTextFontSize="Body"
+                        IsVisible="{Binding IsPersonalDevice}"/>
+
+            <sv:DatePickerCell
+                        Title="{x:Static lang:AppStrings.Settings_UserBirthday}"
+                        Date="{Binding Birthday}"
+                        ValueTextFontSize="Body"
+                        Description="{Binding PatientAge}"
+                        IsVisible="{Binding IsPersonalDevice}"/>
+
+            <sv:DatePickerCell
+                        Title="{x:Static lang:AppStrings.Settings_PregnancyStart}"
+                        Date="{Binding PregnancyStart}"
+                        ValueTextFontSize="Body"
+                        Description="{Binding PregnancyTime}"
+                        IsVisible="{Binding IsPersonalDevice}"/>
+
+            <sv:NumberPickerCell
+                        Title="{x:Static lang:AppStrings.Settings_PregnancyNumber}"
+                        PickerTitle="{x:Static lang:AppStrings.Settings_PregnancyNumber}"
+                        ValueTextFontSize="Body"
+                        Min="1" Max="10"
+                        Number="{Binding PregnancyNumber}"
+                        IsVisible="{Binding IsPersonalDevice}"/>
+
+        </sv:Section>
+
+        <sv:Section Title="{x:Static lang:AppStrings.Settings_SectionPdf}">
+            <sv:PickerCell
+                        Title="{x:Static lang:AppStrings.Settings_PdfRecordingSpeed}"
+                        PageTitle="{x:Static lang:AppStrings.Settings_PdfRecordingSpeed}"
+                        SelectionMode="Single"
+                        KeepSelectedUntilBack="True"
+                        ValueTextFontSize="Body"
+                        ItemsSource="{Binding RecordingSpeeds}"
+                        DisplayMember="Name"
+                        SelectedItem="{Binding RecordingSpeed}"/>
+
+        </sv:Section>
+
+    </sv:SettingsView>
+</ContentPage>

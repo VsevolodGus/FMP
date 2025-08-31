@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ContentPage
+    xmlns="http://xamarin.com/schemas/2014/forms"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+    xmlns:yummy="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView" 
+    xmlns:oxy="clr-namespace:OxyPlot.Xamarin.Forms;assembly=OxyPlot.Xamarin.Forms"
+    x:Class="Bioss.Ultrasound.UI.Pages.RecordPage"
+    Title="{Binding Title}">
+
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding AppearingCommand}"/>
+
+        <xct:EventToCommandBehavior
+            EventName="Disappearing"
+            Command="{Binding DisappearingCommand}"/>
+    </ContentPage.Behaviors>
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem IconImageSource="ic_export" Command="{Binding ExportToPdfCommand}"/>
+        <ToolbarItem IconImageSource="ic_delete" Command="{Binding DeleteCommand}"/>
+    </ContentPage.ToolbarItems>
+
+    <Grid
+        RowDefinitions="Auto, *">
+
+        <Grid ColumnDefinitions="*,Auto,*,Auto,*,Auto,*" Margin="16,16,16,0">
+
+            <StackLayout Grid.Column="0" Spacing="0">
+                <Label Text="%" FontSize="Caption" HorizontalOptions="Center"/>
+                <Label Text="{Binding LossPercentage}" FontSize="Title" HorizontalOptions="Center"/>
+            </StackLayout>
+
+            <BoxView Grid.Column="1" WidthRequest="1" BackgroundColor="LightGray"/>
+
+            <StackLayout Grid.Column="2" Spacing="0">
+                <Label Text="FHR" FontSize="Caption" HorizontalOptions="Center"/>
+                <Label Text="{Binding HeartRate}" FontSize="Title" HorizontalOptions="Center"/>
+            </StackLayout>
+
+            <BoxView Grid.Column="3" WidthRequest="1" BackgroundColor="LightGray"/>
+
+            <StackLayout Grid.Column="4" Spacing="0" VerticalOptions="Center">
+                <Label Text="TOCO" FontSize="Caption" HorizontalOptions="Center"/>
+                <Label Text="{Binding Toco}" FontSize="Title" HorizontalOptions="Center"/>
+            </StackLayout>
+
+            <BoxView Grid.Column="5" WidthRequest="1" BackgroundColor="LightGray"/>
+
+            <StackLayout Grid.Column="6" Spacing="0">
+                <Label Text="FM" FontSize="Caption" HorizontalOptions="Center"/>
+                <Label Text="{Binding FetalMovements}" FontSize="Title" HorizontalOptions="Center"/>
+            </StackLayout>
+
+        </Grid>
+
+        <oxy:PlotView Grid.Row="1" 
+            Model="{Binding PlotModel}" />
+
+        <yummy:PancakeView Grid.Row="1"
+                        HorizontalOptions="End" 
+                        VerticalOptions="End"
+                        CornerRadius="32" 
+                        Margin="30" 
+                        BackgroundColor="#CCFFFFFF">
+
+            <yummy:PancakeView.Shadow>
+                <yummy:DropShadow BlurRadius="5" Color="Gray"/>
+            </yummy:PancakeView.Shadow>
+
+            <Grid 
+                xct:TouchEffect.Command="{Binding BiometricCommand}"
+                xct:TouchEffect.NativeAnimation="True">
+                    
+                <Image Source="ic_account_edit"
+                        Margin="16"
+                        HeightRequest="32"
+                        WidthRequest="32"
+                        VerticalOptions="Center"
+                        HorizontalOptions="Center"
+                        xct:IconTintColorEffect.TintColor="DarkSlateGray"/>
+                   
+            </Grid>
+        </yummy:PancakeView>
+
+    </Grid>
+</ContentPage>

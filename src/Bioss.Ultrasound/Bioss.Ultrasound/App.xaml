@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             xmlns:converters="clr-namespace:Bioss.Ultrasound.UI.Converters"
+             x:Class="Bioss.Ultrasound.App">
+    <Application.Resources>
+
+        <converters:ReverseBoolConverter x:Key="ReverseBoolConverter"/>
+        <converters:SoundLevelToPercentConverter x:Key="SoundLevelToPercentConverter"/>
+        <converters:LossPercentageToColorConverter x:Key="LossPercentageToColorConverter"/>
+
+        <Style TargetType="NavigationPage"> 
+            <Setter Property="BarBackgroundColor" Value="#F6F6F7"/> 
+            <Setter Property="BarTextColor" Value="Black"/>   
+        </Style>   
+
+        <Style TargetType="{x:Type ContentPage}" ApplyToDerivedTypes="True">
+            <!-- Удаляем текст кнопки назад -->
+            <Setter Property="NavigationPage.BackButtonTitle" Value=""/>
+        </Style>
+
+        <Style TargetType="Button">
+            <Setter Property="Visual" Value="Material"/>
+            <Setter Property="BackgroundColor" Value="#eee"/>
+            <Setter Property="TextColor" Value="#333"/>
+        </Style>
+
+        <Style TargetType="Button" x:Key="Style.Button.Popup.Main">
+            <Setter Property="Visual" Value="Material"/>
+            <Setter Property="BackgroundColor" Value="#eee"/>
+            <Setter Property="TextColor" Value="Green"/>
+        </Style>
+
+        <Style TargetType="Label">
+            <Style.Triggers>
+                <Trigger TargetType="Label" Property="IsEnabled" Value="False">
+                    <Setter Property="TextColor" Value="Gray"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </Application.Resources>
+</Application>

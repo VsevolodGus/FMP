@@ -1,0 +1,176 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Acr.UserDialogs" Version="7.2.0.564" />
+    <PackageReference Include="Libs.DI" Version="1.3.0" />
+    <PackageReference Include="Libs.Plugins.Battery" Version="1.0.3" />
+    <PackageReference Include="MigraDocCore.DocumentObjectModel" Version="1.3.16" />
+    <PackageReference Include="MigraDocCore.Rendering" Version="1.3.16" />
+    <PackageReference Include="PdfSharpCore" Version="1.3.16" />
+    <PackageReference Include="Plugin.BLE" Version="2.1.2" />
+    <PackageReference Include="Xamarin.Forms" Version="5.0.0.2401" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.7.2" />
+    <PackageReference Include="Xamarin.Forms.PancakeView" Version="2.3.0.759" />
+    <PackageReference Include="Xamarin.Forms.Visual.Material" Version="5.0.0.2401" />
+    <PackageReference Include="AiForms.SettingsView" Version="1.3.30" />
+    <PackageReference Include="SQLiteNetExtensions" Version="2.1.0" />
+    <PackageReference Include="SQLiteNetExtensions.Async" Version="2.1.0" />
+    <PackageReference Include="OxyPlot.Xamarin.Forms" Version="1.0.0" />
+    <PackageReference Include="SkiaSharp.Views.Forms" Version="2.80.3" />
+    <PackageReference Include="SkiaSharp.Views" Version="2.80.3" />
+    <PackageReference Include="Xamarin.CommunityToolkit" Version="1.3.0" />
+    <PackageReference Include="Vitvov.SQLiteMigrations" Version="1.1.0" />
+    <PackageReference Include="Xam.Plugin.SimpleAudioPlayer" Version="1.6.0" />
+    <PackageReference Include="Rg.Plugins.Popup" Version="2.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Fonts\Arial-Bold.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\Arial-BoldItalic.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\Arial-Italic.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\Arial.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\SegoeUI-Bold.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\SegoeUI-BoldItalic.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\SegoeUI-Italic.ttf" />
+    <EmbeddedResource Include="Resources\Fonts\SegoeUI.ttf" />
+    <EmbeddedResource Include="Resources\Images\baseline.png" />
+    <EmbeddedResource Include="Resources\Images\brace.png" />
+    <EmbeddedResource Include="Resources\Images\bluetooth.png" />
+    <EmbeddedResource Include="Resources\Audio\button37a.mp3" />
+    <EmbeddedResource Include="Resources\Audio\MixkitAlarmTone996.wav" />
+    <EmbeddedResource Include="Resources\Images\vibro.png" />
+    <EmbeddedResource Include="Resources\Images\bipuls_logo.jpg" />
+    <EmbeddedResource Include="Resources\Images\pin.png" />
+    <EmbeddedResource Include="Resources\Images\pin_top.png" />
+    <EmbeddedResource Include="Resources\Docs\privacy.txt" />
+    <EmbeddedResource Include="Resources\Docs\privacy-ru.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\Localization\AppStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>AppStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Update="UI\Pages\AboutPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="UI\Pages\MainPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="UI\Pages\MainTabbedPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="UI\Pages\MenuPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="UI\Pages\RecordsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="UI\Pages\SettingsPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="UI\Pages\StartupPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Resources\Fonts\Arial-Bold.ttf" />
+    <None Remove="Resources\Fonts\Arial-BoldItalic.ttf" />
+    <None Remove="Resources\Fonts\Arial-Italic.ttf" />
+    <None Remove="Resources\Fonts\Arial.ttf" />
+    <None Remove="Resources\Fonts\SegoeUI-Bold.ttf" />
+    <None Remove="Resources\Fonts\SegoeUI-BoldItalic.ttf" />
+    <None Remove="Resources\Fonts\SegoeUI-Italic.ttf" />
+    <None Remove="Resources\Fonts\SegoeUI.ttf" />
+    <None Remove="Resources\Images\baseline.png" />
+    <None Remove="Xam.Plugin.SimpleAudioPlayer" />
+    <None Remove="NAudio" />
+    <None Remove="Collections\" />
+    <None Remove="UI\Controls\" />
+    <None Remove="AiForms.SettingsView" />
+    <None Remove="Domain\Plotting\" />
+    <None Remove="Domain\UI\" />
+    <None Remove="UI\Helpers\" />
+    <None Remove="Data\" />
+    <None Remove="Data\Database\" />
+    <None Remove="Data\Database\Entities\" />
+    <None Remove="SQLiteNetExtensions" />
+    <None Remove="SQLiteNetExtensions.Async" />
+    <None Remove="Data\Database\Entities\Enums\" />
+    <None Remove="Mapping\" />
+    <None Remove="Repository\Abstracts\" />
+    <None Remove="Tools\PdfTests\" />
+    <None Remove="OxyPlot.Pdf" />
+    <None Remove="OxyPlot.SkiaSharp" />
+    <None Remove="OxyPlot.Xamarin.Forms" />
+    <None Remove="Resources\Images\brace.png" />
+    <None Remove="Services\Abstracts\" />
+    <None Remove="SkiaSharp" />
+    <None Remove="SkiaSharp.Views.Forms" />
+    <None Remove="SkiaSharp.Views" />
+    <None Remove="Resources\Images\bluetooth.png" />
+    <None Remove="Xamarin.CommunityToolkit" />
+    <None Remove="NAudio.Core" />
+    <None Remove="Data\Database\Migrations\" />
+    <None Remove="UI\Popups\" />
+    <None Remove="Domain\Constants\" />
+    <None Remove="IO\Sound\" />
+    <None Remove="CSCore" />
+    <None Remove="Accord.Audio" />
+    <None Remove="Vitvov.SQLiteMigrations" />
+    <None Remove="Resources\Audio\" />
+    <None Remove="Resources\Audio\button37a.mp3" />
+    <None Remove="Resources\Audio\mixkit_alarm_tone996.wav" />
+    <None Remove="Resources\Images\vibro.png" />
+    <None Remove="Resources\Images\bipuls_logo.jpg" />
+    <None Remove="Domain\Collections\" />
+    <None Remove="Rg.Plugins.Popup" />
+    <None Remove="Resources\Images\pin.png" />
+    <None Remove="Resources\Images\pin_top.png" />
+    <None Remove="SkiaChart.Forms" />
+    <None Remove="Resources\Documents\" />
+    <None Remove="Resources\Docs\privacy.txt" />
+    <None Remove="Resources\Docs\privacy-ru.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Collections\" />
+    <Folder Include="UI\Controls\" />
+    <Folder Include="Domain\Plotting\" />
+    <Folder Include="Domain\UI\" />
+    <Folder Include="UI\Helpers\" />
+    <Folder Include="Data\" />
+    <Folder Include="Data\Database\" />
+    <Folder Include="Data\Database\Entities\" />
+    <Folder Include="Data\Database\Entities\Enums\" />
+    <Folder Include="Mapping\" />
+    <Folder Include="Repository\Abstracts\" />
+    <Folder Include="Tools\PdfTests\" />
+    <Folder Include="Services\Abstracts\" />
+    <Folder Include="Data\Database\Migrations\" />
+    <Folder Include="UI\Popups\" />
+    <Folder Include="Domain\Constants\" />
+    <Folder Include="Resources\Audio\" />
+    <Folder Include="Domain\Collections\" />
+    <Folder Include="Resources\Docs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resources\Localization\AppStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>AppStrings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>

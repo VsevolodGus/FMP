@@ -1,0 +1,298 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:xct="http://xamarin.com/schemas/2020/toolkit"
+             xmlns:lang="clr-namespace:Bioss.Ultrasound.Resources.Localization" 
+             xmlns:battery="clr-namespace:Libs.Plugins.Battery;assembly=Libs.Plugins.Battery" 
+             xmlns:oxy="clr-namespace:OxyPlot.Xamarin.Forms;assembly=OxyPlot.Xamarin.Forms"
+             xmlns:yummy="clr-namespace:Xamarin.Forms.PancakeView;assembly=Xamarin.Forms.PancakeView" 
+             xmlns:controls="clr-namespace:Bioss.Ultrasound.UI.Controls"
+             x:Class="Bioss.Ultrasound.UI.Pages.MainPage"
+             Title="{x:Static lang:AppStrings.Main_Title}">
+
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding AppearingCommand}"/>
+
+        <xct:EventToCommandBehavior
+            EventName="Disappearing"
+            Command="{Binding DisappearingCommand}"/>
+    </ContentPage.Behaviors>
+
+    <NavigationPage.TitleView>
+        
+        <StackLayout Orientation="Horizontal"
+                    HorizontalOptions="Start"
+                    Spacing="0"
+                    IsVisible="{Binding IsConnected}">
+
+            <Image Source="ic_volume"/>
+
+            <StackLayout Spacing="0"
+                         VerticalOptions="Center"
+                         WidthRequest="35">
+                <Label Text="{Binding SoundLevel, Converter={StaticResource SoundLevelToPercentConverter}}"
+                       FontSize="Caption"/>
+                <ProgressBar Progress="{Binding SoundLevel}"/>
+            </StackLayout>
+
+            <battery:BatteryImage Grid.Column="2"
+                                  Margin="8,0"
+                Percentage="{Binding BatteryLevel}"/>
+        </StackLayout>
+    </NavigationPage.TitleView>
+
+    <ContentPage.ToolbarItems>
+
+        <controls:BindableToolbarItem
+                IconImageSource="ic_bell_off"
+                IsVisible="{Binding IsBell}"
+                Command="{Binding BellOffCommand}"/>
+
+        <controls:BindableToolbarItem
+                IconImageSource="ic_close"
+                IsVisible="{Binding IsCloseButtonVisible}"
+                Command="{Binding DisconnectCommand}"/>
+
+    </ContentPage.ToolbarItems>
+
+    <Grid>
+
+        <Grid RowDefinitions="1*, 2*"
+              IsVisible="{Binding IsConnected, Converter={StaticResource ReverseBoolConverter}}">
+
+            <yummy:PancakeView
+                BackgroundColor="White">
+
+                <yummy:PancakeView.Shadow>
+                    <yummy:DropShadow BlurRadius="10" Color="Gray"/>
+                </yummy:PancakeView.Shadow>
+
+                <Grid>
+                    <controls:Pulse AutoStart="{Binding IsConnected, Converter={StaticResource ReverseBoolConverter}}"
+                                    PulseColor="CornflowerBlue"
+                                    Speed="10"
+                                    Source="Bioss.Ultrasound.Resources.Images.bluetooth.png"
+                                    VerticalOptions="FillAndExpand"/>
+                    <Label Text="{x:Static lang:AppStrings.BluetoothSearch}" VerticalOptions="End" HorizontalTextAlignment="Center"
+                           Padding="16" TextColor="DarkSlateGray"/>
+
+                </Grid>
+
+            </yummy:PancakeView>
+
+            <CollectionView Grid.Row="1"
+                ItemsSource="{Binding Devices}"
+                SelectionMode="Single"
+                SelectedItem="{Binding SelectedDevice}"
+                SelectionChangedCommand="{Binding SelectedDeviceCommand}">
+
+                <CollectionView.EmptyView>
+                    <Grid>
+                        <Label Text="{x:Static lang:AppStrings.TurnOnYourDevice}"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Margin="16"
+                            HorizontalTextAlignment="Center"
+                            TextColor="Gray"/>
+                    </Grid>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <StackLayout Orientation="Horizontal" Spacing="16"  Margin="16">
+                                <Image Source="ic_bluetooth"
+                                       xct:IconTintColorEffect.TintColor="Gray"/>
+                                <Label Text="{Binding Name}"/>
+                            </StackLayout>
+                            
+                            <BoxView HeightRequest="0.5" VerticalOptions="End" Margin="16,0" BackgroundColor="#ccc"/>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+
+        </Grid>
+
+        <Grid
+            RowDefinitions="Auto, 3*, 2*"
+            IsVisible="{Binding IsConnected}">
+
+            <StackLayout Margin="16,16,16,0">
+
+                <Grid ColumnDefinitions="*,Auto,*,Auto,*,Auto,*">
+
+                    <StackLayout Grid.Column="0" Spacing="0">
+                        <Label Text="%" FontSize="Caption" HorizontalOptions="Center"/>
+                        <Label Text="{Binding LossPercentage}" FontSize="Title" HorizontalOptions="Center"
+                               TextColor="{Binding LossPercentage, Converter={StaticResource LossPercentageToColorConverter}}"/>
+
+                        <StackLayout Orientation="Horizontal" Spacing="0" HorizontalOptions="Center">
+                            <Label Text="{Binding LossPercentageMinute}" FontSize="Caption"/>
+                            <Label Text="/" FontSize="Caption"/>
+                            <Label Text="{x:Static lang:AppStrings.Unit_min}" FontSize="Caption"/>
+                        </StackLayout>
+                    </StackLayout>
+
+                    <BoxView Grid.Column="1" WidthRequest="1" BackgroundColor="LightGray"/>
+
+                    <StackLayout Grid.Column="2" Spacing="0">
+                        <Label Text="FHR" FontSize="Caption" HorizontalOptions="Center"/>
+                        <Label Text="{Binding FHR}" FontSize="Title" HorizontalOptions="Center"/>
+                    </StackLayout>
+
+                    <BoxView Grid.Column="3" WidthRequest="1" BackgroundColor="LightGray"/>
+
+                     <StackLayout Grid.Column="4" Spacing="0">
+                        <Label Text="TOCO" FontSize="Caption" HorizontalOptions="Center"/>
+                        <Label Text="{Binding Toco}" FontSize="Title" HorizontalOptions="Center"/>
+                     </StackLayout>
+
+                     <BoxView Grid.Column="5" WidthRequest="1" BackgroundColor="LightGray"/>
+
+                     <StackLayout Grid.Column="6" Spacing="0">
+                        <Label Text="FM" FontSize="Caption" HorizontalOptions="Center"/>
+                        <Label Text="{Binding FetalMovements}" FontSize="Title" HorizontalOptions="Center"/>
+                     </StackLayout>
+                </Grid>
+
+                <controls:ErrorView
+                            Text="{x:Static lang:AppStrings.WarningLowBatteryLevel}"
+                            IsVisible="{Binding IsLowBatteryLevel}"/>
+
+                <controls:ErrorView
+                            Text="{x:Static lang:AppStrings.WarningLossData}"
+                            IsVisible="{Binding IsLossData}"/>
+            </StackLayout>
+
+            
+            <oxy:PlotView Grid.Row="1" Grid.RowSpan="2"
+                          Model="{Binding PlotModel}" />
+
+            <yummy:PancakeView Grid.Row="2" HorizontalOptions="Center" 
+                           VerticalOptions="End"
+                           CornerRadius="32" 
+                           Margin="0,0,0,30" 
+                           BackgroundColor="#CCFFFFFF">
+
+                <yummy:PancakeView.Shadow>
+                    <yummy:DropShadow BlurRadius="5" Color="Gray"/>
+                </yummy:PancakeView.Shadow>
+
+                <Grid
+                    xct:TouchEffect.NativeAnimation="True"
+                    xct:TouchEffect.Command="{Binding RecordCommand}"
+                    xct:TouchEffect.LongPressCommand="{Binding LongPressRecordCommand}"
+                    xct:TouchEffect.LongPressDuration="2000">
+
+                    <Grid>
+                        <Image Source="ic_play"
+                               Margin="8"
+                               HeightRequest="48"
+                               WidthRequest="48"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center"
+                               xct:IconTintColorEffect.TintColor="Red"
+                               IsVisible="{Binding IsRecording, Converter={StaticResource ReverseBoolConverter}}"/>
+
+                        <StackLayout Orientation="Horizontal"
+                                     Margin="16,8,8,8"
+                                     Spacing="0"
+                                     IsVisible="{Binding IsRecording}">
+                            <Label Text="{Binding RecordTimePassed}" VerticalOptions="CenterAndExpand"
+                                   FontSize="Large"/>
+
+                            <Image Source="ic_stop"
+                               HeightRequest="48"
+                               WidthRequest="48"
+                               VerticalOptions="Center"
+                               HorizontalOptions="Center"
+                               xct:IconTintColorEffect.TintColor="Red"/>
+                        </StackLayout>
+                    </Grid>
+                </Grid>
+            </yummy:PancakeView>
+
+            <yummy:PancakeView Grid.Row="2"
+                        HorizontalOptions="End" 
+                        VerticalOptions="End"
+                        CornerRadius="32" 
+                        Margin="30" 
+                        BackgroundColor="#CCFFFFFF"
+                        IsVisible="{Binding IsRecording}">
+
+                <yummy:PancakeView.Shadow>
+                    <yummy:DropShadow BlurRadius="5" Color="Gray"/>
+                </yummy:PancakeView.Shadow>
+
+                <Grid 
+                    xct:TouchEffect.Command="{Binding BiometricCommand}"
+                    xct:TouchEffect.NativeAnimation="True">
+                    
+                    <Image Source="ic_account_edit"
+                            Margin="16"
+                            HeightRequest="32"
+                            WidthRequest="32"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"
+                            xct:IconTintColorEffect.TintColor="DarkSlateGray"/>
+                   
+                </Grid>
+            </yummy:PancakeView>
+
+            <yummy:PancakeView Grid.Row="1"
+                    Margin="20"
+                    VerticalOptions="End"
+                    HorizontalOptions="End"
+                    CornerRadius="18"
+                    BackgroundColor="NavajoWhite"
+                    WidthRequest="36"
+                    HeightRequest="36">
+
+                <yummy:PancakeView.Shadow>
+                    <yummy:DropShadow BlurRadius="5" Color="Gray"/>
+                </yummy:PancakeView.Shadow>
+
+                <Grid 
+                    xct:TouchEffect.Command="{Binding ResetFMCommand}"
+                    xct:TouchEffect.NativeAnimation="True">
+
+                    <Image Source="{xct:ImageResourceExtension Bioss.Ultrasound.Resources.Images.vibro.png}"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"/>
+                </Grid>
+
+            </yummy:PancakeView>
+
+            <yummy:PancakeView Grid.Row="2"
+                    Margin="20"
+                    VerticalOptions="Start"
+                    HorizontalOptions="End"
+                    CornerRadius="18"
+                    BackgroundColor="NavajoWhite"
+                    WidthRequest="36"
+                    HeightRequest="36">
+
+                <yummy:PancakeView.Shadow>
+                    <yummy:DropShadow BlurRadius="5" Color="Gray"/>
+                </yummy:PancakeView.Shadow>
+
+                <Grid 
+                    xct:TouchEffect.Command="{Binding ResetTocoCommand}"
+                    xct:TouchEffect.NativeAnimation="True">
+
+                    <Image Source="{xct:ImageResourceExtension Bioss.Ultrasound.Resources.Images.baseline.png}"
+                            VerticalOptions="Center"
+                            HorizontalOptions="Center"/>
+                </Grid>
+
+            </yummy:PancakeView>
+            
+        </Grid>
+
+        
+    </Grid>
+</ContentPage>
