@@ -344,7 +344,7 @@
     <value>страница {0} из {1}</value>
   </data>
   <data name="PDF_FooterSN" xml:space="preserve">
-    <value>Монитор SN: {0}</value>
+    <value>Монитор Имя: {0}</value>
   </data>
 
   <data name="PDF_TableCTGParameters" xml:space="preserve">

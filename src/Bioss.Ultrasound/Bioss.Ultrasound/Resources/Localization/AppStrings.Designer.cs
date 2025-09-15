@@ -331,7 +331,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Monitor SN: {0}.
+        ///   Ищет локализованную строку, похожую на Monitor Name: {0}.
         /// </summary>
         internal static string PDF_FooterSN {
             get {

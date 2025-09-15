@@ -344,7 +344,7 @@
     <value>page {0} of {1}</value>
   </data>
   <data name="PDF_FooterSN" xml:space="preserve">
-    <value>Monitor SN: {0}</value>
+    <value>Monitor Name: {0}</value>
   </data>
 
   <data name="PDF_TableCTGParameters" xml:space="preserve">

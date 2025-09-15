@@ -167,6 +167,11 @@
     <Folder Include="Resources\Docs\" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="CatAna">
+      <HintPath>..\..\CatAna.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Update="Resources\Localization\AppStrings.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
