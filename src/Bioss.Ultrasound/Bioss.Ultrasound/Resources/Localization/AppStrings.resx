@@ -215,19 +215,19 @@
     <value>Enter your name</value>
   </data>
   <data name="Settings_UserBirthday" xml:space="preserve">
-    <value>Birthday</value>
+    <value>Date of birth</value>
   </data>
   <data name="Settings_UserBirthdayDescriptionNotSelected" xml:space="preserve">
-    <value>Birthday not entered</value>
+    <value>Date of birth not entered</value>
   </data>
   <data name="Settings_UserBirthdayDescriptionAge" xml:space="preserve">
     <value>You are {0} full years old</value>
   </data>
   <data name="Settings_PregnancyStart" xml:space="preserve">
-    <value>Start of pregnancy</value>
+    <value>Gestation period</value>
   </data>
   <data name="Settings_PregnancyStartDescriptionNotSelected" xml:space="preserve">
-    <value>Start of pregnancy not entered</value>
+    <value>Gestation period not entered</value>
   </data>
   <data name="Settings_PregnancyStartDescriptionTime" xml:space="preserve">
     <value>You are pregnant {0} weeks and {1} days</value>
@@ -453,7 +453,7 @@
     <value>Low battery level</value>
   </data>
   <data name="WarningLossData" xml:space="preserve">
-    <value>Large data loss</value>
+    <value>Large loss of heart rate signal</value>
   </data>
 
   <data name="Chart_FHRAxysTitle" xml:space="preserve">
