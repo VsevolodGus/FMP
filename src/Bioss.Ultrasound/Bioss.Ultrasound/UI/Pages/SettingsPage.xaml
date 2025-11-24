@@ -44,6 +44,12 @@
                         IsVisible="{Binding IsAutoRecordTime}"/>
 
             <sv:SwitchCell
+                        Title="{x:Static lang:AppStrings.Settings_MonitorAutoCompleteRecordByCriteria}"
+                        On="{Binding IsAutoCompleteRecordByCriteria}"
+                        IsVisible="{Binding IsAutoRecordTime}"/>
+
+
+            <sv:SwitchCell
                         Title="{x:Static lang:AppStrings.Settings_MonitorSoundBatteryLow}"
                         On="{Binding IsBatteryLowSound}"/>
 

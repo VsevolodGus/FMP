@@ -113,6 +113,13 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
         }
 
+        public bool IsAutoCompleteRecordByCriteria
+        {
+            get => _appSettings.IsAutoCompleteRecordByCriteria;
+            set => _appSettings.IsAutoCompleteRecordByCriteria = value;
+        }
+
+
         public ObservableCollection<PickerItem<int>> ChartXScales { get; } = new ObservableCollection<PickerItem<int>>
         {
             new PickerItem<int> { Name = string.Format(AppStrings.Settings_ChartVariantsMinuteFormat, 1), Value = 1 * 60 },

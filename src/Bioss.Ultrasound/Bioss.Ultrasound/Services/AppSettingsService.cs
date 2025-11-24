@@ -19,6 +19,7 @@ namespace Bioss.Ultrasound.Services
         private const string AUTO_RECORD_TIME = "isAutoRecordTime";
         private const string RECORD_TIME_MINUTES = "recordTimeMinutes";
         private const string CONFIRM_RECORD_COMPLETE = "confirmRecordCompleated";
+        private const string AUTO_COMPLETE_RECORD_BY_CRITERIA = "autoCompleteRecordByCriteria";
         private const string IS_BATTERY_LOW_SOUND = "isBatteryLowSound";
         private const string IS_LOSS_DATA_SOUND = "isLossDataSound";
         private const string SOUND_LEVEL = "soundLevel";
@@ -69,6 +70,12 @@ namespace Bioss.Ultrasound.Services
         {
             get => Preferences.Get(CONFIRM_RECORD_COMPLETE, false, NAME);
             set => Preferences.Set(CONFIRM_RECORD_COMPLETE, value, NAME);
+        }
+
+        public bool IsAutoCompleteRecordByCriteria
+        {
+            get => Preferences.Get(AUTO_COMPLETE_RECORD_BY_CRITERIA, false, NAME);
+            set => Preferences.Set(AUTO_COMPLETE_RECORD_BY_CRITERIA, value, NAME);
         }
 
         public bool IsBatteryLowSound
