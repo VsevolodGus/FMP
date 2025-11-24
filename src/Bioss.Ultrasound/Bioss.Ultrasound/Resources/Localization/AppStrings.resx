@@ -328,7 +328,7 @@
     <value>FMP "BIPULS"</value>
   </data>
   <data name="PDF_HeaderDateOfResearch" xml:space="preserve">
-   <value>Date of research</value>
+    <value>Date of research</value>
   </data>
   <data name="PDF_HeaderPatient" xml:space="preserve">
     <value>Patient</value>
@@ -574,5 +574,9 @@
   <data name="Settings_MonitorAutoCompleteRecordByCriteria" xml:space="preserve">
     <value>When meeting the Dawes-Redman Criteria</value>
     <comment>When meeting the Dawes-Redman Criteria</comment>
+  </data>
+  <data name="Dialog_CriteriaMet" xml:space="preserve">
+    <value>Are the criteria met, finish recording?</value>
+    <comment>Критерии  выполнены, завершить запись?</comment>
   </data>
 </root>

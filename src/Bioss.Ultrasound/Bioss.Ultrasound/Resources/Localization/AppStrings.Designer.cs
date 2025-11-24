@@ -1345,6 +1345,12 @@ namespace Bioss.Ultrasound.Resources.Localization {
             {
                 return ResourceManager.GetString("Settings_MonitorAutoCompleteRecordByCriteria", resourceCulture);
             }
+        } 
+        
+        internal static string Dialog_CriteriaMet {
+            get {
+                return ResourceManager.GetString("Dialog_CriteriaMet", resourceCulture);
+            }
         }
     }
 }

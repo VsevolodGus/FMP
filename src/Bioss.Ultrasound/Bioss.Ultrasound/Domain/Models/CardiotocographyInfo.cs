@@ -144,7 +144,7 @@
         public bool IsRoodDawsonCriteriaValid(int bi)
         {            
             // TODO test
-            return bi > 60;
+            return bi > 100;
             
             //return IsValidRecordingDuration
             //    && SignalLossValid

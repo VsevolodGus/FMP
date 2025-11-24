@@ -10,6 +10,7 @@ using Bioss.Ultrasound.Domain.Plotting;
 using Bioss.Ultrasound.Repository.Abstracts;
 using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Services;
+using Bioss.Ultrasound.Tools;
 using Bioss.Ultrasound.UI.Helpers;
 using Bioss.Ultrasound.UI.Popups;
 using Libs.DI.ViewModels;
@@ -25,6 +26,7 @@ using System.Windows.Input;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Essentials;
 using Xamarin.Forms;
+using static Bioss.Ultrasound.Services.AudioService;
 
 namespace Bioss.Ultrasound.UI.ViewModels
 {
@@ -42,7 +44,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly PlottingHelper _plottingHelper = new PlottingHelper();
         private readonly ChartDrawer _chartDrawer;
         private readonly RecordTimePassedHelper _recordTimePassedHelper = new RecordTimePassedHelper();
-
+        private readonly LossPercentageHelper _lossHelper = new();
 
         private readonly INavigation _navigation;
         private readonly IUserDialogs _dialogs;
@@ -53,12 +55,13 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly IPcmPlayer _pcmPlayer;
         private readonly AudioService _audioService;
         private readonly ISystemVolume _systemVolume;
+        private readonly InfoSettingsService _infoSettingsService;
         private readonly CatAnaService _catAnaService = new CatAnaService();
+
 
 
         private IDevice _selectedDevice;
 
-        private LossPercentageHelper _lossHelper = new();
 
         private bool _isConnected;
         private byte _fhr;
@@ -87,7 +90,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
             IMyDevice device, 
             IPcmPlayer pcmPlayer, 
             AudioService audioService, 
-            ISystemVolume systemVolume)
+            ISystemVolume systemVolume,
+            InfoSettingsService infoSettingsService)
         {
             _navigation = navigation;
             _dialogs = dialogs;
@@ -98,6 +102,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _pcmPlayer = pcmPlayer;
             _audioService = audioService;
             _systemVolume = systemVolume;
+            _infoSettingsService = infoSettingsService;
 
             _devicesScaner.Discovered += OnDeviceDiscovered;
             _device.ConnectedChanged += OnConnectedChanged;
@@ -382,27 +387,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         {
             RecordTimePassed = _recordTimePassedHelper.DisplayTimePassed();
 
-            if (_recordTimePassedHelper.IsTimeEnd)
-            {
-                _recordTimePassedHelper.IsAutoRecord = false;
-
-                if (_appSettings.IsConfirmRecordCompleated)
-                {
-                    PlayBell(AudioService.Sounds.Attention, true);
-
-                    var result = await _dialogs.ConfirmAsync(AppStrings.Dialog_RecordCompleted, null, AppStrings.Yes, AppStrings.Continue);
-
-                    _audioService.Stop(AudioService.Sounds.Attention);
-
-                    if (!result)
-                        return;
-                }
-
-                await SaveCurrentRecordAsync();
-            }
-            //  ------------------------------------
-
-            //
+            await StopRecord(_recordTimePassedHelper.IsTimeEnd, AppStrings.Dialog_RecordCompleted);
             if (package.FHRPackage != null)
             {
                 var fhrPackage = package.FHRPackage;
@@ -452,7 +437,25 @@ namespace Bioss.Ultrasound.UI.ViewModels
             
             //
             WriteRecord(package);
+
+            if (_record is null 
+                || !_recordTimePassedHelper.IsAutoRecord
+                || !_appSettings.IsAutoCompleteRecordByCriteria)
+                return;
+
+            var week = _infoSettingsService.PregnancyStart.HasValue
+                ? _infoSettingsService.PregnancyStart.Value.CalculatePregnantTime().weeks
+                : Constants.DefaultCountWeek;
+
+            var floatRate = _record.Fhrs.Select(c => (float)c.Fhr).ToArray();
+            var movement = _record.Events.Select(c => c.Event == Events.FetalMovement).ToArray();
+            var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(week, floatRate, movement);
+
+            bi++;
+            await StopRecord(cardiografy.IsRoodDawsonCriteriaValid(bi), AppStrings.Dialog_CriteriaMet);
         }
+        // TODO сделан для тестов
+        private int bi = 0;
 
         private async void OnDeviceDiscovered(object sender, IDevice device)
         {
@@ -470,6 +473,31 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
         }
         #endregion
+
+        private async Task StopRecord(bool conditionStop, string confirmText)
+        {
+            if (!conditionStop)
+                return;
+            
+
+            _recordTimePassedHelper.IsAutoRecord = false;
+            if (_appSettings.IsConfirmRecordCompleated)
+            {
+                PlayBell(Sounds.Attention, true);
+
+                var result = await _dialogs.ConfirmAsync(confirmText, null, AppStrings.Yes, AppStrings.Continue);
+
+                _audioService.Stop(Sounds.Attention);
+
+                if (!result)
+                    return;
+            }
+
+            // Реальная остановка находится внутри метода SaveCurrentRecordAsync
+            await SaveCurrentRecordAsync();
+
+            return;
+        }
 
         private async Task SaveCurrentRecordAsync()
         {

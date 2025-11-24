@@ -548,4 +548,7 @@
   <data name="Settings_MonitorAutoCompleteRecordByCriteria" xml:space="preserve">
     <value>При выполнении Критериев Доуса-Редмана</value>
   </data>
+  <data name="Dialog_CriteriaMet" xml:space="preserve">
+    <value>Критерии  выполнены, завершить запись?</value>
+  </data>
 </root>
