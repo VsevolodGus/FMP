@@ -1,5 +1,4 @@
 ﻿using System.Windows.Input;
-using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.UI.Pages;
 using Libs.DI.ViewModels;
 using Xamarin.Forms;
@@ -19,7 +18,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
         public ICommand PrivacyCommand => new Command(async a =>
         {
-            await _navigation.PushAsync(new DocumentPage(AppStrings.DocPrivacy));
+            await _navigation.PushModalAsync(new DocumentPage());
         });
     }
 }

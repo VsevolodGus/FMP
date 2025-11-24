@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 using Bioss.Ultrasound.DependencyExtensions;
 using Bioss.Ultrasound.Domain.UI;
 using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Services;
 using Bioss.Ultrasound.Tools;
+using Bioss.Ultrasound.UI.Pages;
 using Libs.DI.ViewModels;
+using Xamarin.Forms;
 
 namespace Bioss.Ultrasound.UI.ViewModels
 {
@@ -17,19 +20,28 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly AutoResetTocoService _autoResetTocoService;
         private readonly ISystemVolume _systemVolume;
         private readonly AudioService _audioService;
+        private readonly INavigation _navigation;
+
 
         private PickerItem<int> _autoRecordTime;
         private PickerItem<int> _chartXScale;
         private PickerItem<(int, int)> _chartYScale;
         private PickerItem<int> _recordingSpeed;
 
-        public SettingsViewModel(AppSettingsService appSettings, InfoSettingsService infoSettingsService, AutoResetTocoService autoResetTocoService, ISystemVolume systemVolume, AudioService audioService)
+        public SettingsViewModel(AppSettingsService appSettings,
+            InfoSettingsService infoSettingsService, 
+            AutoResetTocoService autoResetTocoService, 
+            ISystemVolume systemVolume, 
+            AudioService audioService,
+            INavigation navigation
+            )
         {
             _appSettings = appSettings;
             _infoSettingsService = infoSettingsService;
             _autoResetTocoService = autoResetTocoService;
             _systemVolume = systemVolume;
             _audioService = audioService;
+            _navigation = navigation;
 
             AutoRecordTime = AutoRecordTimes.FirstOrDefault(a => a.Value == _appSettings.RecordTimeMinutes);
             ChartXScale = ChartXScales.FirstOrDefault(a => a.Value == _appSettings.ChartXScaleSeconds);
@@ -37,6 +49,11 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             RecordingSpeed = RecordingSpeeds.FirstOrDefault(a => a.Value == _infoSettingsService.PdfRecordingSpeed);
         }
+
+        public ICommand PrivacyCommand => new Command(async _ =>
+        {
+            await _navigation.PushModalAsync(new DocumentPage());
+        });
 
         public bool IsAutoToco
         {

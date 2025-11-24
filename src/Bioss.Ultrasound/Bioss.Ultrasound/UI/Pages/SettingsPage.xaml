@@ -105,6 +105,7 @@
                         Title="{x:Static lang:AppStrings.Settings_Doctor}"
                         Placeholder="{x:Static lang:AppStrings.Settings_DoctorPlaceholder}"
                         ValueText="{Binding Doctor}"
+                        CompletedCommand="{Binding PrivacyCommand}"
                         ValueTextFontSize="Body"/>
 
             <sv:SwitchCell
@@ -116,6 +117,7 @@
                         Title="{x:Static lang:AppStrings.Settings_UserName}"
                         Placeholder="{x:Static lang:AppStrings.Settings_UserNamePlaceholder}"
                         ValueText="{Binding Patient}"
+                        CompletedCommand="{Binding PrivacyCommand}"
                         ValueTextFontSize="Body"
                         IsVisible="{Binding IsPersonalDevice}"/>
 

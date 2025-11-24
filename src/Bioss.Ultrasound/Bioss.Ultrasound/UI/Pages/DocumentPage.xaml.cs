@@ -1,14 +1,15 @@
-﻿using Bioss.Ultrasound.UI.ViewModels;
+﻿using Autofac;
+using Bioss.Ultrasound.UI.ViewModels;
 using Xamarin.Forms;
 
 namespace Bioss.Ultrasound.UI.Pages
 {
     public partial class DocumentPage : ContentPage
     {
-        public DocumentPage(string documentName)
+        public DocumentPage()
         {
             InitializeComponent();
-            BindingContext = new DocumentViewModel(documentName);
+            BindingContext = App.Injector.Container.Resolve<DocumentViewModel>();
         }
     }
 }
