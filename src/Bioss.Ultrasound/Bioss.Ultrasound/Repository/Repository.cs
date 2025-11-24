@@ -23,8 +23,23 @@ namespace Bioss.Ultrasound.Repository
         public event EventHandler<long> NewItem;
         public event EventHandler<long> ItemDelated;
 
+        private readonly Record _mockRecord = new Record
+        {
+            Id = -1,
+            StartTime = DateTime.Now.AddMinutes(-10),
+            StopTime = DateTime.Now,
+            Biometric = new Biometric()
+            {
+                Temperature = 36.6d,
+                Comment = "MockComment"
+            },
+            DeviceSerialNumber = "MockDeviceName",
+        };
         public async Task<Record> Get(long id)
         {
+            if (id == -1)
+                return _mockRecord;
+
             var record = await _database.RecordsTable.FirstOrDefaultAsync(a => a.Id == id);
             await _database.Connection.GetChildrenAsync(record);
             return record.ToRecord();
@@ -33,6 +48,8 @@ namespace Bioss.Ultrasound.Repository
         public async Task<IEnumerable<Record>> RecordsAsync()
         {
             var entities = await _database.Connection.GetAllWithChildrenAsync<RecordEntity>();
+            entities.Add(_mockRecord.ToEntity());
+
             return entities.Select(a => a.ToRecord())
                 .OrderByDescending(a => a.StartTime);
         }

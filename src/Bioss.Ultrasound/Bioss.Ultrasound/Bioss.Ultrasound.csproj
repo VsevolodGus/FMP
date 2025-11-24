@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
@@ -60,10 +60,6 @@
     <EmbeddedResource Include="Resources\Docs\privacy-ru.txt" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="Resources\Localization\AppStrings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>AppStrings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
     <EmbeddedResource Update="UI\Pages\AboutPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
@@ -162,17 +158,14 @@
     <Folder Include="Services\Abstracts\" />
     <Folder Include="Data\Database\Migrations\" />
     <Folder Include="UI\Popups\" />
-    <Folder Include="Domain\Constants\" />
     <Folder Include="Resources\Audio\" />
     <Folder Include="Domain\Collections\" />
     <Folder Include="Resources\Docs\" />
     <Folder Include="Ble\ProtocolGenerations\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Resources\Localization\AppStrings.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>AppStrings.resx</DependentUpon>
-    </Compile>
+    <Reference Include="CatAna">
+	  <HintPath>..\..\CatAna.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

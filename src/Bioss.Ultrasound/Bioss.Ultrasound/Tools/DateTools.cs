@@ -1,9 +1,9 @@
 ﻿using System;
 namespace Bioss.Ultrasound.Tools
 {
-    public class DateTools
+    public static class DateTools
     {
-        public static int CalculateAge(DateTime dateOfBirth)
+        public static int CalculateAge(this DateTime dateOfBirth)
         {
             var age = DateTime.Now.Year - dateOfBirth.Year;
             if (DateTime.Now.DayOfYear < dateOfBirth.DayOfYear)
@@ -12,12 +12,12 @@ namespace Bioss.Ultrasound.Tools
             return age;
         }
 
-        public static (int weeks, int days) CalculatePregnantTime(DateTime pregnantStart)
+        public static (int weeks, int days) CalculatePregnantTime(this DateTime pregnantStart)
         {
             return CalculatePregnantTime(pregnantStart, DateTime.Now);
         }
 
-        public static (int weeks, int days) CalculatePregnantTime(DateTime pregnantStart, DateTime toDate)
+        public static (int weeks, int days) CalculatePregnantTime(this DateTime pregnantStart, DateTime toDate)
         {
             var pregnantDays = (toDate - pregnantStart).Days;
 
@@ -25,6 +25,12 @@ namespace Bioss.Ultrasound.Tools
             var daysCount = pregnantDays - (weeksCount * 7);
 
             return (weeksCount, daysCount);
+        }
+
+        public static DateTime GetDefaultPregnancyDate()
+        {
+            return DateTime.Now
+                .AddDays(-Constants.DefaultCountWeek * Constants.DayInWeek);
         }
     }
 }

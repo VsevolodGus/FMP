@@ -123,7 +123,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             var recoringStartTime = _record.StartTime;
             var fileName = Path.Combine(Path.GetTempPath(), $"Fetal Monitor Report - {recoringStartTime:yyyy-MM-dd-HH-mm}.pdf");
 
-            var generator = new PdfGeneratorService(_infoService);
+            var generator = new ReportPdfGenerator(_infoService);
             generator.GenerateToFile(fileName, _record);
 
             var files = new List<ShareFile>();

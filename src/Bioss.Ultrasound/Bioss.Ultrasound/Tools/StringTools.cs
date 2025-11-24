@@ -1,12 +1,26 @@
 ﻿namespace Bioss.Ultrasound.Tools
 {
-    public class StringTools
+    public static class StringTools
     {
-        public static string ToStringOrEmptyString(double value, string emptyString = "")
+        public static string ToStringOrEmptyString(this double value, string emptyString = "", string format = null)
         {
-            return value == .0
-                ? emptyString
-                : $"{value}";
+            if (value == 0)
+                return emptyString;
+
+
+            return string.IsNullOrEmpty(format)
+                ? value.ToString()
+                : value.ToString(format);
+        }
+        public static string ToStringOrEmptyString(this int value, string emptyString = "", string format = null)
+        {
+            if (value == 0)
+                return emptyString;
+
+
+            return string.IsNullOrEmpty(format)
+                ? value.ToString()
+                : value.ToString(format);
         }
     }
 }
