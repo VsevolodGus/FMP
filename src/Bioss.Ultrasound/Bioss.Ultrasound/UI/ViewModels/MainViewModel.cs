@@ -4,7 +4,6 @@ using Bioss.Ultrasound.Ble.Devices;
 using Bioss.Ultrasound.Ble.Models;
 using Bioss.Ultrasound.Data.Database.Entities.Enums;
 using Bioss.Ultrasound.DependencyExtensions;
-using Bioss.Ultrasound.Domain.Collections;
 using Bioss.Ultrasound.Domain.Constants;
 using Bioss.Ultrasound.Domain.Models;
 using Bioss.Ultrasound.Domain.Plotting;
@@ -31,11 +30,19 @@ namespace Bioss.Ultrasound.UI.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private readonly List<string> DevicePrefixesFilter = new List<string> { "LCeFM", "Doctis CTG", "FMP", "DOCTIS-CTG" };
+        private static readonly IReadOnlyCollection<string> DevicePrefixesFilter = new List<string> 
+        { 
+            "LCeFM",
+            "Doctis CTG",
+            "FMP", 
+            "DOCTIS-CTG" 
+        };
 
         private readonly PlottingTimeSpanHelper _plottingTimeSpanHelper = new PlottingTimeSpanHelper();
         private readonly PlottingHelper _plottingHelper = new PlottingHelper();
         private readonly ChartDrawer _chartDrawer;
+        private readonly RecordTimePassedHelper _recordTimePassedHelper = new RecordTimePassedHelper();
+
 
         private readonly INavigation _navigation;
         private readonly IUserDialogs _dialogs;
@@ -46,8 +53,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly IPcmPlayer _pcmPlayer;
         private readonly AudioService _audioService;
         private readonly ISystemVolume _systemVolume;
+        private readonly CatAnaService _catAnaService = new CatAnaService();
 
-        private readonly RecordTimePassedHelper _recordTimePassedHelper = new RecordTimePassedHelper();
 
         private IDevice _selectedDevice;
 
@@ -72,8 +79,15 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
         private bool _isBell;
 
-        public MainViewModel(INavigation navigation, IUserDialogs dialogs, DevicesScaner devicesScaner, IRepository repository,
-            AppSettingsService appSettings, IMyDevice device, IPcmPlayer pcmPlayer, AudioService audioService, ISystemVolume systemVolume)
+        public MainViewModel(INavigation navigation, 
+            IUserDialogs dialogs, 
+            DevicesScaner devicesScaner, 
+            IRepository repository,
+            AppSettingsService appSettings, 
+            IMyDevice device, 
+            IPcmPlayer pcmPlayer, 
+            AudioService audioService, 
+            ISystemVolume systemVolume)
         {
             _navigation = navigation;
             _dialogs = dialogs;
@@ -232,6 +246,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             set => SetProperty(ref _isBell, value);
         }
 
+        #region ICommand
         public ICommand AppearingCommand => new Command(a =>
         {
             _plottingHelper.Scale = _appSettings.ChartXScaleSeconds;
@@ -255,7 +270,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
         public ICommand DisconnectCommand => new AsyncCommand(async () =>
         {
-            if (!await _dialogs.ConfirmAsync(AppStrings.Dialog_DisconnectMessage, "", AppStrings.Yes, AppStrings.Cancel))
+            if (!await _dialogs.ConfirmAsync(AppStrings.Dialog_DisconnectMessage, string.Empty, AppStrings.Yes, AppStrings.Cancel))
                 return;
 
             await _device.DisconnectAsync();
@@ -324,15 +339,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _chartDrawer.AddFMAnnotation(_plottingTimeSpanHelper.CollectTimeSpan(now));
         });
 
-        private void Vibro()
-        {
-            try
-            {
-                HapticFeedback.Perform(HapticFeedbackType.Click);
-            }
-            catch { }
-        }
-
         public ICommand BiometricCommand => new AsyncCommand(async () =>
         {
             var popup = new BiometricPopup(_dialogs, _record.Biometric);
@@ -341,6 +347,23 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
         }, allowsMultipleExecutions: false);
 
+        public ICommand BellOffCommand => new Command(a =>
+        {
+            _audioService.Stop();
+            IsBell = false;
+        });
+
+        private void Vibro()
+        {
+            try
+            {
+                HapticFeedback.Perform(HapticFeedbackType.Click);
+            }
+            catch { }
+        }
+        #endregion
+
+        #region Events with Bluetooth
         private async void OnConnectedChanged(object sender, bool isConnected)
         {
             IsConnected = isConnected;
@@ -352,25 +375,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
                 //  TODO: пока что просто сохраним то что намеряли до этого
                 await SaveCurrentRecordAsync();
-            }
-        }
-
-        public ICommand BellOffCommand => new Command(a =>
-        {
-            StopAllBell();
-            IsBell = false;
-        });
-
-        private async Task SaveCurrentRecordAsync()
-        {
-            IsRecording = false;
-            var recordToSave = _record;
-            _record = null;
-
-            recordToSave.StopTime = DateTime.Now;
-            using (var loading = UserDialogs.Instance.Loading(AppStrings.PleaseWait))
-            {
-                await _repository.InsertAsync(recordToSave);
             }
         }
 
@@ -465,6 +469,20 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 await _device.ConnectAsync(device);
             }
         }
+        #endregion
+
+        private async Task SaveCurrentRecordAsync()
+        {
+            IsRecording = false;
+            var recordToSave = _record;
+            _record = null;
+
+            recordToSave.StopTime = DateTime.Now;
+            using (var loading = UserDialogs.Instance.Loading(AppStrings.PleaseWait))
+            {
+                await _repository.InsertAsync(recordToSave);
+            }
+        }
 
         private void WriteRecord(Package package)
         {
@@ -518,94 +536,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             _systemVolume.Volume = _appSettings.SoundLevel;
             _audioService.Play(sound, loop);
-        }
-
-        private void StopAllBell()
-        {
-            _audioService.Stop();
-        }
-    }
-
-    class RecordTimePassedHelper
-    {
-        public bool IsAutoRecord { get; set; }
-        public int TotalAutoRecordSeconds { get; set; }
-        public DateTime StartTime { get; set; }
-
-        public void Init(bool isAutoRecord, int totalAutoRecordSeconds, DateTime startTime)
-        {
-            IsAutoRecord = isAutoRecord;
-            TotalAutoRecordSeconds = totalAutoRecordSeconds;
-            StartTime = startTime;
-        }
-
-        public bool IsTimeEnd
-        {
-            get
-            {
-                if (!IsAutoRecord)
-                    return false;
-
-                return (DateTime.Now - StartTime).TotalSeconds > TotalAutoRecordSeconds;
-            }
-        }
-
-        public string DisplayTimePassed()
-        {
-            var timeLeft = (DateTime.Now - StartTime).TotalSeconds;
-
-            if (IsAutoRecord)
-            {
-                var tt = TotalAutoRecordSeconds - timeLeft;
-                var span = TimeSpan.FromSeconds(tt);
-                return $"{span.Minutes:D2}:{span.Seconds:D2}";
-            }
-            else
-            {
-                var span = TimeSpan.FromSeconds(timeLeft);
-                return $"{span.Minutes:D2}:{span.Seconds:D2}";
-            }
-        }
-    }
-
-    class LossPercentageHelper
-    {
-        private const byte ErrorValue = 0;
-        private readonly TimeQueue<byte> _queue = new(TimeSpan.FromMinutes(1));
-
-        private int _countValues;
-        private int _countZeroValues;
-
-        public bool IsError => IsQueryFull && PercentInMin() > .25;
-
-        public double PercentAll()
-        {
-            if (_countValues == 0)
-                return 0;
-            return (double)_countZeroValues / _countValues;
-        }
-
-        public double PercentInMin()
-        {
-            return _queue.Percent(ErrorValue);
-        }
-
-        public bool IsQueryFull => _queue.IsFull;
-
-        public void Add(byte value)
-        {
-            _queue.Add(value);
-
-            _countValues++;
-            if (value == 0)
-                _countZeroValues++;
-        }
-
-        public void Clear()
-        {
-            _queue.Clear();
-            _countValues = 0;
-            _countZeroValues = 0;
         }
     }
 }

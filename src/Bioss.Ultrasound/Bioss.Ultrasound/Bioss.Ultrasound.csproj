@@ -147,7 +147,6 @@
     <Folder Include="UI\Controls\" />
     <Folder Include="Domain\Plotting\" />
     <Folder Include="Domain\UI\" />
-    <Folder Include="UI\Helpers\" />
     <Folder Include="Data\" />
     <Folder Include="Data\Database\" />
     <Folder Include="Data\Database\Entities\" />
