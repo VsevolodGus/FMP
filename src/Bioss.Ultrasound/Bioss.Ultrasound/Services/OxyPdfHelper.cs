@@ -64,7 +64,7 @@ namespace Bioss.Ultrasound.Services
             settings.PaddingLeft = tmpPaddingLeft;
 
             DrawString(settings, 12, 0, XStringAlignment.Center, $"{hospital}");
-            DrawString(settings, 12, 1, XStringAlignment.Center, "");
+            DrawString(settings, 12, 1, XStringAlignment.Center, string.Empty);
 
             DrawString(settings, 9, 2, XStringAlignment.Near, AppStrings.PDF_HeaderDateOfResearch);
             DrawString(settings, 12, 3, XStringAlignment.Near, $"{dateOfResearch}");
@@ -240,7 +240,7 @@ namespace Bioss.Ultrasound.Services
             fhrAxes.MinorGridlineColor = lightGridColor;
             fhrAxes.MajorGridlineColor = lightGridColor;
             fhrAxes.FontSize = 10;
-            fhrAxes.Title = ""; //  удаляем заголовок, так к OxyPlot не сохраняет Unicode в PDF
+            fhrAxes.Title = string.Empty; //  удаляем заголовок, так к OxyPlot не сохраняет Unicode в PDF
             var fhrLine = (LineSeries)chartDrawer.Model.Series.First(a => ((LineSeries)a).YAxisKey == ChartDrawer.KEY_FHR);
             fhrLine.StrokeThickness = 1;
 

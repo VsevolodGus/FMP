@@ -26,7 +26,6 @@ using System.Windows.Input;
 using Xamarin.CommunityToolkit.ObjectModel;
 using Xamarin.Essentials;
 using Xamarin.Forms;
-using static Bioss.Ultrasound.Services.AudioService;
 
 namespace Bioss.Ultrasound.UI.ViewModels
 {
@@ -174,9 +173,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     return;
 
                 if (value && _appSettings.IsBatteryLowSound)
-                    PlayBell(AudioService.Sounds.LowBattery, true);
+                    PlayBell(Sounds.LowBattery, true);
                 else
-                    _audioService.Stop(AudioService.Sounds.LowBattery);
+                    _audioService.Stop(Sounds.LowBattery);
             }
         }
 
@@ -189,9 +188,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     return;
 
                 if (value && IsRecording && _appSettings.IsLossDataSound)
-                    PlayBell(AudioService.Sounds.LossData, true);
+                    PlayBell(Sounds.LossData, true);
                 else
-                    _audioService.Stop(AudioService.Sounds.LossData);
+                    _audioService.Stop(Sounds.LossData);
             }
         }
 
@@ -495,8 +494,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             // Реальная остановка находится внутри метода SaveCurrentRecordAsync
             await SaveCurrentRecordAsync();
-
-            return;
         }
 
         private async Task SaveCurrentRecordAsync()
@@ -557,7 +554,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _chartDrawer.AddTocoAnnotation(_plottingTimeSpanHelper.CollectTimeSpan(now));
         }
 
-        private void PlayBell(AudioService.Sounds sound, bool loop = false)
+        private void PlayBell(Sounds sound, bool loop = false)
         {
             if (loop)
                 IsBell = true;

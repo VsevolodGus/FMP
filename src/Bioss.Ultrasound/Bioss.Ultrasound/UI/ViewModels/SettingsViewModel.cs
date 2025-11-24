@@ -318,7 +318,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 _appSettings.SoundLevel = settingsValue;
 
                 _systemVolume.Volume = settingsValue;
-                _audioService.Play(AudioService.Sounds.Attention);
+                _audioService.Play(Sounds.Attention);
 
                 OnPropertyChanged();
             }

@@ -70,7 +70,7 @@ namespace Bioss.Ultrasound.Tools.PdfTests
 
                 DrawString($"{hospital}", page, gfx, padding, 12, lineHeight, 0, XStringAlignment.Center);
 
-                DrawString("", page, gfx, padding, 12, lineHeight, 1, XStringAlignment.Center);
+                DrawString(string.Empty, page, gfx, padding, 12, lineHeight, 1, XStringAlignment.Center);
 
                 DrawString("Date of research", page, gfx, padding, 10, lineHeight, 2, XStringAlignment.Near);
                 DrawString($"{dateOfResearch}", page, gfx, padding, 12, lineHeight, 3, XStringAlignment.Near);

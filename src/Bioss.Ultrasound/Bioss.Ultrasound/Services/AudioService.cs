@@ -5,13 +5,21 @@ using Plugin.SimpleAudioPlayer;
 
 namespace Bioss.Ultrasound.Services
 {
-    public partial class AudioService
+    public enum Sounds
     {
+        Attention,
+        LowBattery,
+        LossData
+    }
+
+    public class AudioService
+    {
+        private const string audioResourceName = "Bioss.Ultrasound.Resources.Audio.MixkitAlarmTone996.wav";
         private readonly Dictionary<Sounds, SoundPlayer> _players = new()
         {
-            { Sounds.Attention, new SoundPlayer("Bioss.Ultrasound.Resources.Audio.MixkitAlarmTone996.wav") },
-            { Sounds.LowBattery, new SoundPlayer("Bioss.Ultrasound.Resources.Audio.MixkitAlarmTone996.wav") },
-            { Sounds.LossData, new SoundPlayer("Bioss.Ultrasound.Resources.Audio.MixkitAlarmTone996.wav") }
+            { Sounds.Attention, new SoundPlayer(audioResourceName) },
+            { Sounds.LowBattery, new SoundPlayer(audioResourceName) },
+            { Sounds.LossData, new SoundPlayer(audioResourceName) }
         };
 
         public void Play(Sounds sound, bool loop = false)
@@ -28,16 +36,6 @@ namespace Bioss.Ultrasound.Services
         {
             foreach (var player in _players)
                 player.Value.Stop();
-        }
-    }
-
-    public partial class AudioService
-    {
-        public enum Sounds
-        {
-            Attention,
-            LowBattery,
-            LossData
         }
 
         class SoundPlayer
