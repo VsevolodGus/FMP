@@ -29,7 +29,7 @@
     <MtouchDebug>true</MtouchDebug>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodesignKey>Apple Development: Vitalii Vovchok (H7JF736786)</CodesignKey>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>VS: ru.mks.ultrasound Development</CodesignProvision>
     <RunWithWarnings>true</RunWithWarnings>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
@@ -43,7 +43,7 @@
     <MtouchArch>x86_64</MtouchArch>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodesignKey>Apple Development: Vitalii Vovchok (H7JF736786)</CodesignKey>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>VS: ru.mks.ultrasound Development</CodesignProvision>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
@@ -61,7 +61,7 @@
     <MtouchLink>None</MtouchLink>
     <MtouchInterpreter>-all</MtouchInterpreter>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>VS: ru.mks.ultrasound Development</CodesignProvision>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">

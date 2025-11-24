@@ -215,19 +215,19 @@
     <value>Enter your name</value>
   </data>
   <data name="Settings_UserBirthday" xml:space="preserve">
-    <value>Date of birth</value>
+    <value>Birthday</value>
   </data>
   <data name="Settings_UserBirthdayDescriptionNotSelected" xml:space="preserve">
-    <value>Date of birth not entered</value>
+    <value>Birthday not entered</value>
   </data>
   <data name="Settings_UserBirthdayDescriptionAge" xml:space="preserve">
     <value>You are {0} full years old</value>
   </data>
   <data name="Settings_PregnancyStart" xml:space="preserve">
-    <value>Gestation period</value>
+    <value>Start of pregnancy</value>
   </data>
   <data name="Settings_PregnancyStartDescriptionNotSelected" xml:space="preserve">
-    <value>Gestation period not entered</value>
+    <value>Start of pregnancy not entered</value>
   </data>
   <data name="Settings_PregnancyStartDescriptionTime" xml:space="preserve">
     <value>You are pregnant {0} weeks and {1} days</value>
@@ -344,7 +344,7 @@
     <value>page {0} of {1}</value>
   </data>
   <data name="PDF_FooterSN" xml:space="preserve">
-    <value>Monitor Name: {0}</value>
+    <value>Monitor SN: {0}</value>
   </data>
 
   <data name="PDF_TableCTGParameters" xml:space="preserve">
@@ -453,7 +453,7 @@
     <value>Low battery level</value>
   </data>
   <data name="WarningLossData" xml:space="preserve">
-    <value>Large loss of heart rate signal</value>
+    <value>Large data loss</value>
   </data>
 
   <data name="Chart_FHRAxysTitle" xml:space="preserve">

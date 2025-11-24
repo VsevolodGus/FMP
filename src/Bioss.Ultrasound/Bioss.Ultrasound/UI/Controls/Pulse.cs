@@ -142,7 +142,6 @@ namespace Bioss.Ultrasound.UI.Controls
                 SKPoint center = new SKPoint(info.Width / 2, info.Height / 2);
                 float baseRadius = Math.Min(info.Width, info.Height) / 12;
                 float radius = 0;
-                Console.WriteLine(radius);
                 for (int i = 0; i < t.Length; i++)
                 {
                     radius = info.Width / 2 * (t[i]);

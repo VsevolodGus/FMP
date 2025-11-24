@@ -197,7 +197,7 @@
     <value>Введите название</value>
   </data>
   <data name="Settings_Doctor" xml:space="preserve">
-    <value>Врач</value>
+    <value>Доктор</value>
   </data>
   <data name="Settings_DoctorPlaceholder" xml:space="preserve">
     <value>Введите имя</value>
@@ -215,19 +215,19 @@
     <value>Введите ваше имя</value>
   </data>
   <data name="Settings_UserBirthday" xml:space="preserve">
-    <value>Дата рождения</value>
+    <value>День рождения</value>
   </data>
   <data name="Settings_UserBirthdayDescriptionNotSelected" xml:space="preserve">
-    <value>Дата рождения не указана</value>
+    <value>День рождения не указан</value>
   </data>
   <data name="Settings_UserBirthdayDescriptionAge" xml:space="preserve">
     <value>Вам {0} полных лет</value>
   </data>
   <data name="Settings_PregnancyStart" xml:space="preserve">
-    <value>Срок беременности</value>
+    <value>Начало беременности</value>
   </data>
   <data name="Settings_PregnancyStartDescriptionNotSelected" xml:space="preserve">
-    <value>Срок беременности не указано</value>
+    <value>Начало беременности не указано</value>
   </data>
   <data name="Settings_PregnancyStartDescriptionTime" xml:space="preserve">
     <value>Вы беременны {0} недель и {1} дней</value>
@@ -344,7 +344,7 @@
     <value>страница {0} из {1}</value>
   </data>
   <data name="PDF_FooterSN" xml:space="preserve">
-    <value>Монитор Имя: {0}</value>
+    <value>Монитор SN: {0}</value>
   </data>
 
   <data name="PDF_TableCTGParameters" xml:space="preserve">
@@ -452,7 +452,7 @@
     <value>Низкий зарад батареи</value>
   </data>
   <data name="WarningLossData" xml:space="preserve">
-    <value>Большие потери сигнала ЧСС</value>
+    <value>Большие потери данных</value>
   </data>
 
   <data name="Chart_FHRAxysTitle" xml:space="preserve">

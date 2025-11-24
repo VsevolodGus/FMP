@@ -1,5 +1,6 @@
 ﻿using Bioss.Ultrasound.Ble.Commands;
 using Bioss.Ultrasound.Ble.Models;
+using Bioss.Ultrasound.Ble.ProtocolGenerations;
 using Bioss.Ultrasound.Collections;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions;
@@ -8,7 +9,6 @@ using Plugin.BLE.Abstractions.EventArgs;
 using Plugin.BLE.Abstractions.Exceptions;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
 
 namespace Bioss.Ultrasound.Ble.Devices
@@ -17,8 +17,8 @@ namespace Bioss.Ultrasound.Ble.Devices
     {
         private IAdapter _adapter;
         private IDevice _device;
-
         private List<ICharacteristic> _subscribedToValueUpdated = new();
+        private IGeneration _guids;
 
         private RingBuffer<byte> _buffer = new RingBuffer<byte>(1024);
 
@@ -65,8 +65,9 @@ namespace Bioss.Ultrasound.Ble.Devices
             IsConnected = true;
             ConnectedChanged?.Invoke(this, IsConnected);
 
-            var services = await _device.GetServicesAsync();
+            _guids = await GuidsManager.GetGeneration(_device);
 
+            var services = await _device.GetServicesAsync();
             //  подписываемся на все характеристики
             foreach (var s in services)
             {
@@ -104,10 +105,9 @@ namespace Bioss.Ultrasound.Ble.Devices
             //DebugWriteLine($"ValueUpdated: {characteristic.Uuid} {characteristic.Value} {characteristic.Value.Length}");
             //DebugWriteLine($"ValueUpdated: len: {characteristic.Value.Length}, data: {BitConverter.ToString(characteristic.Value)}");
 
-            if (Guids.CH_CUSTOM_READ == characteristic.Id)
+            if (_guids.ChCustomRead == characteristic.Id)
             {
                 var data = e.Characteristic.Value;
-
 
                 var checkStartPackage = data.Length >= 3 && data[0] == 0x55 && data[1] == 0xAA && data[2] == 0x09;
 
@@ -134,13 +134,18 @@ namespace Bioss.Ultrasound.Ble.Devices
             }
         }
 
-        public async Task ResetTocoAsync()
+        public async Task<bool> ResetTocoAsync()
         {
-            var customService = await _device.GetServiceAsync(Guids.SR_CUSTOM);
-            var writeCh = await customService.GetCharacteristicAsync(Guids.CH_CUSTOM_WRITE);
+            try
+            {
+                var customService = await _device.GetServiceAsync(_guids.SrCustom);
+                var writeCh = await customService.GetCharacteristicAsync(_guids.ChCustomWrite);
 
-            var command = new SetupCommand(7, 10, true, 0, false);
-            var result = await writeCh.WriteAsync(command.WriteData());
+                var command = new SetupCommand(7, 1, true, 0, false);
+                return await writeCh.WriteAsync(command.WriteData());
+            } catch { }
+
+            return false;
         }
 
         private void DisconnectWork(IDevice device)

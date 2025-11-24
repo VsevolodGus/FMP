@@ -8,6 +8,7 @@ using Bioss.Ultrasound.DependencyExtensions;
 using Bioss.Ultrasound.Droid.Extensions;
 using System;
 using Android.Widget;
+using AndroidX.AppCompat.App;
 
 namespace Bioss.Ultrasound.Droid
 {
@@ -23,6 +24,8 @@ namespace Bioss.Ultrasound.Droid
         protected override void OnCreate(Bundle savedInstanceState)
         {
             SetTheme(Resource.Style.MainTheme);
+            // отключена темная тема
+            AppCompatDelegate.DefaultNightMode = AppCompatDelegate.ModeNightNo;
 
             base.OnCreate(savedInstanceState);
             //  libs
