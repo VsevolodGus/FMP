@@ -13,7 +13,6 @@ using Libs.DI.ViewModels;
 using OxyPlot;
 using OxyPlot.Axes;
 using Xamarin.CommunityToolkit.ObjectModel;
-using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using System.Diagnostics;
@@ -21,8 +20,8 @@ using System.Linq;
 using Bioss.Ultrasound.Data.Database.Entities.Enums;
 using OxyPlot.Annotations;
 using System;
-using Bioss.Ultrasound.UI.Pages;
 using Rg.Plugins.Popup.Services;
+using Bioss.Ultrasound.Services.Network.Logging;
 
 namespace Bioss.Ultrasound.UI.ViewModels
 {
@@ -35,6 +34,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly InfoSettingsService _infoService;
         private readonly IRepository _repository;
         private readonly Record _record;
+        private readonly ILogger _logger;
 
         private readonly PlottingHelper _plottingHelper = new PlottingHelper();
 
@@ -44,7 +44,13 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private PointAnnotation _fhrAnnotation;
         private PointAnnotation _tocoAnnotation;
 
-        public RecordViewModel(INavigation navigation, IUserDialogs dialogs, AppSettingsService appSettings, InfoSettingsService infoService, IRepository repository, Record record)
+        public RecordViewModel(INavigation navigation, 
+            IUserDialogs dialogs, 
+            AppSettingsService appSettings, 
+            InfoSettingsService infoService, 
+            IRepository repository, 
+            ILogger logger,
+            Record record)
         {
             _navigation = navigation;
             _dialogs = dialogs;
@@ -53,6 +59,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _appSettings = appSettings;
             _infoService = infoService;
             _repository = repository;
+            _logger = logger;
             _record = record;
 
             _plottingHelper.Scale = _appSettings.ChartXScaleSeconds;
@@ -114,6 +121,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             if (!await _dialogs.ConfirmAsync(AppStrings.Record_DialogDeleteMessage, AppStrings.Record_DialogDeleteTitle, AppStrings.Yes, AppStrings.Cancel))
                 return;
 
+            _logger.Log("Delete record");
             await _repository.DeleteAsync(_record);
             await _navigation.PopAsync();
         }, allowsMultipleExecutions: false);
@@ -123,7 +131,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
             var recoringStartTime = _record.StartTime;
             var fileName = Path.Combine(Path.GetTempPath(), $"Fetal Monitor Report - {recoringStartTime:yyyy-MM-dd-HH-mm}.pdf");
 
-            var generator = new ReportPdfGenerator(_infoService);
+            _logger.Log("Export record to PDF");
+             var generator = new ReportPdfGenerator(_infoService);
             generator.GenerateToFile(fileName, _record);
 
             var files = new List<ShareFile>();
