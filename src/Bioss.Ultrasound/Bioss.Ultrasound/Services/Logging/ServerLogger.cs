@@ -1,11 +1,13 @@
-﻿using Bioss.Ultrasound.Services.Network.Sessions;
+﻿using Bioss.Ultrasound.Services.Logging.Abstracts;
+using Bioss.Ultrasound.Services.Server;
+using Bioss.Ultrasound.Services.Sessions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Bioss.Ultrasound.Services.Network.Logging
+namespace Bioss.Ultrasound.Services.Logging
 {
-    internal class ServerLogger : ILogger
+    internal class ServerLogger : ILogger, IUnsentLogDispatcher
     {
         private readonly ISessionManager _sessionTokenProvider;
         private readonly ServerHttpProvider _serverHttpProvider;
@@ -66,7 +68,7 @@ namespace Bioss.Ultrasound.Services.Network.Logging
                     unsentLogs.Add(logData);
                 }
             });
-            
+
             await Task.WhenAll(sendLogTasks);
         }
     }

@@ -1,33 +1,26 @@
 ﻿using Newtonsoft.Json;
 using System.Net.Http;
 using System.Text;
-using System;
 using System.Threading.Tasks;
 
-namespace Bioss.Ultrasound.Services.Network
+namespace Bioss.Ultrasound.Services.Server
 {
-    public struct HttpServerConstants
-    {
-        public static readonly Uri Uri = new Uri("https://dev.dxnich.ru/");
-        public const string JsonMediaType = "application/json";
-    }
-
     internal class ServerHttpProvider
     {
         private readonly HttpClient _httpClient;
         public ServerHttpProvider()
         {
             _httpClient = new HttpClient();
-            _httpClient.BaseAddress = HttpServerConstants.Uri;
+            _httpClient.BaseAddress = ServerHttpConstants.Uri;
             _httpClient.DefaultRequestHeaders.Add("User-Agent", "Bipuls.v1");
             _httpClient.DefaultRequestHeaders.Add("Host", "dev.dxnich.ru");
         }
 
         public async Task<string> SendAsync<T>(T requestContent) where T : class
         {
-            using var request = new HttpRequestMessage(HttpMethod.Post, HttpServerConstants.Uri);
+            using var request = new HttpRequestMessage(HttpMethod.Post, ServerHttpConstants.Uri);
             var json = JsonConvert.SerializeObject(requestContent);
-            request.Content = new StringContent(json, Encoding.UTF8, HttpServerConstants.JsonMediaType);
+            request.Content = new StringContent(json, Encoding.UTF8, ServerHttpConstants.JsonMediaType);
 
             try
             {
@@ -45,7 +38,7 @@ namespace Bioss.Ultrasound.Services.Network
 
         public async Task<string> SendAsync()
         {
-            using var request = new HttpRequestMessage(HttpMethod.Post, HttpServerConstants.Uri);
+            using var request = new HttpRequestMessage(HttpMethod.Post, ServerHttpConstants.Uri);
 
             try
             {

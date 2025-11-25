@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Bioss.Ultrasound.Services.Server;
+using Bioss.Ultrasound.Services.Server.Sessions;
 
-namespace Bioss.Ultrasound.Services.Network.Sessions
+namespace Bioss.Ultrasound.Services.Sessions
 {
     internal class SessionManager : ISessionManager
     {
@@ -16,7 +18,7 @@ namespace Bioss.Ultrasound.Services.Network.Sessions
 
         public async ValueTask<SessionInfo> GetCurrentSessionAsync()
         {
-            if(_currentSession is null)
+            if (_currentSession is null)
                 await StartSessionAsync();
 
             return _currentSession;

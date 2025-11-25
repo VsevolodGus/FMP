@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Bioss.Ultrasound.Services.Network.Sessions
+namespace Bioss.Ultrasound.Services.Sessions
 {
     public interface ISessionManager
     {

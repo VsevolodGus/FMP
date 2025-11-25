@@ -1,6 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Bioss.Ultrasound.Services.Server;
+using Newtonsoft.Json;
 
-namespace Bioss.Ultrasound.Services.Network.Sessions
+namespace Bioss.Ultrasound.Services.Sessions
 {
     public class SessionExitRequest : BaseRequest
     {

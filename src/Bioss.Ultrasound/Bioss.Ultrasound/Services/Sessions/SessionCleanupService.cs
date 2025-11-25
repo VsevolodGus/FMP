@@ -1,10 +1,12 @@
-﻿using Bioss.Ultrasound.Services.Network.Logging;
+﻿using Bioss.Ultrasound.Services.Logging;
+using Bioss.Ultrasound.Services.Logging.Abstracts;
+using Bioss.Ultrasound.Services.Server;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Bioss.Ultrasound.Services.Network.Sessions
+namespace Bioss.Ultrasound.Services.Sessions
 {
     internal class SessionCleanupService
     {
@@ -25,7 +27,7 @@ namespace Bioss.Ultrasound.Services.Network.Sessions
             _serverHttpProvider = serverHttpProvider;
         }
 
-        
+
         public async Task RemoveOldSessionsAsync()
         {
             var now = DateTimeOffset.Now;

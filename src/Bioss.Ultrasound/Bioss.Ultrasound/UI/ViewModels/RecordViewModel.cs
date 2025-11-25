@@ -21,7 +21,7 @@ using Bioss.Ultrasound.Data.Database.Entities.Enums;
 using OxyPlot.Annotations;
 using System;
 using Rg.Plugins.Popup.Services;
-using Bioss.Ultrasound.Services.Network.Logging;
+using Bioss.Ultrasound.Services.Logging.Abstracts;
 
 namespace Bioss.Ultrasound.UI.ViewModels
 {

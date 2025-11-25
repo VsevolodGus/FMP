@@ -3,11 +3,13 @@ using Bioss.Ultrasound.Ble;
 using Bioss.Ultrasound.Data.Database;
 using Bioss.Ultrasound.DI;
 using Bioss.Ultrasound.Services;
-using Bioss.Ultrasound.Services.Network.Logging;
-using Bioss.Ultrasound.Services.Network.Sessions;
+using Bioss.Ultrasound.Services.Logging;
+using Bioss.Ultrasound.Services.Logging.Abstracts;
+using Bioss.Ultrasound.Services.Sessions;
 using Bioss.Ultrasound.UI.Pages;
 using System;
 using System.Collections.Generic;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace Bioss.Ultrasound
@@ -17,6 +19,7 @@ namespace Bioss.Ultrasound
         private readonly AppDatabase _database;
         private readonly ILogger _serverLogger;
         private readonly ISessionManager _sessionService;
+        private readonly IUnsentLogDispatcher _unsentLogDispatcher;
         private readonly SessionCleanupService _sessionCleanup;
         public static Injector Injector { get; private set; }
 
@@ -24,6 +27,7 @@ namespace Bioss.Ultrasound
         {
             InitializeComponent();
 
+            Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             if (Injector == null)
             {
@@ -37,6 +41,7 @@ namespace Bioss.Ultrasound
             _database = Injector.Container.Resolve<AppDatabase>();
             _serverLogger = Injector.Container.Resolve<ILogger>();
             _sessionService = Injector.Container.Resolve<ISessionManager>();
+            _unsentLogDispatcher = Injector.Container.Resolve<IUnsentLogDispatcher>();
             _sessionCleanup = Injector.Container.Resolve<SessionCleanupService>();
         }
 
@@ -44,10 +49,12 @@ namespace Bioss.Ultrasound
         {
             await _database.ConnectAsync();
             await _sessionService.StartSessionAsync();
-            //await _serverLogger.SendAllUnsentAsync();
             // TODO уточнить точно как тут должно работать
             // должно отработать фоном
             //await _sessionCleanup.RemoveOldSessionsAsync();
+            if(Connectivity.NetworkAccess == NetworkAccess.Internet)
+                await _unsentLogDispatcher.SendAllUnsentAsync();
+
 
             var devicesScaner = Injector.Container.Resolve<DevicesScaner>();
             devicesScaner.Start();
@@ -59,18 +66,17 @@ namespace Bioss.Ultrasound
             autoresetToco.IsAutoResetToco = appSettings.IsAutoResetToco;
         }
 
-        protected override void OnSleep()
-        {
-        }
-
-        protected override void OnResume()
-        {
-        }
-
         private async void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = e.ExceptionObject as Exception;
             await _serverLogger.LogAsync(ex.Message, ServerLogLevel.FatalTerminationError);
+        }
+
+        private async void Connectivity_ConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
+        {
+            var access = e.NetworkAccess;
+            if (access == NetworkAccess.Internet)   
+                await _unsentLogDispatcher.SendAllUnsentAsync();
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Bioss.Ultrasound.Services.Network.Sessions
+namespace Bioss.Ultrasound.Services.Sessions
 {
     public class SessionInfo
     {

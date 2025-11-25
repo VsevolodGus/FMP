@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace Bioss.Ultrasound.Services.Network
+namespace Bioss.Ultrasound.Services.Server
 {
     public abstract class BaseRequest
     {

@@ -1,4 +1,4 @@
-﻿namespace Bioss.Ultrasound.Services.Network.Logging
+﻿namespace Bioss.Ultrasound.Services.Logging
 {
     //    {LogLevel.Information, 0},
     //    {LogLevel.Warning, 1}, //1-4

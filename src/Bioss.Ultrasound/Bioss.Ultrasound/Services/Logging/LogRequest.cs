@@ -1,6 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Bioss.Ultrasound.Services.Server;
+using Newtonsoft.Json;
 
-namespace Bioss.Ultrasound.Services.Network.Logging
+namespace Bioss.Ultrasound.Services.Logging
 {
     public class LogRequest : BaseRequest
     {

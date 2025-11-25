@@ -1,8 +1,9 @@
 ﻿using Autofac;
 using Bioss.Ultrasound.Services;
-using Bioss.Ultrasound.Services.Network;
-using Bioss.Ultrasound.Services.Network.Logging;
-using Bioss.Ultrasound.Services.Network.Sessions;
+using Bioss.Ultrasound.Services.Logging;
+using Bioss.Ultrasound.Services.Logging.Abstracts;
+using Bioss.Ultrasound.Services.Server;
+using Bioss.Ultrasound.Services.Sessions;
 
 namespace Bioss.Ultrasound.DI.Modules
 {
@@ -17,9 +18,12 @@ namespace Bioss.Ultrasound.DI.Modules
 
 
             builder.RegisterType<SessionManager>().As<ISessionManager>().SingleInstance();
-            builder.RegisterType<ServerLogger>().As<ILogger>().SingleInstance();
             builder.RegisterType<SessionCleanupService>().SingleInstance();
             builder.RegisterType<ServerHttpProvider>().SingleInstance();
+            builder.RegisterType<ServerLogger>()
+                .As<ILogger>()
+                .As<IUnsentLogDispatcher>()
+                .SingleInstance();
         }
     }
 }
