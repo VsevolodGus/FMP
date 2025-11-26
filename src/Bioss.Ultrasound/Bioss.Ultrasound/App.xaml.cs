@@ -23,7 +23,7 @@ namespace Bioss.Ultrasound
         private readonly IUnsentLogDispatcher _unsentLogDispatcher;
         private readonly SessionCleanupService _sessionCleanup;
         public static Injector Injector { get; private set; }
-
+        private static bool HasNetwork => Connectivity.NetworkAccess == NetworkAccess.Internet;
         public App()
         {
             InitializeComponent();
@@ -36,10 +36,11 @@ namespace Bioss.Ultrasound
                 Injector.RunWithMappedTypes(new Dictionary<Type, Type>());
             }
 
-            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
-                MainPage = new DocumentPage();
-            else
+            if (HasNetwork)
                 MainPage = new StartupPage();
+            else
+                MainPage = new NetworkUnvailable();
+
 
 
             _database = Injector.Container.Resolve<AppDatabase>();
@@ -51,7 +52,7 @@ namespace Bioss.Ultrasound
 
         protected override async void OnStart()
         {
-            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+            if (!HasNetwork)
                 return;
 
             await _database.ConnectAsync();
