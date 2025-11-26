@@ -16,7 +16,6 @@ namespace Bioss.Ultrasound.DI.Modules
             builder.RegisterType<AboutViewModel>();
             builder.RegisterType<DocumentViewModel>();
 
-            builder.RegisterType<PDFTestViewModel>();
             builder.RegisterType<BackupViewModel>();
         }
     }
