@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Bioss.Ultrasound.Services.Server;
-using Bioss.Ultrasound.Services.Server.Sessions;
 
 namespace Bioss.Ultrasound.Services.Sessions
 {

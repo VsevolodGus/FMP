@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Bioss.Ultrasound.Services.Server
 {
-    internal class ServerHttpProvider
+    public sealed class ServerHttpProvider
     {
         private readonly HttpClient _httpClient;
         public ServerHttpProvider()

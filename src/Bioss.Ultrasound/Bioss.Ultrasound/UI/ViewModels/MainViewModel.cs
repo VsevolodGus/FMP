@@ -10,6 +10,7 @@ using Bioss.Ultrasound.Domain.Plotting;
 using Bioss.Ultrasound.Repository.Abstracts;
 using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Services;
+using Bioss.Ultrasound.Services.Licenses;
 using Bioss.Ultrasound.Tools;
 using Bioss.Ultrasound.UI.Helpers;
 using Bioss.Ultrasound.UI.Popups;
@@ -55,6 +56,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly AudioService _audioService;
         private readonly ISystemVolume _systemVolume;
         private readonly InfoSettingsService _infoSettingsService;
+        private readonly ILicenseService _licenseService;
         private readonly CatAnaService _catAnaService = new CatAnaService();
 
 
@@ -90,7 +92,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
             IPcmPlayer pcmPlayer, 
             AudioService audioService, 
             ISystemVolume systemVolume,
-            InfoSettingsService infoSettingsService)
+            InfoSettingsService infoSettingsService,
+            ILicenseService licenseService)
         {
             _navigation = navigation;
             _dialogs = dialogs;
@@ -102,6 +105,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _audioService = audioService;
             _systemVolume = systemVolume;
             _infoSettingsService = infoSettingsService;
+            //_catAnaService = catAnaService;
+            _licenseService = licenseService;
 
             _devicesScaner.Discovered += OnDeviceDiscovered;
             _device.ConnectedChanged += OnConnectedChanged;
@@ -263,12 +268,10 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 return;
 
             //await _devicesScaner.StopAsync();
+            
+            
 
             await _device.ConnectAsync(SelectedDevice);
-
-            //  TODO
-
-            //await Task.Delay(100);
             SelectedDevice = null;
         }, allowsMultipleExecutions: false);
 
@@ -458,18 +461,24 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
         private async void OnDeviceDiscovered(object sender, IDevice device)
         {
+            if (_device is not null && _device.IsConnected)
+                return;
+
             if (device.Name == null || !DevicePrefixesFilter.Any(s => device.Name.StartsWith(s, StringComparison.CurrentCultureIgnoreCase)))
                 return;
 
             if (Devices.Any(a => a.Name == device.Name))
                 return;
 
+            // TODO обходной путь, что в списке отображались только лицензионные устройства
+            var isLicense = await _licenseService.CheckDeviceLicenseAsync(device.Name);
+            if (!isLicense)
+                return;
+
             Devices.Add(device);
 
             if (_appSettings.IsAutoConnect && !_device.IsConnected)
-            {
                 await _device.ConnectAsync(device);
-            }
         }
         #endregion
 

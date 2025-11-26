@@ -27,7 +27,6 @@ namespace Bioss.Ultrasound.Services.Sessions
             _serverHttpProvider = serverHttpProvider;
         }
 
-
         public async Task RemoveOldSessionsAsync()
         {
             var now = DateTimeOffset.Now;

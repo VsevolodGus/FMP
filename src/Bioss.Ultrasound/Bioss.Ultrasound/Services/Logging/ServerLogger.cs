@@ -9,7 +9,7 @@ namespace Bioss.Ultrasound.Services.Logging
 {
     internal class ServerLogger : ILogger, IUnsentLogDispatcher
     {
-        private readonly ISessionManager _sessionTokenProvider;
+        private readonly ISessionManager _sessionManager;
         private readonly ServerHttpProvider _serverHttpProvider;
 
         // TODO заменить на БД
@@ -19,7 +19,7 @@ namespace Bioss.Ultrasound.Services.Logging
             ISessionManager sessionTokenProvider,
             ServerHttpProvider serverHttpProvider)
         {
-            _sessionTokenProvider = sessionTokenProvider;
+            _sessionManager = sessionTokenProvider;
             _serverHttpProvider = serverHttpProvider;
         }
 
@@ -31,7 +31,7 @@ namespace Bioss.Ultrasound.Services.Logging
 
         public async Task LogAsync(string message, ServerLogLevel logLevel = ServerLogLevel.Info)
         {
-            var sessionInfo = await _sessionTokenProvider.GetCurrentSessionAsync();
+            var sessionInfo = await _sessionManager.GetCurrentSessionAsync();
             var logData = new LogRequest
             {
                 SessionToken = sessionInfo.Token,
@@ -49,10 +49,9 @@ namespace Bioss.Ultrasound.Services.Logging
             {
                 unsentLogs.Add(logData);
             }
-            await _sessionTokenProvider.UpdateLastActivityAsync();
+            await _sessionManager.UpdateLastActivityAsync();
         }
 
-        // нужно сделаь отправку по тригеру и при запуске
         public async Task SendAllUnsentAsync()
         {
             var logsToSend = unsentLogs.ToArray();

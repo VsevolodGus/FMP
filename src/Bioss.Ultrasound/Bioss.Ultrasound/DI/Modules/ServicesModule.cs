@@ -1,5 +1,6 @@
 ﻿using Autofac;
 using Bioss.Ultrasound.Services;
+using Bioss.Ultrasound.Services.Licenses;
 using Bioss.Ultrasound.Services.Logging;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Services.Server;
@@ -18,7 +19,10 @@ namespace Bioss.Ultrasound.DI.Modules
 
 
             builder.RegisterType<SessionManager>().As<ISessionManager>().SingleInstance();
+            builder.RegisterType<LicenseService>().As<ILicenseService>().SingleInstance();
             builder.RegisterType<SessionCleanupService>().SingleInstance();
+            //builder.RegisterType<CatAnaService>().SingleInstance();
+            builder.RegisterType<ServerHttpProvider>().SingleInstance();
             builder.RegisterType<ServerHttpProvider>().SingleInstance();
             builder.RegisterType<ServerLogger>()
                 .As<ILogger>()
