@@ -9,6 +9,7 @@ using Bioss.Ultrasound.Services.Sessions;
 using Bioss.Ultrasound.UI.Pages;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -35,7 +36,10 @@ namespace Bioss.Ultrasound
                 Injector.RunWithMappedTypes(new Dictionary<Type, Type>());
             }
 
-            MainPage = new StartupPage();
+            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+                MainPage = new DocumentPage();
+            else
+                MainPage = new StartupPage();
 
 
             _database = Injector.Container.Resolve<AppDatabase>();
@@ -47,14 +51,15 @@ namespace Bioss.Ultrasound
 
         protected override async void OnStart()
         {
+            if (Connectivity.NetworkAccess != NetworkAccess.Internet)
+                return;
+
             await _database.ConnectAsync();
             await _sessionService.StartSessionAsync();
-            // TODO уточнить точно как тут должно работать
-            // должно отработать фоном
-            //await _sessionCleanup.RemoveOldSessionsAsync();
-            if(Connectivity.NetworkAccess == NetworkAccess.Internet)
-                await _unsentLogDispatcher.SendAllUnsentAsync();
-
+                       
+            var sendUnsentLogsTask =_unsentLogDispatcher.SendAllUnsentAsync();
+            var removeOldSession = _sessionCleanup.RemoveOldSessionsAsync();
+            await Task.WhenAny(sendUnsentLogsTask, removeOldSession);
 
             var devicesScaner = Injector.Container.Resolve<DevicesScaner>();
             devicesScaner.Start();
