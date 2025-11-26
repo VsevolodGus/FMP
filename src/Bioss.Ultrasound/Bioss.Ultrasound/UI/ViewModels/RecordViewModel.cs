@@ -22,6 +22,7 @@ using OxyPlot.Annotations;
 using System;
 using Rg.Plugins.Popup.Services;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
+using Bioss.Ultrasound.Services.Abstracts;
 
 namespace Bioss.Ultrasound.UI.ViewModels
 {
@@ -35,6 +36,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly IRepository _repository;
         private readonly Record _record;
         private readonly ILogger _logger;
+        private readonly IPdfGenerator _pdfGenerator;
 
         private readonly PlottingHelper _plottingHelper = new PlottingHelper();
 
@@ -50,7 +52,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
             InfoSettingsService infoService, 
             IRepository repository, 
             ILogger logger,
-            Record record)
+            Record record,
+            IPdfGenerator pdfGenerator)
         {
             _navigation = navigation;
             _dialogs = dialogs;
@@ -61,6 +64,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _repository = repository;
             _logger = logger;
             _record = record;
+            _pdfGenerator = pdfGenerator;
 
             _plottingHelper.Scale = _appSettings.ChartXScaleSeconds;
 
@@ -132,8 +136,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             var fileName = Path.Combine(Path.GetTempPath(), $"Fetal Monitor Report - {recoringStartTime:yyyy-MM-dd-HH-mm}.pdf");
 
             _logger.Log("Export record to PDF");
-             var generator = new ReportPdfGenerator(_infoService);
-            generator.GenerateToFile(fileName, _record);
+            _pdfGenerator.GenerateToFile(fileName, _record);
 
             var files = new List<ShareFile>();
             files.Add(new ShareFile(fileName));

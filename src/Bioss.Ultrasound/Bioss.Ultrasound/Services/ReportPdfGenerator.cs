@@ -21,13 +21,16 @@ namespace Bioss.Ultrasound.Services
         private const string Style = "MyTableStyle2";
         private const string FloatFormat = "0.00";
 
-        private readonly InfoSettingsService _infoService;
         private readonly CatAnaService _catAnaService;
-
-        public ReportPdfGenerator(InfoSettingsService infoService)
+        private readonly InfoSettingsService _infoService;
+        
+        public ReportPdfGenerator(
+            CatAnaService catAnaService,
+            InfoSettingsService infoService
+            )
         {
             _infoService = infoService;
-            _catAnaService = new CatAnaService();
+            _catAnaService = catAnaService;
         }
 
         // A4 210 × 297 mm
