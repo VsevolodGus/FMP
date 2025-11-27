@@ -72,7 +72,7 @@
     <EmbeddedResource Update="UI\Pages\MenuPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
-    <EmbeddedResource Update="UI\Pages\NetworkUnvailable.xaml">
+    <EmbeddedResource Update="UI\Pages\NetworkUnvailablePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="UI\Pages\RecordsPage.xaml">
@@ -169,5 +169,10 @@
     <Reference Include="CatAna">
 	  <HintPath>..\..\CatAna.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="UI\Pages\NetworkUnvailablePage.xaml.cs">
+      <DependentUpon>NetworkUnvailablePage.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

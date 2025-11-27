@@ -39,7 +39,7 @@ namespace Bioss.Ultrasound
             if (HasNetwork)
                 MainPage = new StartupPage();
             else
-                MainPage = new NetworkUnvailable();
+                MainPage = new NetworkUnvailablePage();
 
 
 

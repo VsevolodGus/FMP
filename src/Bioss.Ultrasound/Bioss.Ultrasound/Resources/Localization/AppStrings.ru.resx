@@ -551,4 +551,10 @@
   <data name="Dialog_CriteriaMet" xml:space="preserve">
     <value>Критерии  выполнены, завершить запись?</value>
   </data>
+  <data name="NetworkUnvailable_MainText" xml:space="preserve">
+    <value>Нет подключения к интернету</value>
+  </data>
+  <data name="NetworkUnvailable_AdditionalText" xml:space="preserve">
+    <value>Проверьте подключение и попробуйте снова</value>
+  </data>
 </root>

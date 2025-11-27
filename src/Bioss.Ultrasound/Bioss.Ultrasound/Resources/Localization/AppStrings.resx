@@ -579,4 +579,10 @@
     <value>Are the criteria met, finish recording?</value>
     <comment>Критерии  выполнены, завершить запись?</comment>
   </data>
+  <data name="NetworkUnvailable_MainText" xml:space="preserve">
+    <value>No internet connection</value>
+  </data>
+  <data name="NetworkUnvailable_AdditionalText" xml:space="preserve">
+    <value>Check the connection and try again.</value>
+  </data>
 </root>

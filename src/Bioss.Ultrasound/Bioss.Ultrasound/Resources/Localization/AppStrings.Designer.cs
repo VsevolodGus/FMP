@@ -1351,6 +1351,18 @@ namespace Bioss.Ultrasound.Resources.Localization {
             get {
                 return ResourceManager.GetString("Dialog_CriteriaMet", resourceCulture);
             }
+        }  
+        
+        internal static string NetworkUnvailable_MainText {
+            get {
+                return ResourceManager.GetString("NetworkUnvailable_MainText", resourceCulture);
+            }
+        }
+        
+        internal static string NetworkUnvailable_AdditionalText {
+            get {
+                return ResourceManager.GetString("NetworkUnvailable_AdditionalText", resourceCulture);
+            }
         }
     }
 }
