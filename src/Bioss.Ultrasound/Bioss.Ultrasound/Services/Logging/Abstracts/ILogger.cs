@@ -1,5 +1,4 @@
 ﻿using System.Threading.Tasks;
-using Bioss.Ultrasound.Services.Logging;
 
 namespace Bioss.Ultrasound.Services.Logging.Abstracts
 {

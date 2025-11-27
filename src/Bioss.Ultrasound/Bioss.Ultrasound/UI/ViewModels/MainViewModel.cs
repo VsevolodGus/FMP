@@ -11,6 +11,7 @@ using Bioss.Ultrasound.Repository.Abstracts;
 using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Services;
 using Bioss.Ultrasound.Services.Licenses;
+using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Tools;
 using Bioss.Ultrasound.UI.Helpers;
 using Bioss.Ultrasound.UI.Popups;
@@ -57,7 +58,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly ISystemVolume _systemVolume;
         private readonly InfoSettingsService _infoSettingsService;
         private readonly ILicenseService _licenseService;
-        private readonly CatAnaService _catAnaService = new CatAnaService();
+        private readonly CatAnaService _catAnaService;
+        private readonly ILogger _logger;
 
 
 
@@ -93,7 +95,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
             AudioService audioService, 
             ISystemVolume systemVolume,
             InfoSettingsService infoSettingsService,
-            ILicenseService licenseService)
+            ILicenseService licenseService,
+            CatAnaService catAnaService,
+            ILogger logger)
         {
             _navigation = navigation;
             _dialogs = dialogs;
@@ -105,8 +109,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _audioService = audioService;
             _systemVolume = systemVolume;
             _infoSettingsService = infoSettingsService;
-            //_catAnaService = catAnaService;
+            _catAnaService = catAnaService;
             _licenseService = licenseService;
+            _logger = logger;
 
             _devicesScaner.Discovered += OnDeviceDiscovered;
             _device.ConnectedChanged += OnConnectedChanged;
@@ -131,6 +136,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _systemVolume.VolumeChanged += (a, e) => SoundLevel = e;
         }
 
+        #region Поля для UI
         public bool IsConnected
         {
             get => _isConnected;
@@ -254,6 +260,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             get => _isBell;
             set => SetProperty(ref _isBell, value);
         }
+        #endregion
 
         #region ICommand
         public ICommand AppearingCommand => new Command(a =>
@@ -268,10 +275,11 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 return;
 
             //await _devicesScaner.StopAsync();
-            
-            
 
+
+            
             await _device.ConnectAsync(SelectedDevice);
+            _logger.Log($"Подключили устройство {SelectedDevice.Name}");
             SelectedDevice = null;
         }, allowsMultipleExecutions: false);
 
@@ -280,6 +288,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             if (!await _dialogs.ConfirmAsync(AppStrings.Dialog_DisconnectMessage, string.Empty, AppStrings.Yes, AppStrings.Cancel))
                 return;
 
+            _logger.Log($"Отключили устройство {_device.Name}");
             await _device.DisconnectAsync();
 
             //  На всякий случай останавливаем звуковой сигнал, если он вдруг включен
@@ -302,6 +311,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             IsRecording = true;
 
+            _logger.Log($"Начали запись с устройством {_device.Name}");
             _record = new Record
             {
                 StartTime = DateTime.Now,
@@ -516,6 +526,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
             {
                 await _repository.InsertAsync(recordToSave);
             }
+
+            var duretionRecord = _record.StopTime - _record.StartTime;
+            _logger.Log($"Законсилась запись {_device.Name}, запись длилась {duretionRecord}");
         }
 
         private void WriteRecord(Package package)

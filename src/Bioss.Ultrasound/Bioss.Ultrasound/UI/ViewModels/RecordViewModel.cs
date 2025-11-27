@@ -23,6 +23,7 @@ using System;
 using Rg.Plugins.Popup.Services;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Services.Abstracts;
+using Bioss.Ultrasound.Tools.PdfTests;
 
 namespace Bioss.Ultrasound.UI.ViewModels
 {
@@ -125,7 +126,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             if (!await _dialogs.ConfirmAsync(AppStrings.Record_DialogDeleteMessage, AppStrings.Record_DialogDeleteTitle, AppStrings.Yes, AppStrings.Cancel))
                 return;
 
-            _logger.Log("Delete record");
+            _logger.Log("Удалили запись");
             await _repository.DeleteAsync(_record);
             await _navigation.PopAsync();
         }, allowsMultipleExecutions: false);
@@ -135,7 +136,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
             var recoringStartTime = _record.StartTime;
             var fileName = Path.Combine(Path.GetTempPath(), $"Fetal Monitor Report - {recoringStartTime:yyyy-MM-dd-HH-mm}.pdf");
 
-            _logger.Log("Export record to PDF");
             _pdfGenerator.GenerateToFile(fileName, _record);
 
             var files = new List<ShareFile>();
@@ -156,6 +156,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             if (result.Ok)
             {
+                _logger.Log("Обновили у сохраненной записи показатели пациента");
                 var biom = result.Biometric;
                 await _repository.InsertOrUpdateAsync(biom);
                 _record.Biometric = biom;

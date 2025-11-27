@@ -6,6 +6,7 @@ using Bioss.Ultrasound.Domain.Plotting;
 using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Services.Abstracts;
 using Bioss.Ultrasound.Services.Extensions;
+using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Tools;
 using MigraDocCore.DocumentObjectModel;
 using MigraDocCore.DocumentObjectModel.Tables;
@@ -21,14 +22,17 @@ namespace Bioss.Ultrasound.Services
         private const string Style = "MyTableStyle2";
         private const string FloatFormat = "0.00";
 
+        private readonly ILogger _logger;
         private readonly CatAnaService _catAnaService;
         private readonly InfoSettingsService _infoService;
         
         public ReportPdfGenerator(
+            ILogger logger,
             CatAnaService catAnaService,
             InfoSettingsService infoService
             )
         {
+            _logger = logger;
             _infoService = infoService;
             _catAnaService = catAnaService;
         }
@@ -38,6 +42,7 @@ namespace Bioss.Ultrasound.Services
         {
             MyFontResolver.Apply();
 
+            _logger.Log("Export record to PDF");
             var document = CreateDocument();
             AddData(document, record);
             document.Save(fileName);
