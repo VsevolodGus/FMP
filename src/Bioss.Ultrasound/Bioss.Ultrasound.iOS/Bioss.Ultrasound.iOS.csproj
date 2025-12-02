@@ -99,7 +99,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2401" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.7.2" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.8.1" />
     <PackageReference Include="Xamarin.Forms.Visual.Material">
       <Version>5.0.0.2401</Version>
     </PackageReference>
@@ -223,10 +223,8 @@
     <BundleResource Include="Resources\ic_volume%402x.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Assets.xcassets\SplashImage.imageset\" />
     <Folder Include="Renderers\" />
-    <Folder Include="Resources\ru.lproj\" />
-    <Folder Include="Assets.xcassets\SplashImage.imageset\" />
-    <Folder Include="Assets.xcassets\SplashImage.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\SplashScreen.storyboard" />

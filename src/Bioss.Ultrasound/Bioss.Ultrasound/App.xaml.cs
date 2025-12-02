@@ -28,8 +28,7 @@ namespace Bioss.Ultrasound
         {
             InitializeComponent();
 
-            // TODO на андроиде 15 почему-то не рабоатет
-            //Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
+            Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             if (Injector == null)
             {
