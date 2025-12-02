@@ -10,6 +10,7 @@
         public const string Yes = "V";
 
         public const int DefaultFontSize = 9;
+        public const int FontSizeGrafic = 8;
         public const int HeaderFontSize = 12;
 
         public const string DefultValue = "-";

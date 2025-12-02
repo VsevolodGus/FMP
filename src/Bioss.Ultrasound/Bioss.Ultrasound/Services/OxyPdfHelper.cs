@@ -4,132 +4,20 @@ using System.Linq;
 using Bioss.Ultrasound.Domain.Models;
 using Bioss.Ultrasound.Domain.Plotting;
 using Bioss.Ultrasound.Resources.Localization;
-using Bioss.Ultrasound.Tools;
+using Bioss.Ultrasound.Services.Extensions;
 using Bioss.Ultrasound.UI.Helpers;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using PdfSharpCore.Drawing;
-using PdfSharpCore.Drawing.Layout;
 using PdfSharpCore.Pdf;
 using PdfSharpCore.Pdf.IO;
 
 namespace Bioss.Ultrasound.Services
 {
-    public class Helper
+    public static class Helper
     {
-        private const string FontName = "Segoe UI";
-
-        public void DrawHorizontalRullerTest(XGraphics gfx, XUnit leftMargin, XUnit len)
-        {
-            var marginTop = XUnit.FromMillimeter(44).Point;
-            var marginLeft = leftMargin.Point;
-
-            var pt1 = new XPoint(marginLeft, marginTop);
-            var pt2 = new XPoint(marginLeft + len.Point, marginTop);
-
-            gfx.DrawLine(new XPen(XBrushes.Black), pt1, pt2);
-        }
-
-        public void DrawVerticalRullerTest(XGraphics gfx, XUnit topMargin, XUnit len)
-        {
-            var marginTop = topMargin.Point;
-            var marginLeft = XUnit.FromMillimeter(282).Point;
-
-            var pt1 = new XPoint(marginLeft, marginTop);
-            var pt2 = new XPoint(marginLeft, marginTop + len.Point);
-
-            gfx.DrawLine(new XPen(XBrushes.Black), pt1, pt2);
-        }
-
-        public void DrawHeader(XGraphics graphics, PdfPage page, string hospital, DateTime dateOfResearch, string patient, string doctor)
-        {
-            var settings = new DrawStringSettings
-            {
-                Page = page,
-                Graphics = graphics,
-                LineHeight = XUnit.FromMillimeter(4),
-                PaddingTop = XUnit.FromMillimeter(5),
-                PaddingLeft = XUnit.FromMillimeter(10),
-                PaddingRight = XUnit.FromMillimeter(10),
-            };
-
-            var imageSource = MigraDocTools.GetImageSourceFromResources("bipuls_logo", "jpg");
-            XImage image = XImage.FromImageSource(imageSource);
-            graphics.DrawImage(image, settings.PaddingLeft.Point, settings.PaddingTop.Point, 22, 22);
-
-            var tmpPaddingLeft = settings.PaddingLeft;
-            settings.PaddingLeft = XUnit.FromMillimeter(settings.PaddingLeft.Millimeter + 10);
-            DrawString(settings, 12, 0, XStringAlignment.Near, AppStrings.PDF_HeaderLeftCorner);
-            settings.PaddingLeft = tmpPaddingLeft;
-
-            DrawString(settings, 12, 0, XStringAlignment.Center, $"{hospital}");
-            DrawString(settings, 12, 1, XStringAlignment.Center, string.Empty);
-
-            DrawString(settings, 9, 2, XStringAlignment.Near, AppStrings.PDF_HeaderDateOfResearch);
-            DrawString(settings, 12, 3, XStringAlignment.Near, $"{dateOfResearch}");
-
-            DrawString(settings, 9, 2, XStringAlignment.Center, AppStrings.PDF_HeaderPatient);
-            DrawString(settings, 12, 3, XStringAlignment.Center, patient);
-
-            DrawString(settings, 9, 2, XStringAlignment.Far, AppStrings.PDF_HeaderDoctor);
-            DrawString(settings, 12, 3, XStringAlignment.Far, doctor);
-        }
-
-        public void DrawData(XGraphics gfx, PdfPage page, Biometric biometric, TimeSpan recordTime, int fetalsCount, DateTime dateOfResearch, DateTime? pregnancyStart)
-        {
-            biometric ??= new Biometric();
-
-            var settings = new DrawStringSettings
-            {
-                Page = page,
-                Graphics = gfx,
-                LineHeight = XUnit.FromMillimeter(4.5),
-                PaddingTop = XUnit.FromMillimeter(25),
-                PaddingLeft = XUnit.FromMillimeter(10),
-                PaddingRight = XUnit.FromMillimeter(10),
-            };
-
-            DrawString(settings, 9, 0, XStringAlignment.Near, $"{AppStrings.PDF_RecordingDuration}: {recordTime.Minutes} {AppStrings.Unit_min}");
-            DrawString(settings, 9, 1, XStringAlignment.Near, $"{AppStrings.PDF_FetalMovements}: {fetalsCount}");
-            if (pregnancyStart.HasValue)
-            {
-                var time = DateTools.CalculatePregnantTime(pregnancyStart.Value, dateOfResearch);
-                DrawString(settings, 9, 2, XStringAlignment.Near, $"{AppStrings.PDF_GestationalAge}: {time.weeks}/{time.days}");
-
-            }
-
-            settings.PaddingLeft = XUnit.FromMillimeter(60);
-            var empty = "-";
-            DrawString(settings, 9, 0, XStringAlignment.Near, $"{AppStrings.PDF_Temperature}: {StringTools.ToStringOrEmptyString(biometric.Temperature, empty)}{AppStrings.Unit_Celsius}");
-            DrawString(settings, 9, 1, XStringAlignment.Near, $"{AppStrings.PDF_Pulse}: {StringTools.ToStringOrEmptyString(biometric.Pulse, empty)} {AppStrings.Unit_HeartRate}");
-            DrawString(settings, 9, 2, XStringAlignment.Near, $"{AppStrings.PDF_Sugar}: {StringTools.ToStringOrEmptyString(biometric.Sugar, empty)} {AppStrings.Unit_BloodGlucose}");
-            DrawString(settings, 9, 3, XStringAlignment.Near, $"{AppStrings.PDF_HeartRate}: {StringTools.ToStringOrEmptyString(biometric.Systolic, empty)}/{StringTools.ToStringOrEmptyString(biometric.Diastolic, empty)} {AppStrings.Unit_MillimetreOfMercury}");
-
-            settings.PaddingLeft = XUnit.FromMillimeter(60 + 45);
-            settings.LineHeight = XUnit.FromMillimeter(4.5);
-
-            DrawMultilineString(settings, 9, 0, 2, $"{AppStrings.PDF_Comment}: {biometric.Comment}");
-            DrawMultilineString(settings, 9, 2, 2, $"{AppStrings.PDF_DoctorsConclusion}:");
-        }
-
-        public void DrawPageNumbers(XGraphics gfx, PdfPage page, int pageNumber, int pageCount)
-        {
-            var lineHeight = XUnit.FromMillimeter(2.5);
-            var padding = XUnit.FromMillimeter(page.Height.Millimeter - 10);
-            var paddingLeft = XUnit.FromMillimeter(10);
-            DrawString(string.Format(AppStrings.PDF_FooterPageNumbers, pageNumber, pageCount), page, gfx, padding, paddingLeft, 10, lineHeight, 0, XStringAlignment.Far);
-        }
-
-        public void DrawDeviceSerialNumber(XGraphics gfx, PdfPage page, string serialNumber)
-        {
-            var lineHeight = XUnit.FromMillimeter(2.5);
-            var padding = XUnit.FromMillimeter(page.Height.Millimeter - 10);
-            var paddingLeft = XUnit.FromMillimeter(10);
-            DrawString(string.Format(AppStrings.PDF_FooterSN, serialNumber), page, gfx, padding, paddingLeft, 10, lineHeight, 0, XStringAlignment.Near);
-        }
-
-        public static void DrawString(string text, PdfPage page, XGraphics gfx, XUnit paddingTop, XUnit paddingLeft, int fontSize, XUnit lineHeight, int lineNumber, XStringAlignment textAlignment)
+        public static void DrawString(this XGraphics gfx, string text, PdfPage page, XUnit paddingTop, XUnit paddingLeft, int fontSize, XUnit lineHeight, int lineNumber, XStringAlignment textAlignment)
         {
             var heightPoints = lineHeight.Point;
             var paddingTopPoints = paddingTop.Point;
@@ -144,12 +32,11 @@ namespace Bioss.Ultrasound.Services
                 LineAlignment = XLineAlignment.Center,
                 Alignment = textAlignment
             };
-            var font = new XFont(FontName, fontSize);
-            var brush = XBrushes.Black;
-            gfx.DrawString(text, font, brush, rect, format);
+            var font = new XFont(PdfOrderConstants.FontName, fontSize);
+            gfx.DrawString(text, font, XBrushes.Black, rect, format);
         }
 
-        public static void DrawString(DrawStringSettings settings, int fontSize, int lineNumber, XStringAlignment textAlignment, string text)
+        public static void DrawString(this DrawStringSettings settings, int fontSize, int lineNumber, XStringAlignment textAlignment, string text)
         {
             var heightPoints = settings.LineHeight.Point;
             var paddingTopPoints = settings.PaddingTop.Point;
@@ -165,52 +52,8 @@ namespace Bioss.Ultrasound.Services
                 LineAlignment = XLineAlignment.Center,
                 Alignment = textAlignment
             };
-            var font = new XFont(FontName, fontSize);
-            var brush = XBrushes.Black;
-            settings.Graphics.DrawString(text, font, brush, rect, format);
-        }
-
-        public static void DrawRectangle(DrawStringSettings settings, XBrush brush)
-        {
-            var heightPoints = settings.LineHeight.Point;
-            var paddingTopPoints = settings.PaddingTop.Point;
-            var paddingLeftPoints = settings.PaddingLeft.Point;
-            var paddingRightPoints = settings.PaddingRight.Point;
-            var widthPoints = settings.Page.Width.Point - paddingLeftPoints - paddingRightPoints;
-
-            var yPoints = paddingTopPoints;
-            var rect = new XRect(paddingLeftPoints, yPoints, widthPoints, heightPoints);
-
-            settings.Graphics.DrawRectangle(brush, rect);
-        }
-
-        private void DrawMultilineString(DrawStringSettings settings, int fontSize, int lineNumber, int lineCount, string text)
-        {
-            var lineHeight = settings.LineHeight.Point;
-            var heightPoints = lineHeight * lineCount;
-            var paddingTopPoints = settings.PaddingTop.Point;
-            var paddingLeftPoints = settings.PaddingLeft.Point;
-            var paddingRightPoints = settings.PaddingRight.Point;
-            var widthPoints = settings.Page.Width.Point - paddingLeftPoints - paddingRightPoints;
-
-            var yPoints = paddingTopPoints + (lineHeight * lineNumber);
-            var rect = new XRect(paddingLeftPoints, yPoints, widthPoints, heightPoints);
-
-            var font = new XFont(FontName, fontSize);
-            var brush = XBrushes.Black;
-
-            var formatter = new XTextFormatter(settings.Graphics);
-            formatter.DrawString(text, font, brush, rect, XStringFormats.TopLeft);
-        }
-
-        public class DrawStringSettings
-        {
-            public PdfPage Page { get; set; }
-            public XGraphics Graphics { get; set; }
-            public XUnit PaddingTop { get; set; }
-            public XUnit PaddingLeft { get; set; }
-            public XUnit PaddingRight { get; set; }
-            public XUnit LineHeight { get; set; }
+            var font = new XFont(PdfOrderConstants.FontName, fontSize);
+            settings.Graphics.DrawString(text, font, XBrushes.Black, rect, format);
         }
     }
 
@@ -293,7 +136,7 @@ namespace Bioss.Ultrasound.Services
         //  эта функция рисует заголовки для осей координат, так как OxyPlot не поддерживает Unicode
         public void DrawChartTitles(XGraphics graphics, PdfPage page, int recordingSpeed)
         {
-            var settings = new Helper.DrawStringSettings
+            var settings = new DrawStringSettings
             {
                 Graphics = graphics,
                 LineHeight = XUnit.FromMillimeter(2.5),
@@ -304,7 +147,7 @@ namespace Bioss.Ultrasound.Services
             };
 
             // X - min
-            Helper.DrawString(settings, 8, 0, XStringAlignment.Far, string.Format(AppStrings.Settings_PdfRecordingSpeedFormat, recordingSpeed));
+            settings.DrawString(PdfOrderConstants.FontSizeGrafic, 0, XStringAlignment.Far, string.Format(AppStrings.Settings_PdfRecordingSpeedFormat, recordingSpeed));
 
             // Y - FHR
             var lineHeight = XUnit.FromMillimeter(2.5);
@@ -314,7 +157,7 @@ namespace Bioss.Ultrasound.Services
             var rotatePoint = new XPoint(paddingLeft, paddingTop);
 
             graphics.RotateAtTransform(-90, rotatePoint);
-            Helper.DrawString(AppStrings.Chart_FHRAxysTitle, page, graphics, paddingTop, paddingLeft, 8, lineHeight, 0, XStringAlignment.Near);
+            graphics.DrawString(AppStrings.Chart_FHRAxysTitle, page, paddingTop, paddingLeft, PdfOrderConstants.FontSizeGrafic, lineHeight, 0, XStringAlignment.Near);
             graphics.RotateAtTransform(90, rotatePoint);
         }
 

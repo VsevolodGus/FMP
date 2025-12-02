@@ -527,7 +527,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 await _repository.InsertAsync(recordToSave);
             }
 
-            var duretionRecord = _record.StopTime - _record.StartTime;
+            var duretionRecord = recordToSave.StopTime - recordToSave.StartTime;
             _logger.Log($"Законсилась запись {_device.Name}, запись длилась {duretionRecord}");
         }
 
