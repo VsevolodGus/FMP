@@ -13,7 +13,10 @@ namespace Bioss.Ultrasound.Droid.Extensions
                 (Manifest.Permission.AccessCoarseLocation, true),
                 (Manifest.Permission.AccessFineLocation, true),
                 (Manifest.Permission.Bluetooth, false),
-                (Manifest.Permission.BluetoothAdmin, false)
+                (Manifest.Permission.BluetoothAdmin, false),
+
+                ("android.permission.BLUETOOTH_SCAN", false),
+                ("android.permission.BLUETOOTH_CONNECT", false),
             };
 
         public override Task<PermissionStatus> CheckStatusAsync()
