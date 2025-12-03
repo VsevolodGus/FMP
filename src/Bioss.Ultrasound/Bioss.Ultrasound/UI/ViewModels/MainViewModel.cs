@@ -463,11 +463,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
             var movement = _record.Events.Select(c => c.Event == Events.FetalMovement).ToArray();
             var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(week, floatRate, movement);
 
-            bi++;
-            await StopRecord(cardiografy.IsRoodDawsonCriteriaValid(bi), AppStrings.Dialog_CriteriaMet);
+            await StopRecord(cardiografy.IsRoodDawsonCriteriaValid(), AppStrings.Dialog_CriteriaMet);
         }
-        // TODO сделан для тестов
-        private int bi = 0;
 
         private async void OnDeviceDiscovered(object sender, IDevice device)
         {
@@ -480,7 +477,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
             if (Devices.Any(a => a.Name == device.Name))
                 return;
 
-            // TODO обходной путь, что в списке отображались только лицензионные устройства
             var isLicense = await _licenseService.CheckDeviceLicenseAsync(device.Name);
             if (!isLicense)
                 return;

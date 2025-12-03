@@ -141,19 +141,16 @@
             return countValidCriteria;
         }
 
-        public bool IsRoodDawsonCriteriaValid(int bi)
-        {            
-            // TODO test
-            return bi > 100;
-            
-            //return IsValidRecordingDuration
-            //    && SignalLossValid
-            //    && BasalHeartRateValid
-            //    && DecelerationsMark
-            //    && IsValidSyncRhythm
-            //    && STVValid
-            //    && MovementFrequencyValid
-            //    && IsTimeDependentParameters;
+        public bool IsRoodDawsonCriteriaValid()
+        {
+            return IsValidRecordingDuration
+                && SignalLossValid
+                && BasalHeartRateValid
+                && DecelerationsMark
+                && IsValidSyncRhythm
+                && STVValid
+                && MovementFrequencyValid
+                && IsTimeDependentParameters;
         }
     }
 }
