@@ -9,7 +9,6 @@ using Bioss.Ultrasound.Services.Sessions;
 using Bioss.Ultrasound.UI.Pages;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -27,7 +26,7 @@ namespace Bioss.Ultrasound
         public App()
         {
             InitializeComponent();
-
+                
             Connectivity.ConnectivityChanged += Connectivity_ConnectivityChanged;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             if (Injector == null)
@@ -58,9 +57,8 @@ namespace Bioss.Ultrasound
             await _database.ConnectAsync();
             await _sessionService.StartSessionAsync();
                        
-            var sendUnsentLogsTask =_unsentLogDispatcher.SendAllUnsentAsync();
-            var removeOldSession = _sessionCleanup.RemoveOldSessionsAsync();
-            await Task.WhenAny(sendUnsentLogsTask, removeOldSession);
+            await _unsentLogDispatcher.SendAllUnsentAsync();
+            await _sessionCleanup.RemoveOldSessionsAsync();
 
             var devicesScaner = Injector.Container.Resolve<DevicesScaner>();
             devicesScaner.Start();

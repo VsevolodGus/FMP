@@ -23,9 +23,13 @@ namespace Bioss.Ultrasound.Data.Database
         public AsyncTableQuery<EventEntity> EventTable => Connection.Table<EventEntity>();
         public AsyncTableQuery<AudioEntity> AudioTable => Connection.Table<AudioEntity>();
         public AsyncTableQuery<BiometricEntity> BiometricTable => Connection.Table<BiometricEntity>();
+        public AsyncTableQuery<LogEntity> LogTable => Connection.Table<LogEntity>();
+        public AsyncTableQuery<SessionEntity> SessionTable => Connection.Table<SessionEntity>();
 
         public override async Task CreateAsync()
         {
+            await Connection.CreateTableAsync<LogEntity>();
+            await Connection.CreateTableAsync<SessionEntity>();
             await Connection.CreateTableAsync<RecordEntity>();
             await Connection.CreateTableAsync<DataEntity>();
             await Connection.CreateTableAsync<EventEntity>();
@@ -38,7 +42,8 @@ namespace Bioss.Ultrasound.Data.Database
             return new List<IMigration>
             {
                 new Migration1To2(),
-                new Migration2To3()
+                new Migration2To3(),
+                new Migration3To4()
             };
         }
     }

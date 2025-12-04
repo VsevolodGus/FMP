@@ -150,15 +150,10 @@
     <Folder Include="UI\Controls\" />
     <Folder Include="Domain\Plotting\" />
     <Folder Include="Domain\UI\" />
-    <Folder Include="Data\" />
-    <Folder Include="Data\Database\" />
-    <Folder Include="Data\Database\Entities\" />
     <Folder Include="Data\Database\Entities\Enums\" />
-    <Folder Include="Mapping\" />
     <Folder Include="Repository\Abstracts\" />
     <Folder Include="Tools\PdfTests\" />
     <Folder Include="Services\Abstracts\" />
-    <Folder Include="Data\Database\Migrations\" />
     <Folder Include="UI\Popups\" />
     <Folder Include="Resources\Audio\" />
     <Folder Include="Domain\Collections\" />

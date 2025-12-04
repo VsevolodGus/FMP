@@ -1,17 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Bioss.Ultrasound.Data.Database;
+using Bioss.Ultrasound.Mapping;
 using Bioss.Ultrasound.Services.Server;
 
 namespace Bioss.Ultrasound.Services.Sessions
 {
     internal class SessionManager : ISessionManager
     {
+        private readonly AppDatabase _database;
         private readonly ServerHttpProvider _serverHttpProvider;
 
         private SessionInfo _currentSession;
 
-        public SessionManager(ServerHttpProvider serverHttpProvider)
+        public SessionManager(AppDatabase database,
+            ServerHttpProvider serverHttpProvider)
         {
+            _database = database;
             _serverHttpProvider = serverHttpProvider;
         }
 
@@ -36,17 +41,10 @@ namespace Bioss.Ultrasound.Services.Sessions
             _currentSession = new SessionInfo
             {
                 Token = token,
-                LastActivityDate = DateTimeOffset.UtcNow,
+                CreatedDate = DateTime.UtcNow,
             };
 
-            // TODO добавить сессию в БД
-        }
-
-        public async Task UpdateLastActivityAsync()
-        {
-            _currentSession.LastActivityDate = DateTimeOffset.UtcNow;
-            await Task.Delay(100);
-            // TODO обновить время в БД
+            await _database.Connection.InsertAsync(_currentSession.ToEntity());
         }
     }
 }

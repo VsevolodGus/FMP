@@ -1,7 +1,8 @@
-﻿using Bioss.Ultrasound.Services.Logging.Abstracts;
+﻿using Bioss.Ultrasound.Data.Database;
+using Bioss.Ultrasound.Mapping;
+using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Services.Server;
 using Bioss.Ultrasound.Services.Sessions;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -11,16 +12,16 @@ namespace Bioss.Ultrasound.Services.Logging
     {
         private readonly ISessionManager _sessionManager;
         private readonly ServerHttpProvider _serverHttpProvider;
-
-        // TODO заменить на БД
-        private ICollection<LogRequest> unsentLogs = new List<LogRequest>();
+        private readonly AppDatabase _database;
 
         public ServerLogger(
             ISessionManager sessionTokenProvider,
-            ServerHttpProvider serverHttpProvider)
+            ServerHttpProvider serverHttpProvider,
+            AppDatabase database)
         {
             _sessionManager = sessionTokenProvider;
             _serverHttpProvider = serverHttpProvider;
+            _database = database;
         }
 
 
@@ -47,24 +48,24 @@ namespace Bioss.Ultrasound.Services.Logging
             }
             catch
             {
-                unsentLogs.Add(logData);
+                await _database.Connection.InsertAsync(logData);
             }
-            await _sessionManager.UpdateLastActivityAsync();
         }
 
         public async Task SendAllUnsentAsync()
         {
-            var logsToSend = unsentLogs.ToArray();
-            unsentLogs.Clear();
-            var sendLogTasks = logsToSend.Select(async logData =>
+            var logToSend = await _database.LogTable.ToArrayAsync();
+            
+            var sendLogTasks = logToSend.Select(async logData =>
             {
                 try
                 {
-                    await _serverHttpProvider.SendAsync(logData);
+                    await _serverHttpProvider.SendAsync(logData.ToRequest());
+                    await _database.Connection.DeleteAsync(logData);
                 }
                 catch
                 {
-                    unsentLogs.Add(logData);
+                    await _database.Connection.InsertAsync(logData);
                 }
             });
 

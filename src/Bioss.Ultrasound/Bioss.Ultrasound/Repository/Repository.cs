@@ -23,6 +23,7 @@ namespace Bioss.Ultrasound.Repository
         public event EventHandler<long> NewItem;
         public event EventHandler<long> ItemDelated;
 
+        // TODO удалить этот mock
         private readonly Record _mockRecord = new Record
         {
             Id = -1,
