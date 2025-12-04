@@ -1363,6 +1363,12 @@ namespace Bioss.Ultrasound.Resources.Localization {
             get {
                 return ResourceManager.GetString("NetworkUnvailable_AdditionalText", resourceCulture);
             }
+        } 
+        
+        internal static string Loading{
+            get {
+                return ResourceManager.GetString("Loading", resourceCulture);
+            }
         }
     }
 }

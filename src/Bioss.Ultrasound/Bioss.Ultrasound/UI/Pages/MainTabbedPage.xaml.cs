@@ -37,7 +37,7 @@ namespace Bioss.Ultrasound.UI.Pages
                 IconImageSource = icon,
                 Content = new Label
                 {
-                    Text = "Загрузка...",
+                    Text = AppStrings.Loading,
                     HorizontalOptions = LayoutOptions.Center,
                     VerticalOptions = LayoutOptions.Center
                 }

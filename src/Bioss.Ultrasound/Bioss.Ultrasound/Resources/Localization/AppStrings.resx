@@ -585,4 +585,7 @@
   <data name="NetworkUnvailable_AdditionalText" xml:space="preserve">
     <value>Check the connection and try again.</value>
   </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Loading</value>
+  </data>
 </root>
