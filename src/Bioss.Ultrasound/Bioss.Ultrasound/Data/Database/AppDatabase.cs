@@ -9,7 +9,7 @@ namespace Bioss.Ultrasound.Data.Database
 {
     public class AppDatabase : SQLiteAsyncDatabase
     {
-        private const int DB_VERSION = 3;
+        private const int DB_VERSION = 4;
 
         public AppDatabase(string path) : base(DB_VERSION, path)
         {
