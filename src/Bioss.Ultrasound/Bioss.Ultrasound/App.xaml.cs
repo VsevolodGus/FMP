@@ -9,7 +9,6 @@ using Bioss.Ultrasound.Services.Sessions;
 using Bioss.Ultrasound.UI.Pages;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -36,6 +35,15 @@ namespace Bioss.Ultrasound
                 Injector.RunWithMappedTypes(new Dictionary<Type, Type>());
             }
 
+            if (HasNetwork)
+            {
+                MainPage = new StartupPage();
+            }
+            else
+            {
+                MainPage = new NetworkUnvailablePage();
+            }
+
             _database = Injector.Container.Resolve<AppDatabase>();
             _serverLogger = Injector.Container.Resolve<ILogger>();
             _sessionService = Injector.Container.Resolve<ISessionManager>();
@@ -45,20 +53,16 @@ namespace Bioss.Ultrasound
 
         protected override async void OnStart()
         {
-
-            if (HasNetwork)
-            {
-                await _database.ConnectAsync();
-                MainPage = new StartupPage();
-            }
-            else
-            {
-                MainPage = new NetworkUnvailablePage();
+            if (!HasNetwork)
                 return;
-            }
             
-            await _sessionService.StartSessionAsync();
-                       
+            // TODO похорошему это вызывать в конструкторе
+            // но т.к. в синхронном режиме это работает долго, то сделал здесь
+            // иначе белый экран в начале долго грузит
+            // все инициализации страниц должны быть ленивыми
+            await _database.ConnectAsync();
+
+            await _sessionService.StartSessionAsync();        
             await _unsentLogDispatcher.SendAllUnsentAsync();
             await _sessionCleanup.RemoveOldSessionsAsync();
 
