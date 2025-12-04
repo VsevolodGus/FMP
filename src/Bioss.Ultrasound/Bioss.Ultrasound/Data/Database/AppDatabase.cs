@@ -28,13 +28,22 @@ namespace Bioss.Ultrasound.Data.Database
 
         public override async Task CreateAsync()
         {
-            await Connection.CreateTableAsync<LogEntity>();
-            await Connection.CreateTableAsync<SessionEntity>();
-            await Connection.CreateTableAsync<RecordEntity>();
-            await Connection.CreateTableAsync<DataEntity>();
-            await Connection.CreateTableAsync<EventEntity>();
-            await Connection.CreateTableAsync<AudioEntity>();
-            await Connection.CreateTableAsync<BiometricEntity>();
+            await Task.WhenAll(
+                Connection.CreateTableAsync<LogEntity>(),
+                Connection.CreateTableAsync<SessionEntity>(),
+                Connection.CreateTableAsync<RecordEntity>(),
+                Connection.CreateTableAsync<DataEntity>(),
+                Connection.CreateTableAsync<EventEntity>(),
+                Connection.CreateTableAsync<AudioEntity>(),
+                Connection.CreateTableAsync<BiometricEntity>()
+                );
+            //await Connection.CreateTableAsync<LogEntity>();
+            //await Connection.CreateTableAsync<SessionEntity>();
+            //await Connection.CreateTableAsync<RecordEntity>();
+            //await Connection.CreateTableAsync<DataEntity>();
+            //await Connection.CreateTableAsync<EventEntity>();
+            //await Connection.CreateTableAsync<AudioEntity>();
+            //await Connection.CreateTableAsync<BiometricEntity>();
         }
 
         public override List<IMigration> Migrations()
