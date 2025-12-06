@@ -30,21 +30,28 @@ namespace Bioss.Ultrasound.Services.Sessions
 
         public async Task StartSessionAsync()
         {
-            var tempraryToken = await _serverHttpProvider.SendAsync();
-            var token = await _serverHttpProvider.SendAsync(new SessionOpenRequest()
+            try
             {
-                TemporaryToken = tempraryToken,
-                DeviceOs = DeviceInformation.DeviceOs,
-                DeviceModel = DeviceInformation.DeviceModel,
-            });
+                var tempraryToken = await _serverHttpProvider.SendAsync();
+                var token = await _serverHttpProvider.SendAsync(new SessionOpenRequest()
+                {
+                    TemporaryToken = tempraryToken,
+                    DeviceOs = DeviceInformation.DeviceOs,
+                    DeviceModel = DeviceInformation.DeviceModel,
+                });
 
-            _currentSession = new SessionInfo
+                _currentSession = new SessionInfo
+                {
+                    Token = token,
+                    CreatedDate = DateTime.UtcNow,
+                };
+
+                await _database.Connection.InsertAsync(_currentSession.ToEntity());
+            }
+            catch
             {
-                Token = token,
-                CreatedDate = DateTime.UtcNow,
-            };
-
-            await _database.Connection.InsertAsync(_currentSession.ToEntity());
+                // TODO что-то надо делать в случаях если 1-ый запрос к серверу не прошел
+            }
         }
     }
 }

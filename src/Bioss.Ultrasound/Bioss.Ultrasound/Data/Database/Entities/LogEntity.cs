@@ -19,5 +19,9 @@ namespace Bioss.Ultrasound.Data.Database.Entities
         [Column("message")]
         [MaxLength(4095)]
         public string Message { get; set; }
+
+        [Column("message")]
+        [MaxLength(4095)]
+        public long UnixTimeMs{ get; set; }
     }
 }

@@ -30,6 +30,15 @@ namespace Bioss.Ultrasound.iOS
             DependencyService.Register<IPcmPlayer, PcmPlayer>();
             DependencyService.Register<ISystemVolume, SystemVolume>();
 
+            NSNotificationCenter.DefaultCenter.AddObserver(
+                UIApplication.WillTerminateNotification,
+                notification => 
+                {
+                    // TODO вызывать через абстракции закрытие сессий
+                    System.Diagnostics.Debug.WriteLine("iOS приложение завершается.");
+                });
+
+
             global::Xamarin.Forms.Forms.Init();
             AiForms.Renderers.iOS.SettingsViewInit.Init(); // need to write there
             LoadApplication(new App());

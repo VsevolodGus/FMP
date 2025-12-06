@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-
 namespace Bioss.Ultrasound.Services.Server
 {
     public abstract class BaseRequest
@@ -8,6 +6,12 @@ namespace Bioss.Ultrasound.Services.Server
         [JsonProperty("sid")]
         public string SessionToken { get; set; }
         [JsonProperty("id")]
-        public long SessionId => DateTimeOffset.Now.ToUnixTimeMilliseconds();
+        public long SessionId {  get; set; }
+
+        [JsonProperty("lvl")]
+        public virtual byte Level { get; set; }
+
+        [JsonProperty("msg")]
+        public virtual string Message { get; set; }
     }
 }

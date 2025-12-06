@@ -72,6 +72,15 @@ namespace Bioss.Ultrasound.Droid
 
             Rg.Plugins.Popup.Popup.SendBackPressed(base.OnBackPressed);
         }
+
+        protected override async void OnDestroy()
+        {
+            // TODO вызвать закрытие сессии
+            System.Diagnostics.Debug.WriteLine("MainActivity уничтожается.");
+            
+
+            base.OnDestroy();
+        }
     }
 
     class AppHelper

@@ -4,6 +4,6 @@ namespace Bioss.Ultrasound.Services.Licenses
 {
     public interface ILicenseService
     {
-        Task<bool> CheckDeviceLicenseAsync(string deviceName);
+        Task CheckDeviceLicenseAsync(string deviceName);
     }
 }

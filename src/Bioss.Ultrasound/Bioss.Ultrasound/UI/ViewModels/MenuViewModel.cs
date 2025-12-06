@@ -29,6 +29,12 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     Description = AppStrings.Menu_AboutDescription,
                     Action = async () => await _navigation.PushAsync(new AboutPage())
                 },
+                //new Setting
+                //{
+                //    Name = "Backup",
+                //    Description = AppStrings.Menu_AboutDescription,
+                //    Action = async () => await _navigation.PushAsync(new BackupPage())
+                //},
             };
         }
 

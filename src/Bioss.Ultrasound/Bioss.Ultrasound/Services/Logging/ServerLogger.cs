@@ -3,6 +3,7 @@ using Bioss.Ultrasound.Mapping;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Services.Server;
 using Bioss.Ultrasound.Services.Sessions;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -38,6 +39,7 @@ namespace Bioss.Ultrasound.Services.Logging
                 SessionToken = sessionInfo.Token,
                 DeviceModel = DeviceInformation.DeviceModel,
                 DeviceOs = DeviceInformation.DeviceOs,
+                SessionId = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
                 Level = (byte)logLevel,
                 Message = message
             };
@@ -48,7 +50,7 @@ namespace Bioss.Ultrasound.Services.Logging
             }
             catch
             {
-                await _database.Connection.InsertAsync(logData);
+                await _database.Connection.InsertAsync(logData.ToEntity());
             }
         }
 
@@ -60,7 +62,7 @@ namespace Bioss.Ultrasound.Services.Logging
             {
                 try
                 {
-                    await _serverHttpProvider.SendAsync(logData.ToRequest());
+                    await _serverHttpProvider.SendAsync(logData.ToLogRequest());
                     await _database.Connection.DeleteAsync(logData);
                 }
                 catch

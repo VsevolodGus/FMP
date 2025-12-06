@@ -276,9 +276,10 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             //await _devicesScaner.StopAsync();
 
-
             
             await _device.ConnectAsync(SelectedDevice);
+            await _licenseService.CheckDeviceLicenseAsync(SelectedDevice.Name);
+
             _logger.Log($"Подключили устройство {SelectedDevice.Name}");
             SelectedDevice = null;
         }, allowsMultipleExecutions: false);
@@ -477,14 +478,14 @@ namespace Bioss.Ultrasound.UI.ViewModels
             if (Devices.Any(a => a.Name == device.Name))
                 return;
 
-            var isLicense = await _licenseService.CheckDeviceLicenseAsync(device.Name);
-            if (!isLicense)
-                return;
-
             Devices.Add(device);
 
             if (_appSettings.IsAutoConnect && !_device.IsConnected)
+            {
                 await _device.ConnectAsync(device);
+                await _licenseService.CheckDeviceLicenseAsync(device.Name);
+            }
+                
         }
         #endregion
 

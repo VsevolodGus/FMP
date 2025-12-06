@@ -11,11 +11,5 @@ namespace Bioss.Ultrasound.Services.Logging
 
         [JsonProperty("os")]
         public string DeviceOs { get; set; }
-
-        [JsonProperty("lvl")]
-        public byte Level { get; set; }
-
-        [JsonProperty("msg")]
-        public string Message { get; set; }
     }
 }

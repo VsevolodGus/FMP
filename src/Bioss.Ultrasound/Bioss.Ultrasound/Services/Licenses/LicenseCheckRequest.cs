@@ -7,9 +7,9 @@ namespace Bioss.Ultrasound.Services.Licenses
     {
 
         [JsonProperty("lvl")]
-        public byte Level => 254;
+        public override byte Level => 254;
 
         [JsonProperty("msg")]
-        public string Message { get; set; }
+        public override string Message { get; set; }
     }
 }

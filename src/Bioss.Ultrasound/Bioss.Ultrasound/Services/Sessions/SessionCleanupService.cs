@@ -38,6 +38,7 @@ namespace Bioss.Ultrasound.Services.Sessions
                     await _serverHttpProvider.SendAsync(new SessionExitRequest
                     {
                         SessionToken = session.Token,
+                        SessionId = DateTimeOffset.Now.ToUnixTimeMilliseconds()
                     });
                     await _database.Connection.DeleteAsync(session);
                 }
