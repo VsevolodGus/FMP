@@ -79,6 +79,9 @@
     <MtouchExtraArgs>--linkskip=Xamarin.CommunityToolkit</MtouchExtraArgs>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
+    <AppExtensionDebugBundleId />
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="Extensions\BLEPermission.cs" />
     <Compile Include="Main.cs" />
