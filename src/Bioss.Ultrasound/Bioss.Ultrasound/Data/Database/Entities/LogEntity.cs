@@ -20,8 +20,8 @@ namespace Bioss.Ultrasound.Data.Database.Entities
         [MaxLength(4095)]
         public string Message { get; set; }
 
-        [Column("message")]
+        [Column("unixDateTimeMs")]
         [MaxLength(4095)]
-        public long UnixTimeMs{ get; set; }
+        public long UnixDateTimeMs{ get; set; }
     }
 }

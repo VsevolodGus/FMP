@@ -11,7 +11,7 @@ namespace Bioss.Ultrasound.Mapping
             {
                 Level = logRequest.Level,
                 Message = logRequest.Message,
-                UnixTimeMs = logRequest.SessionId,
+                UnixDateTimeMs = logRequest.SessionId,
                 SessionToken = logRequest.SessionToken,
             };
 
@@ -21,7 +21,7 @@ namespace Bioss.Ultrasound.Mapping
               Level = entity.Level,
               Message = entity.Message,
               SessionToken = entity.SessionToken,
-              SessionId = entity.UnixTimeMs,
+              SessionId = entity.UnixDateTimeMs,
 
               DeviceModel = DeviceInformation.DeviceModel,
               DeviceOs = DeviceInformation.DeviceOs,
