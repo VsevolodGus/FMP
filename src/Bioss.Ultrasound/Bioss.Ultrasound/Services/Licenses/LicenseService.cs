@@ -1,9 +1,10 @@
 ﻿using Bioss.Ultrasound.Data.Database;
-using Bioss.Ultrasound.Mapping;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Services.Server;
 using Bioss.Ultrasound.Services.Sessions;
 using System;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -13,8 +14,6 @@ namespace Bioss.Ultrasound.Services.Licenses
     {
         private readonly ILogger _logger;
         private readonly ISessionManager _sessionManager;
-
-        private readonly AppDatabase _database;
         private readonly ServerHttpProvider _serverHttpProvider;
 
         public LicenseService(
@@ -25,12 +24,10 @@ namespace Bioss.Ultrasound.Services.Licenses
         {
             _logger = logger;
             _sessionManager = sessionManager;
-
-            _database = database;
             _serverHttpProvider = serverHttpProvider;
         }
 
-        public async Task CheckDeviceLicenseAsync(string deviceName)
+        public async Task<bool> CheckDeviceLicenseAsync(string deviceName)
         {
             var sessionInfo = await _sessionManager.GetCurrentSessionAsync();
             var logData = new LicenseCheckRequest
@@ -42,12 +39,29 @@ namespace Bioss.Ultrasound.Services.Licenses
 
             try
             {
-
-                await _serverHttpProvider.SendAsync(logData);
+                var hashServer =  await _serverHttpProvider.SendAsync(logData);
+                var hashLocal = CalculateMd5($"{ServerHttpConstants.UserAgent}{logData.Message}{logData.SessionId + 1}");
+                return hashLocal.Equals(hashServer, StringComparison.OrdinalIgnoreCase);
             }
             catch
             {
-                await _database.Connection.InsertAsync(logData.ToEntity());
+                return false;
+            }
+        }
+
+        private string CalculateMd5(string input)
+        {
+            byte[] inputBytes = Encoding.UTF8.GetBytes(input);
+
+            using (MD5 md5 = MD5.Create())
+            {
+                byte[] hashBytes = md5.ComputeHash(inputBytes);
+                var sb = new StringBuilder(32);
+
+                for (int i = 0; i < hashBytes.Length; i++)
+                    sb.Append(hashBytes[i].ToString("x2"));
+
+                return sb.ToString();
             }
         }
     }

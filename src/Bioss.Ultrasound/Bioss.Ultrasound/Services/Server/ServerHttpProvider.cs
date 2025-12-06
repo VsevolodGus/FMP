@@ -12,7 +12,7 @@ namespace Bioss.Ultrasound.Services.Server
         {
             _httpClient = new HttpClient();
             _httpClient.BaseAddress = ServerHttpConstants.Uri;
-            _httpClient.DefaultRequestHeaders.Add("User-Agent", "Bipuls.v1");
+            _httpClient.DefaultRequestHeaders.Add("User-Agent", ServerHttpConstants.UserAgent);
             _httpClient.DefaultRequestHeaders.Add("Host", "dev.dxnich.ru");
         }
 
