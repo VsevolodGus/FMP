@@ -7,5 +7,6 @@ namespace Bioss.Ultrasound.Services.Sessions
         ValueTask<SessionInfo> GetCurrentSessionAsync();
 
         Task StartSessionAsync();
+        Task Exit(string token = null);
     }
 }

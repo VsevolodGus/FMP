@@ -11,19 +11,20 @@ namespace Bioss.Ultrasound.Services.Sessions
     internal class SessionCleanupService
     {
         private readonly ILogger _serverLogger;
+        private readonly ISessionManager _sessionManager;
         private readonly AppDatabase _database;
         private readonly ServerHttpProvider _serverHttpProvider;
-        
-
-        private SessionInfo _currentSession;
 
         public SessionCleanupService(
             ILogger serverLogger,
-            ServerHttpProvider serverHttpProvider,
-            AppDatabase database)
+            ISessionManager sessionManager,
+            AppDatabase database,
+            ServerHttpProvider serverHttpProvider)
         {
-            _database = database;
             _serverLogger = serverLogger;
+            _sessionManager = sessionManager;
+
+            _database = database;
             _serverHttpProvider = serverHttpProvider;
         }
 
@@ -35,12 +36,7 @@ namespace Bioss.Ultrasound.Services.Sessions
             {
                 try
                 {
-                    await _serverHttpProvider.SendAsync(new SessionExitRequest
-                    {
-                        SessionToken = session.Token,
-                        SessionId = DateTimeOffset.Now.ToUnixTimeMilliseconds()
-                    });
-                    await _database.Connection.DeleteAsync(session);
+                    await _sessionManager.Exit(session.Token);
                 }
                 catch (Exception ex)
                 {

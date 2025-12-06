@@ -9,6 +9,7 @@ using Bioss.Ultrasound.Droid.Extensions;
 using System;
 using Android.Widget;
 using AndroidX.AppCompat.App;
+using Bioss.Ultrasound.Services.Sessions;
 
 namespace Bioss.Ultrasound.Droid
 {
@@ -54,7 +55,7 @@ namespace Bioss.Ultrasound.Droid
         }
 
         private DateTime _lastPress;
-        public override void OnBackPressed()
+        public override async void OnBackPressed()
         {
             //  двойной клик для закрытия приложения
             if (AppHelper.IsRootPage)
@@ -70,16 +71,17 @@ namespace Bioss.Ultrasound.Droid
                 }
             }
 
+
+            try
+            {
+                var sessionManager = DependencyService.Resolve<ISessionManager>();
+                await sessionManager.Exit();
+            }
+            catch
+            {
+                System.Diagnostics.Debug.WriteLine("Ошибка при закрытии сессии");
+            }
             Rg.Plugins.Popup.Popup.SendBackPressed(base.OnBackPressed);
-        }
-
-        protected override async void OnDestroy()
-        {
-            // TODO вызвать закрытие сессии
-            System.Diagnostics.Debug.WriteLine("MainActivity уничтожается.");
-            
-
-            base.OnDestroy();
         }
     }
 

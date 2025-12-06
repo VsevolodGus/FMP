@@ -1,5 +1,6 @@
 ﻿using Bioss.Ultrasound.DependencyExtensions;
 using Bioss.Ultrasound.iOS.Extensions;
+using Bioss.Ultrasound.Services.Sessions;
 using Foundation;
 using UIKit;
 using Xamarin.Forms;
@@ -32,10 +33,17 @@ namespace Bioss.Ultrasound.iOS
 
             NSNotificationCenter.DefaultCenter.AddObserver(
                 UIApplication.WillTerminateNotification,
-                notification => 
+                async notification => 
                 {
-                    // TODO вызывать через абстракции закрытие сессий
-                    System.Diagnostics.Debug.WriteLine("iOS приложение завершается.");
+                    try
+                    {
+                        var sessionManager = DependencyService.Resolve<ISessionManager>();
+                        await sessionManager.Exit();
+                    }
+                    catch
+                    {
+                        System.Diagnostics.Debug.WriteLine("Ошибка при закрытии сессии");
+                    }
                 });
 
 

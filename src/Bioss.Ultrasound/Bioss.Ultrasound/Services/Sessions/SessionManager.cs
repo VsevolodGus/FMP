@@ -53,5 +53,23 @@ namespace Bioss.Ultrasound.Services.Sessions
                 // TODO что-то надо делать в случаях если 1-ый запрос к серверу не прошел
             }
         }
+
+        public async Task Exit(string token = null)
+        {
+            try
+            {
+                await _serverHttpProvider.SendAsync(new SessionExitRequest
+                {
+                    SessionToken = token ?? _currentSession.Token,
+                    SessionId = DateTimeOffset.Now.ToUnixTimeMilliseconds()
+                });
+
+                await _database.Connection.DeleteAsync(_currentSession.ToEntity());
+            }
+            catch
+            {
+                throw;
+            }
+        }
     }
 }
