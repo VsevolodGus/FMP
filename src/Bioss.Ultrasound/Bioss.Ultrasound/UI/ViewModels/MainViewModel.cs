@@ -277,7 +277,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             //await _devicesScaner.StopAsync();
 
 
-            var isLicense = await _licenseService.CheckDeviceLicenseAsync(SelectedDevice.Name)
+            var isLicense = await _licenseService.CheckDeviceLicenseAsync(SelectedDevice.Name);
             if (!isLicense)
                 return;
 
