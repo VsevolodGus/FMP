@@ -50,7 +50,7 @@ namespace Bioss.Ultrasound.Services.Sessions
             }
             catch
             {
-                // TODO что-то надо делать в случаях если 1-ый запрос к серверу не прошел
+                throw;
             }
         }
 
