@@ -4,6 +4,7 @@ using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Services.Server;
 using Bioss.Ultrasound.Services.Sessions;
 using System;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Bioss.Ultrasound.Services.Licenses
@@ -36,7 +37,7 @@ namespace Bioss.Ultrasound.Services.Licenses
             {
                 SessionToken = sessionInfo.Token,
                 SessionId = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
-                Message = deviceName
+                Message = Regex.Replace(deviceName, @"[^a-zA-Z0-9]", string.Empty).ToLower()
             };
 
             try
