@@ -1,6 +1,6 @@
 ﻿using Autofac;
-using Bioss.Ultrasound.Ble;
 using Bioss.Ultrasound.Data.Database;
+using Bioss.Ultrasound.DependencyExtensions;
 using Bioss.Ultrasound.DI;
 using Bioss.Ultrasound.Services;
 using Bioss.Ultrasound.Services.Logging;
@@ -9,6 +9,7 @@ using Bioss.Ultrasound.Services.Sessions;
 using Bioss.Ultrasound.UI.Pages;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 
@@ -35,9 +36,14 @@ namespace Bioss.Ultrasound
                 Injector.RunWithMappedTypes(new Dictionary<Type, Type>());
             }
 
+
             if (HasNetwork)
             {
-                MainPage = new StartupPage();
+                if (DeviceInfo.Platform == DevicePlatform.Android 
+                    && DeviceInfo.Version.Major < 12)
+                    MainPage = new StartupPage();
+                else
+                    MainPage = new MainTabbedPage();
             }
             else
             {
@@ -53,9 +59,12 @@ namespace Bioss.Ultrasound
 
         protected override async void OnStart()
         {
+            if (DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 12)
+                await CheckPermissionsAsync();
+
             if (!HasNetwork)
                 return;
-            
+
             // TODO похорошему это вызывать в конструкторе
             // но т.к. в синхронном режиме это работает долго, то сделал здесь
             // иначе белый экран в начале долго грузит
@@ -65,9 +74,6 @@ namespace Bioss.Ultrasound
             await _sessionService.StartSessionAsync();        
             await _unsentLogDispatcher.SendAllUnsentAsync();
             await _sessionCleanup.RemoveOldSessionsAsync();
-
-            var devicesScaner = Injector.Container.Resolve<DevicesScaner>();
-            devicesScaner.Start();
 
             // initialize hidden services
             var autoresetToco = Injector.Container.Resolve<AutoResetTocoService>();
@@ -87,6 +93,19 @@ namespace Bioss.Ultrasound
             var access = e.NetworkAccess;
             if (access == NetworkAccess.Internet)   
                 await _unsentLogDispatcher.SendAllUnsentAsync();
+        }
+
+        private async Task<PermissionStatus> CheckPermissionsAsync()
+        {
+            var ble = DependencyService.Get<IPermission>();
+            var status = await ble.CheckStatusAsync();
+            if (status != PermissionStatus.Granted)
+            {
+                status = await ble.RequestAsync();
+                //_logger.Log("Выдали устройству права");
+            }
+
+            return status;
         }
     }
 }

@@ -134,6 +134,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             });
 
             _systemVolume.VolumeChanged += (a, e) => SoundLevel = e;
+            _devicesScaner.Start();
         }
 
         #region Поля для UI

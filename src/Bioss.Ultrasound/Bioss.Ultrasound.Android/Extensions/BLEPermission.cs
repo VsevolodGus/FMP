@@ -20,8 +20,8 @@ namespace Bioss.Ultrasound.Droid.Extensions
                 if (DeviceInfo.Version.Major >= 12)
                 {
                     // Для Android 12 и выше
-                    permissions.Add((Manifest.Permission.BluetoothScan, false));
-                    permissions.Add((Manifest.Permission.BluetoothConnect, false));
+                    permissions.Add((Manifest.Permission.BluetoothScan, true));
+                    permissions.Add((Manifest.Permission.BluetoothConnect, true));
                 }
                 else
                 {
