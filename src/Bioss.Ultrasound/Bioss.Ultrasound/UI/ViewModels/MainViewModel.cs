@@ -389,6 +389,13 @@ namespace Bioss.Ultrasound.UI.ViewModels
             IsConnected = isConnected;
             Devices.Clear();
 
+            if(isConnected)
+                await _devicesScaner.StopAsync();
+            else 
+                _devicesScaner.Start();
+
+
+
             if (IsRecording && !isConnected)
             {
                 //  TODO: нужно сделать алгоритм реконнекта
