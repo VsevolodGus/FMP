@@ -15,15 +15,23 @@ using Table = MigraDocCore.DocumentObjectModel.Tables.Table;
 
 namespace Bioss.Ultrasound.Services
 {
+    // TODO бардак, аккуратнее бы написать
     public class ReportPdfGenerator : IPdfGenerator
     {
-        private const string Style = "MyTableStyle2";
+        private const string Style = "MyTableStyle";
         private const string FloatFormat = "0.00";
 
         private readonly ILogger _logger;
         private readonly CatAnaService _catAnaService;
         private readonly InfoSettingsService _infoService;
-        
+
+        private readonly static XFont BoxTimeFont = new XFont(PdfOrderConstants.FontName, PdfOrderConstants.HeaderFontSize);
+        private static XStringFormat BoxTimeFormat = new XStringFormat
+        {
+            Alignment = XStringAlignment.Center,
+            LineAlignment = XLineAlignment.Center
+        };
+
         public ReportPdfGenerator(
             ILogger logger,
             CatAnaService catAnaService,
@@ -112,11 +120,7 @@ namespace Bioss.Ultrasound.Services
             }
         }
 
-
-        public void DrawPages()
-        {
-
-        }
+        
         private void DrawBoxWithTime(XGraphics graphics, string recordTime)
         {
             // Параметры рамки
@@ -135,20 +139,8 @@ namespace Bioss.Ultrasound.Services
 
             // Рисуем прямоугольник
             graphics.DrawRectangle(XPens.Black, rect);
-
-            // Добавляем текст по центру
-            var font = new XFont(PdfOrderConstants.FontName,
-                                PdfOrderConstants.HeaderFontSize);
-
-            var format = new XStringFormat
-            {
-                Alignment = XStringAlignment.Center,
-                LineAlignment = XLineAlignment.Center
-            };
-
-            graphics.DrawString(recordTime, font, XBrushes.Black, rect, format);
+            graphics.DrawString(recordTime, BoxTimeFont, XBrushes.Black, rect, BoxTimeFormat);
         }
-
        
 
         #region Построение таблицы
@@ -160,12 +152,12 @@ namespace Bioss.Ultrasound.Services
 
 
             #region Общие настройки таблицы
-            var tableStyle = document.Styles.AddStyle("MyTableStyle", StyleNames.Normal);
+            var tableStyle = document.Styles.AddStyle(Style, StyleNames.Normal);
             tableStyle.Font.Size = PdfOrderConstants.DefaultFontSize;
             table.Format.Font.Name = PdfOrderConstants.FontName;
             table.Borders.Color = Colors.Black;
 
-            table.Style = "MyTableStyle";
+            table.Style = Style;
             table.Borders.Visible = true;
             table.Borders.Width = 0.75;
             table.Rows.LeftIndent = 5;
@@ -382,13 +374,6 @@ namespace Bioss.Ultrasound.Services
         #endregion
         #endregion
 
-
-        private void RenderObject(Document document, XGraphics graphics, Table table, uint xPosition, uint yPostion)
-        {
-            var docRenderer = new DocumentRenderer(document);
-            docRenderer.PrepareDocument();
-            docRenderer.RenderObject(graphics, XUnit.FromMillimeter(xPosition), XUnit.FromMillimeter(yPostion), PdfOrderConstants.WidthA4, table);
-        }
         private string SettingsValueToPdf(string value)
         {
             return string.IsNullOrWhiteSpace(value)
