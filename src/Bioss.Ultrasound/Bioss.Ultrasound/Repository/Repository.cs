@@ -22,9 +22,29 @@ namespace Bioss.Ultrasound.Repository
 
         public event EventHandler<long> NewItem;
         public event EventHandler<long> ItemDelated;
-
+        private static readonly Record _mockRecord = new Record()
+        {
+            Id = 0,
+            StartTime = DateTime.Now,
+            StopTime = DateTime.Now.AddMinutes(40),
+            DeviceSerialNumber = "mockSerialNumber",
+            Biometric = new Biometric()
+            {
+                Comment = "asddsdas",
+                Sugar = 5,
+                Diastolic = 90,
+                Pulse = 60,
+                Systolic = 120,
+                Temperature = 36,
+                Id = 0,
+                RecordId = 0
+            }
+        };
         public async Task<Record> Get(long id)
         {
+            if(id == 0)
+                return _mockRecord;
+
             var record = await _database.RecordsTable.FirstOrDefaultAsync(a => a.Id == id);
             await _database.Connection.GetChildrenAsync(record);
             return record.ToRecord();
@@ -33,8 +53,10 @@ namespace Bioss.Ultrasound.Repository
         public async Task<IEnumerable<Record>> RecordsAsync()
         {
             var entities = await _database.Connection.GetAllWithChildrenAsync<RecordEntity>();
-            return entities.Select(a => a.ToRecord())
-                .OrderByDescending(a => a.StartTime);
+            var records = entities.Select(a => a.ToRecord()).ToList();
+            records.Add(_mockRecord);
+
+            return records.OrderByDescending(a => a.StartTime);
         }
 
         public async Task InsertAsync(Record record)

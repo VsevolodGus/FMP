@@ -489,8 +489,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
             if (_device is not null && _device.IsConnected)
                 return;
 
-            //if (device.Name == null || !DevicePrefixesFilter.Any(s => device.Name.StartsWith(s, StringComparison.CurrentCultureIgnoreCase)))
-            //    return;
+            if (device.Name == null || !DevicePrefixesFilter.Any(s => device.Name.StartsWith(s, StringComparison.CurrentCultureIgnoreCase)))
+                return;
 
             if (Devices.Any(a => a.Name == device.Name))
                 return;

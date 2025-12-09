@@ -1,5 +1,9 @@
-﻿using Bioss.Ultrasound.Domain.Constants;
+﻿using Bioss.Ultrasound.Data.Database.Entities.Enums;
+using Bioss.Ultrasound.Domain.Constants;
 using Bioss.Ultrasound.Domain.Models;
+using Bioss.Ultrasound.Tools;
+using System;
+using System.Linq;
 using static CatAna;
 using static CatAna.AnalysisResultUser;
 
@@ -20,6 +24,13 @@ namespace Bioss.Ultrasound.Services
             mphMin = CardiograhyConstants.MinMovementFrequency,
             periodDependent = true
         };
+
+        public CardiotocographyInfo CargiographAnalayzeWithUserSettings(DateTime pergnancyDate, Record record)
+        {
+            var floatRate = record.Fhrs.Select(c => (float)c.Fhr).ToArray();
+            var movement = record.Events.Select(c => c.Event == Events.FetalMovement).ToArray();
+            return CargiographAnalayzeWithUserSettings(pergnancyDate.CalculatePregnantTime().weeks, floatRate, movement);
+        }
 
         public CardiotocographyInfo CargiographAnalayzeWithUserSettings(int pergnancyWeek, float[] heartRate, bool[] movement)
         {

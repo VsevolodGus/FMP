@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Linq;
-using Bioss.Ultrasound.Data.Database.Entities.Enums;
 using Bioss.Ultrasound.Domain.Models;
 using Bioss.Ultrasound.Domain.Plotting;
 using Bioss.Ultrasound.Resources.Localization;
@@ -70,10 +68,6 @@ namespace Bioss.Ultrasound.Services
                             ? $"{_infoService.Patient ?? "-"}{age}"
                             : AppStrings.PDF_NotSpecified;
 
-            var researchTime = record.StartTime;
-            var serialNumber = record.DeviceSerialNumber ?? string.Empty;
-            var fetalsCount = record.Events.Count(a => a.Event == Events.FetalMovement);
-
             //  сколько секунд отображать на одной странице
             var oxyHelper = new OxyPdfHelper();
             var minutesCountInPage = ReportExtensions.CalculateMinuteInPage(oxyHelper.ChartLength.Centimeter, _infoService.PdfRecordingSpeed);
@@ -84,14 +78,17 @@ namespace Bioss.Ultrasound.Services
             plottingHelper.Scale = minutesCountInPage * Constants.CountMinuteInHours;
             var pregnancyDate = _infoService.PregnancyStart ?? DateTools.GetDefaultPregnancyDate();
 
-            var floatRate = record.Fhrs.Select(c => (float)c.Fhr).ToArray();
-            var movement = record.Events.Select(c => c.Event == Events.FetalMovement).ToArray();
-            var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(pregnancyDate.CalculatePregnantTime().weeks, floatRate, movement);
+            var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(pregnancyDate, record);
+            var comment = cardiografy.IsRoodDawsonCriteriaValid()
+              ? AppStrings.PDF_DawsonRedmanCriteriaMet
+              : string.Format(AppStrings.PDF_DawsonRedmanCriteriaNoMet, cardiografy.CountRoodDawsonCriteriaValid());
             for (var i = 0; i < pages; ++i)
             {
                 var page = document.AddPage();
                 page.Orientation = PdfSharpCore.PageOrientation.Landscape;
                 var graphics = XGraphics.FromPdfPage(page);
+                graphics.MUH = PdfFontEncoding.Unicode;
+
 
                 var model = oxyHelper.GetPlotModel(record, plottingHelper);
                 var time = i * minutesCountInPage;
@@ -100,17 +97,19 @@ namespace Bioss.Ultrasound.Services
 
                 oxyHelper.DrawChartTitles(graphics, page, _infoService.PdfRecordingSpeed);
 
-                graphics.DrawHeader(page, hospital, researchTime, patient, doctor, _infoService.PregnancyStart, pregnancyDate);
+                graphics.DrawHeader(page, hospital, record.StartTime, patient, doctor, _infoService.PregnancyStart, pregnancyDate);
                 graphics.DrawPageNumbers(page, i + 1, pages);
-                graphics.DrawDeviceSerialNumber(page, serialNumber);
+                graphics.DrawDeviceSerialNumber(page, record.DeviceSerialNumber ?? string.Empty);
 
+                
                 DrawDataWithMigradocNew(graphics, record, cardiografy, pregnancyDate);
-                DrawComment(graphics, cardiografy);
-                DrawBoxWithTime(graphics);
+                DrawBoxWithTime(graphics, record.RecordingTime);
+                //DrawComment(graphics, cardiografy);
+                graphics.DrawString(comment, page, 210, 30, PdfOrderConstants.HeaderFontSize, 0, 1, XStringAlignment.Near, XFontStyle.Bold);
             }
         }
 
-        private void DrawBoxWithTime(XGraphics graphics)
+        private void DrawBoxWithTime(XGraphics graphics, string recordTime)
         {
             var document = new Document();
             var section = document.AddSection();
@@ -128,51 +127,9 @@ namespace Bioss.Ultrasound.Services
 
             table.AddColumn("1.5cm");
             var row = table.AddRow();
-            row[0].FillCell(DateTime.Now.ToString("HH:mm"), ParagraphAlignment.Center);
+            row[0].FillCell(recordTime, ParagraphAlignment.Center);
 
-            var docRenderer = new DocumentRenderer(document);
-            docRenderer.PrepareDocument();
-            graphics.MUH = PdfFontEncoding.Unicode;
-            docRenderer.RenderObject(graphics, XUnit.FromMillimeter(43), XUnit.FromMillimeter(80), PdfOrderConstants.WidthA4, table);
-        }
-
-        private void DrawComment(XGraphics graphics, CardiotocographyInfo cardiotocography)
-        {
-            var document = new Document();
-            var section = document.AddSection();
-
-            var table = section.AddTable();
-            //
-            var tableStyle = document.Styles.AddStyle(Style, StyleNames.Normal);
-            tableStyle.Font.Size = PdfOrderConstants.HeaderFontSize;
-            table.Format.Font.Name = PdfOrderConstants.FontName;
-            table.Borders.Top.Clear();
-            table.Borders.Left.Clear();
-            table.Borders.Right.Clear();
-            table.Borders.Bottom.Clear();
-            //
-            table.Style = Style;
-            table.Borders.Visible = true;
-            table.Rows.LeftIndent = 5;
-
-
-            table.AddColumn("27.7cm");
-            var t2row1 = table.AddRow();
-            var countRoodDawsonCriteriaValid = cardiotocography.CountRoodDawsonCriteriaValid();
-
-            var comment = countRoodDawsonCriteriaValid == 8
-                ? AppStrings.PDF_DawsonRedmanCriteriaMet
-                : string.Format(AppStrings.PDF_DawsonRedmanCriteriaNoMet, countRoodDawsonCriteriaValid);
-            var cell = t2row1.Cells[0].AddParagraph(comment);
-            cell.Format.Font.Bold = true;
-            //  --------------------------
-
-            var docRenderer = new DocumentRenderer(document);
-            docRenderer.PrepareDocument();
-
-            // Render the paragraph. You can render tables or shapes the same way.
-            graphics.MUH = PdfFontEncoding.Unicode;
-            docRenderer.RenderObject(graphics, XUnit.FromMillimeter(10), XUnit.FromMillimeter(70), PdfOrderConstants.WidthA4, table);
+            RenderObject(document, graphics, table, 43, 80);
         }
 
         #region Построение таблицы
@@ -248,10 +205,7 @@ namespace Bioss.Ultrasound.Services
             cell08.MergeDown = 4;
             #endregion
 
-            var docRenderer = new DocumentRenderer(document);
-            docRenderer.PrepareDocument();
-            graphics.MUH = PdfFontEncoding.Unicode;
-            docRenderer.RenderObject(graphics, XUnit.FromMillimeter(10), XUnit.FromMillimeter(25), PdfOrderConstants.WidthA4, table);
+            RenderObject(document, graphics, table, 10, 25);
         }
 
         private Row BuildRow0(Table table, CardiotocographyInfo cardiotocography)
@@ -407,6 +361,14 @@ namespace Bioss.Ultrasound.Services
         }
         #endregion
 
+
+        private void RenderObject(Document document, XGraphics graphics, Table table, uint xPosition, uint yPostion, PdfFontEncoding fontEncoding = PdfFontEncoding.Unicode)
+        {
+            var docRenderer = new DocumentRenderer(document);
+            docRenderer.PrepareDocument();
+            graphics.MUH = fontEncoding;
+            docRenderer.RenderObject(graphics, XUnit.FromMillimeter(xPosition), XUnit.FromMillimeter(yPostion), PdfOrderConstants.WidthA4, table);
+        }
         private string SettingsValueToPdf(string value)
         {
             return string.IsNullOrWhiteSpace(value)

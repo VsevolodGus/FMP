@@ -17,7 +17,7 @@ namespace Bioss.Ultrasound.Services
 {
     public static class Helper
     {
-        public static void DrawString(this XGraphics gfx, string text, PdfPage page, XUnit paddingTop, XUnit paddingLeft, int fontSize, XUnit lineHeight, int lineNumber, XStringAlignment textAlignment)
+        public static void DrawString(this XGraphics gfx, string text, PdfPage page, XUnit paddingTop, XUnit paddingLeft, int fontSize, XUnit lineHeight, int lineNumber, XStringAlignment textAlignment, XFontStyle fontStyle = XFontStyle.Regular)
         {
             var heightPoints = lineHeight.Point;
             var paddingTopPoints = paddingTop.Point;
@@ -32,7 +32,7 @@ namespace Bioss.Ultrasound.Services
                 LineAlignment = XLineAlignment.Center,
                 Alignment = textAlignment
             };
-            var font = new XFont(PdfOrderConstants.FontName, fontSize);
+            var font = new XFont(PdfOrderConstants.FontName, fontSize, fontStyle);
             gfx.DrawString(text, font, XBrushes.Black, rect, format);
         }
 
