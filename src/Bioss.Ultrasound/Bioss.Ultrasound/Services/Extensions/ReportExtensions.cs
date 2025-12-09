@@ -1,6 +1,4 @@
-﻿using PdfSharpCore.Drawing;
-
-namespace Bioss.Ultrasound.Services.Extensions
+﻿namespace Bioss.Ultrasound.Services.Extensions
 {
     internal static class ReportExtensions
     {

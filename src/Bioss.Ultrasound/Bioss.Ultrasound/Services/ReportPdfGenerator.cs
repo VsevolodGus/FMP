@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using Bioss.Ultrasound.Domain.Models;
 using Bioss.Ultrasound.Domain.Plotting;
 using Bioss.Ultrasound.Resources.Localization;
@@ -84,11 +83,14 @@ namespace Bioss.Ultrasound.Services
               ? AppStrings.PDF_DawsonRedmanCriteriaMet
               : string.Format(AppStrings.PDF_DawsonRedmanCriteriaNoMet, cardiografy.CountRoodDawsonCriteriaValid());
             var (tableDocument, table) = DrawDataWithMigradocNew(record, cardiografy, pregnancyDate);
+            var tablePosition = new XPoint(XUnit.FromMillimeter(10), XUnit.FromMillimeter(25));
+            var docRenderer = new DocumentRenderer(tableDocument);
+            docRenderer.PrepareDocument();
             for (var i = 0; i < pages; ++i)
             {
                 var page = document.AddPage();
                 page.Orientation = PdfSharpCore.PageOrientation.Landscape;
-                var graphics = XGraphics.FromPdfPage(page);
+                using var graphics = XGraphics.FromPdfPage(page);
                 graphics.MUH = PdfFontEncoding.Unicode;
 
 
@@ -103,14 +105,18 @@ namespace Bioss.Ultrasound.Services
                 graphics.DrawPageNumbers(page, i + 1, pages);
                 graphics.DrawDeviceSerialNumber(page, record.DeviceSerialNumber ?? string.Empty);
 
-                RenderObject(tableDocument, graphics, table, 10, 25);
+                docRenderer.RenderObject(graphics, tablePosition.X, tablePosition.Y, PdfOrderConstants.WidthA4, table);
+
                 graphics.DrawString(comment, page, 210, 30, PdfOrderConstants.HeaderFontSize, 0, 1, XStringAlignment.Near, XFontStyle.Bold);
                 DrawBoxWithTime(graphics, record.RecordingTime);
-               
-                
             }
         }
 
+
+        public void DrawPages()
+        {
+
+        }
         private void DrawBoxWithTime(XGraphics graphics, string recordTime)
         {
             // Параметры рамки
