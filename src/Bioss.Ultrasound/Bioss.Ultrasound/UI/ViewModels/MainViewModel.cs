@@ -275,16 +275,23 @@ namespace Bioss.Ultrasound.UI.ViewModels
             if (SelectedDevice is null)
                 return;
 
-            //await _devicesScaner.StopAsync();
-
-
+            //var isLicense = await _licenseService.CheckDeviceLicenseAsync("1a2b3c4d5e6f");
             var isLicense = await _licenseService.CheckDeviceLicenseAsync(SelectedDevice.Name);
-            if (!isLicense)
-                return;
-
-            await _device.ConnectAsync(SelectedDevice);
-
+            
+            var selectedDevice = SelectedDevice;
             SelectedDevice = null;
+            if (isLicense)
+                await _device.ConnectAsync(selectedDevice);
+            else
+            {
+                _dialogs.Toast(new ToastConfig(AppStrings.AppName)
+                {
+                    Position = ToastPosition.Top,
+                    BackgroundColor = Color.DeepSkyBlue,
+                    MessageTextColor = Color.White
+                });
+            }
+
         }, allowsMultipleExecutions: false);
 
         public ICommand DisconnectCommand => new AsyncCommand(async () =>
@@ -482,8 +489,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
             if (_device is not null && _device.IsConnected)
                 return;
 
-            if (device.Name == null || !DevicePrefixesFilter.Any(s => device.Name.StartsWith(s, StringComparison.CurrentCultureIgnoreCase)))
-                return;
+            //if (device.Name == null || !DevicePrefixesFilter.Any(s => device.Name.StartsWith(s, StringComparison.CurrentCultureIgnoreCase)))
+            //    return;
 
             if (Devices.Any(a => a.Name == device.Name))
                 return;

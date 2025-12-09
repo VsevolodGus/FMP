@@ -50,7 +50,7 @@ namespace Bioss.Ultrasound.Services.Sessions
             }
             catch
             {
-                throw;
+                throw; 
             }
         }
 

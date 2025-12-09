@@ -1369,6 +1369,12 @@ namespace Bioss.Ultrasound.Resources.Localization {
             get {
                 return ResourceManager.GetString("Loading", resourceCulture);
             }
+        } 
+        
+        internal static string Main_DeviceNotLicense {
+            get {
+                return ResourceManager.GetString("Main_DeviceNotLicense", resourceCulture);
+            }
         }
     }
 }

@@ -31,8 +31,11 @@ namespace Bioss.Ultrasound.Services.Sessions
         public async Task RemoveOldSessionsAsync()
         {
             var sessionsToClose = await _database.SessionTable.ToArrayAsync();
-
-            var closeTasks = sessionsToClose.Select(async session =>
+            
+            var currentSession = await _sessionManager.GetCurrentSessionAsync();
+            var closeTasks = sessionsToClose
+                .Where(c=> c.Token != currentSession.Token)
+                .Select(async session =>
             {
                 try
                 {

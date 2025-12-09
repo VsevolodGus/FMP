@@ -71,9 +71,10 @@ namespace Bioss.Ultrasound
             // все инициализации страниц должны быть ленивыми
             await _database.ConnectAsync();
 
-            await _sessionService.StartSessionAsync();        
-            await _unsentLogDispatcher.SendAllUnsentAsync();
+            await _sessionService.StartSessionAsync();
             await _sessionCleanup.RemoveOldSessionsAsync();
+            await _unsentLogDispatcher.SendAllUnsentAsync();
+            
 
             // initialize hidden services
             var autoresetToco = Injector.Container.Resolve<AutoResetTocoService>();
