@@ -25,13 +25,6 @@ namespace Bioss.Ultrasound.Services
         private readonly CatAnaService _catAnaService;
         private readonly InfoSettingsService _infoService;
 
-        private readonly static XFont BoxTimeFont = new XFont(PdfOrderConstants.FontName, PdfOrderConstants.HeaderFontSize);
-        private static XStringFormat BoxTimeFormat = new XStringFormat
-        {
-            Alignment = XStringAlignment.Center,
-            LineAlignment = XLineAlignment.Center
-        };
-
         public ReportPdfGenerator(
             ILogger logger,
             CatAnaService catAnaService,
@@ -136,10 +129,18 @@ namespace Bioss.Ultrasound.Services
                 XUnit.FromMillimeter(widthMm),
                 XUnit.FromMillimeter(heightMm)
             );
-
+            
+            
+            var boxTimeFont = new XFont(PdfOrderConstants.FontName, PdfOrderConstants.HeaderFontSize);
+            var boxTimeFormat = new XStringFormat
+            {
+                Alignment = XStringAlignment.Center,
+                LineAlignment = XLineAlignment.Center
+            };
+            
             // Рисуем прямоугольник
             graphics.DrawRectangle(XPens.Black, rect);
-            graphics.DrawString(recordTime, BoxTimeFont, XBrushes.Black, rect, BoxTimeFormat);
+            graphics.DrawString(recordTime, boxTimeFont, XBrushes.Black, rect, boxTimeFormat);
         }
        
 
