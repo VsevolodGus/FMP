@@ -110,7 +110,7 @@ namespace Bioss.Ultrasound.Services
                 IsValidRecordingDuration = resultCtgUser.recordLenMark.IsCorrect(),
                 BasalHeartRateValid = resultCtgUser.basalRateMark.IsCorrect(),
                 DecelerationsMark = resultCtgUser.decMark.IsCorrect(),
-                IsValidSyncRhythm = resultCtgUser.decMark.IsCorrect(),
+                IsValidSyncRhythm = resultCtgUser.sinMark.IsCorrect(),
                 STVValid = resultCtgUser.stvMark.IsCorrect(),
                 MovementFrequencyValid = resultCtgUser.mphMark.IsCorrect(),
                 IsTimeDependentParameters = resultCtgUser.periodDependentMark.IsCorrect(),

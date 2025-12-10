@@ -99,7 +99,7 @@ namespace Bioss.Ultrasound.Services.Extensions
             }
 
             settings.PaddingLeft = XUnit.FromMillimeter(60);
-            var empty = PdfOrderConstants.DefultValue;    
+            var empty = PdfOrderConstants.DefaultValue;    
             settings.DrawString(PdfOrderConstants.DefaultFontSize, 0, XStringAlignment.Near, $"{AppStrings.PDF_Temperature}: {biometric.Temperature.ToStringOrEmptyString(empty)}{AppStrings.Unit_Celsius}");
             settings.DrawString(PdfOrderConstants.DefaultFontSize, 1, XStringAlignment.Near, $"{AppStrings.PDF_Pulse}: {biometric.Pulse.ToStringOrEmptyString(empty)} {AppStrings.Unit_HeartRate}");
             settings.DrawString(PdfOrderConstants.DefaultFontSize, 2, XStringAlignment.Near, $"{AppStrings.PDF_Sugar}: {biometric.Sugar.ToStringOrEmptyString(empty)} {AppStrings.Unit_BloodGlucose}");
@@ -118,7 +118,7 @@ namespace Bioss.Ultrasound.Services.Extensions
             int pageCount)
         {
             var lineHeight = XUnit.FromMillimeter(2.5);
-            var padding = XUnit.FromMillimeter(page.Height.Millimeter - 10);
+            var padding = XUnit.FromMillimeter(page.Height.Millimeter - 5);
             var paddingLeft = XUnit.FromMillimeter(10);
             gfx.DrawString(string.Format(AppStrings.PDF_FooterPageNumbers, pageNumber, pageCount), page, padding, paddingLeft, 10, lineHeight, 0, XStringAlignment.Far);
         }
@@ -126,7 +126,7 @@ namespace Bioss.Ultrasound.Services.Extensions
         public static void DrawDeviceSerialNumber(this XGraphics gfx, PdfPage page, string serialNumber)
         {
             var lineHeight = XUnit.FromMillimeter(2.5);
-            var padding = XUnit.FromMillimeter(page.Height.Millimeter - 10);
+            var padding = XUnit.FromMillimeter(page.Height.Millimeter - 5);
             var paddingLeft = XUnit.FromMillimeter(10);
             gfx.DrawString(string.Format(AppStrings.PDF_FooterSN, serialNumber), page, padding, paddingLeft, 10, lineHeight, 0, XStringAlignment.Near);
         }

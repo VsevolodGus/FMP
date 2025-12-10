@@ -142,7 +142,7 @@ namespace Bioss.Ultrasound.Services
                 LineHeight = XUnit.FromMillimeter(2.5),
                 PaddingLeft = XUnit.FromMillimeter(265),
                 PaddingRight = XUnit.FromMillimeter(17),
-                PaddingTop = XUnit.FromMillimeter(_verticalSize.CanvasLength.Millimeter + 68),
+                PaddingTop = XUnit.FromMillimeter(_verticalSize.CanvasLength.Millimeter + 83),
                 Page = page,
             };
 

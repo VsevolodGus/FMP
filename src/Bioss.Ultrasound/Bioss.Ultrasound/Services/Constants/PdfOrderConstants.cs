@@ -13,7 +13,7 @@
         public const int FontSizeGrafic = 8;
         public const int HeaderFontSize = 12;
 
-        public const string DefultValue = "-";
-        public const string DefultDoubleValue = "-(-)";
+        public const string DefaultValue = "-";
+        public const string DefaultDoubleValue = "-(-)";
     }
 }
