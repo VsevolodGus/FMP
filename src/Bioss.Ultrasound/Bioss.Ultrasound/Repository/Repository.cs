@@ -23,32 +23,31 @@ namespace Bioss.Ultrasound.Repository
         public event EventHandler<long> NewItem;
         public event EventHandler<long> ItemDelated;
 
+        // TODO удалить после тестов
         private static readonly Random random = new();
-        
+        private static DateTime _start = DateTime.Now;
         private static readonly Record _mockRecord = new Record()
         {
             Id = 0,
             StartTime = DateTime.Now,
-            StopTime = DateTime.Now.AddSeconds(1100),
-            Fhrs = Enumerable.Range(0, 1000)
+            StopTime = _start.AddSeconds(660),
+            Fhrs = Enumerable.Range(0, 600)
             .Select(c=> new FhrData() 
             {
                 Id = random.Next(),
                 RecordId = 0,
-                Time = DateTime.Now.AddSeconds(c),
+                Time = _start.AddSeconds(c),
                 Fhr = (byte)random.Next(110, 160),
                 Toco = 10
             })
             .ToList(),
-            Events = Enumerable.Range(0, 1000).Select(c=> new FhrEvent() 
+            Events = Enumerable.Range(0, 600).Select(c=> new FhrEvent() 
             { 
                 Id =random.Next(),
                 RecordId=0,
-                Time =DateTime.Now.AddSeconds(c),
-                Event = c % 3 == 1 
-                ? Data.Database.Entities.Enums.Events.FetalMovement
-                : c % 3 == 2 
-                    ? Data.Database.Entities.Enums.Events.TocoReset
+                Time = _start.AddSeconds(c),
+                Event = c % 4 == 1 
+                    ? Data.Database.Entities.Enums.Events.FetalMovement
                     : Data.Database.Entities.Enums.Events.None,
             })
             .ToList(),

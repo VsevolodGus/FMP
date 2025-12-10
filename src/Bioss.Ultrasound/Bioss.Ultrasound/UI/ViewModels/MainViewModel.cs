@@ -473,13 +473,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 || !_appSettings.IsAutoCompleteRecordByCriteria)
                 return;
 
-            var week = _infoSettingsService.PregnancyStart.HasValue
-                ? _infoSettingsService.PregnancyStart.Value.CalculatePregnantTime().weeks
-                : Constants.DefaultCountWeek;
-
-            var floatRate = _record.Fhrs.Select(c => (float)c.Fhr).ToArray();
-            var movement = _record.Events.Select(c => c.Event == Events.FetalMovement).ToArray();
-            var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(week, floatRate, movement);
+            var pregnancyDate = _infoSettingsService.PregnancyStart ?? DateTools.GetDefaultPregnancyDate();
+            var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(pregnancyDate, _record);
 
             await StopRecord(cardiografy.IsRoodDawsonCriteriaValid(), AppStrings.Dialog_CriteriaMet);
         }
