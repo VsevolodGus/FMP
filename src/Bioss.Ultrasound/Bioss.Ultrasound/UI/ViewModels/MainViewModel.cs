@@ -275,7 +275,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
             if (SelectedDevice is null)
                 return;
 
-            //var isLicense = await _licenseService.CheckDeviceLicenseAsync("1a2b3c4d5e6f");
             var isLicense = await _licenseService.CheckDeviceLicenseAsync(SelectedDevice.Name);
             
             var selectedDevice = SelectedDevice;
@@ -284,7 +283,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 await _device.ConnectAsync(selectedDevice);
             else
             {
-                _dialogs.Toast(new ToastConfig(AppStrings.AppName)
+                _dialogs.Toast(new ToastConfig(AppStrings.Main_DeviceNotLicense)
                 {
                     Position = ToastPosition.Top,
                     BackgroundColor = Color.DeepSkyBlue,

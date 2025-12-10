@@ -32,6 +32,6 @@
         public const int MinMovementFrequency = 3;
 
         public const int AbsenseSynRhythm = 2;
-        public const int MaxCountDec = 2;
+        public const int MaxCountDec = 0;
     }
 }
