@@ -20,10 +20,12 @@ namespace Bioss.Ultrasound.Services
         private readonly static UserCriterion marksUser = new UserCriterion()
         {
             recordLenMin = CardiograhyConstants.MinRecordingDuration,
+            lossPercentMax = CardiograhyConstants.MaxSignalLossPercentage,
+            
             basalRateMin = CardiograhyConstants.MinBasalHeartRate,
             basalRateMax = CardiograhyConstants.MaxBasalHeartRate,
-            lossPercentMax = CardiograhyConstants.MaxSignalLossPercentage,
-            decMax = CardiograhyConstants.MaxCountDec,
+
+            signDecMax = CardiograhyConstants.MaxCountDec, // TODO когда галочку ставить?
             sinMax = CardiograhyConstants.AbsenseSynRhythm,
             stvMin = CardiograhyConstants.MinValueSTV,
             mphMin = CardiograhyConstants.MinMovementFrequency, //Минимальное значение частоты шевелений
@@ -100,16 +102,16 @@ namespace Bioss.Ultrasound.Services
                 HighVariabilityMinutes = analysisParams.hv,
                 LowVariabilityMinutes = analysisParams.lv,
                 SyncRhythmMinutes = analysisParams.sin,
-                BeatLTV = analysisParams.ltvBpm,
                 TimeMsLTV = analysisParams.ltv,
+                BeatLTV = analysisParams.ltvBpm,
                 STV = analysisParams.stv,
                 OscillationFrequency = analysisParams.ltf,
                 MovementFrequency = analysisParams.mph,
-               
-                SignalLossValid = resultCtgUser.signDecMark.IsCorrect(),
+
                 IsValidRecordingDuration = resultCtgUser.recordLenMark.IsCorrect(),
+                SignalLossValid = resultCtgUser.lossPercentMark.IsCorrect(),
                 BasalHeartRateValid = resultCtgUser.basalRateMark.IsCorrect(),
-                DecelerationsMark = resultCtgUser.decMark.IsCorrect(),
+                DecelerationsMark = resultCtgUser.signDecMark.IsCorrect(),
                 IsValidSyncRhythm = resultCtgUser.sinMark.IsCorrect(),
                 STVValid = resultCtgUser.stvMark.IsCorrect(),
                 MovementFrequencyValid = resultCtgUser.mphMark.IsCorrect(),
