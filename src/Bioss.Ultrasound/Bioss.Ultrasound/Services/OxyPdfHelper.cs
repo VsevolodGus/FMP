@@ -124,7 +124,7 @@ namespace Bioss.Ultrasound.Services
 
             XImage image = XImage.FromFile(chartFileName);
 
-            var top = XUnit.FromMillimeter(80).Point;
+            var top = XUnit.FromMillimeter(88).Point;
             var left = XUnit.FromMillimeter(5).Point;
 
             double width = image.PixelWidth * 72 / image.HorizontalResolution;

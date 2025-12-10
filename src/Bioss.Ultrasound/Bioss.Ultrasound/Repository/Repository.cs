@@ -22,11 +22,36 @@ namespace Bioss.Ultrasound.Repository
 
         public event EventHandler<long> NewItem;
         public event EventHandler<long> ItemDelated;
+
+        private static readonly Random random = new();
+        
         private static readonly Record _mockRecord = new Record()
         {
             Id = 0,
             StartTime = DateTime.Now,
-            StopTime = DateTime.Now.AddMinutes(40),
+            StopTime = DateTime.Now.AddSeconds(1100),
+            Fhrs = Enumerable.Range(0, 1000)
+            .Select(c=> new FhrData() 
+            {
+                Id = random.Next(),
+                RecordId = 0,
+                Time = DateTime.Now.AddSeconds(c),
+                Fhr = (byte)random.Next(110, 160),
+                Toco = 10
+            })
+            .ToList(),
+            Events = Enumerable.Range(0, 1000).Select(c=> new FhrEvent() 
+            { 
+                Id =random.Next(),
+                RecordId=0,
+                Time =DateTime.Now.AddSeconds(c),
+                Event = c % 3 == 1 
+                ? Data.Database.Entities.Enums.Events.FetalMovement
+                : c % 3 == 2 
+                    ? Data.Database.Entities.Enums.Events.TocoReset
+                    : Data.Database.Entities.Enums.Events.None,
+            })
+            .ToList(),
             DeviceSerialNumber = "mockSerialNumber",
             Biometric = new Biometric()
             {
