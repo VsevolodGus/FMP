@@ -549,7 +549,7 @@
     <value>При выполнении Критериев Доуса-Редмана</value>
   </data>
   <data name="Dialog_CriteriaMet" xml:space="preserve">
-    <value>Критерии  выполнены, завершить запись?</value>
+    <value>Запись можно остановить, критерии Доуса-Редмана соблюдены</value>
   </data>
   <data name="NetworkUnvailable_MainText" xml:space="preserve">
     <value>Нет подключения к интернету</value>
@@ -562,5 +562,8 @@
   </data>
   <data name="Main_DeviceNotLicense" xml:space="preserve">
     <value>Устройство не лицензировано</value>
+  </data>
+  <data name="Dialog_PregnancyStartNotCorrect" xml:space="preserve">
+    <value>Допустимый диапазон срока беременности: 24-40 недель.</value>
   </data>
 </root>

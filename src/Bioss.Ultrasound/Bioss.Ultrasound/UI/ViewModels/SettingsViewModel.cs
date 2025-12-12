@@ -265,7 +265,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     var weeks = value.Value.CalculatePregnantTime().weeks;
                     if (!(weeks >= Constants.MinPregnantWeeks && weeks <= Constants.MaxPregnantWeeks))
                     {
-                        _dialogs.Toast(new ToastConfig("Срок беременности должен быть 24-40 недель")
+                        _dialogs.Toast(new ToastConfig(AppStrings.Dialog_PregnancyStartNotCorrect)
                         {
                             Position = ToastPosition.Top,
                             BackgroundColor = Color.DeepSkyBlue,

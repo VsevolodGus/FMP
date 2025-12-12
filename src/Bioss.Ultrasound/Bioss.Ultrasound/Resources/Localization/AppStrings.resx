@@ -576,7 +576,7 @@
     <comment>When meeting the Dawes-Redman Criteria</comment>
   </data>
   <data name="Dialog_CriteriaMet" xml:space="preserve">
-    <value>Are the criteria met, finish recording?</value>
+    <value>The recording can be stopped, the Dawes-Redman criteria are met.</value>
     <comment>Критерии  выполнены, завершить запись?</comment>
   </data>
   <data name="NetworkUnvailable_MainText" xml:space="preserve">
@@ -590,5 +590,8 @@
   </data>
   <data name="Main_DeviceNotLicense" xml:space="preserve">
     <value>The device is not licensed</value>
+  </data>
+  <data name="Dialog_PregnancyStartNotCorrect" xml:space="preserve">
+    <value>The acceptable range of gestation period is 24-40 weeks.</value>
   </data>
 </root>

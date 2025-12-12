@@ -1376,5 +1376,11 @@ namespace Bioss.Ultrasound.Resources.Localization {
                 return ResourceManager.GetString("Main_DeviceNotLicense", resourceCulture);
             }
         }
+        
+        internal static string Dialog_PregnancyStartNotCorrect {
+            get {
+                return ResourceManager.GetString("Dialog_PregnancyStartNotCorrect", resourceCulture);
+            }
+        }
     }
 }
