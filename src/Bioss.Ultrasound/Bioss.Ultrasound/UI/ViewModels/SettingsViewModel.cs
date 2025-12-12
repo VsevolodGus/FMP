@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
+using Acr.UserDialogs;
 using Bioss.Ultrasound.DependencyExtensions;
 using Bioss.Ultrasound.Domain.UI;
 using Bioss.Ultrasound.Resources.Localization;
@@ -21,6 +22,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly ISystemVolume _systemVolume;
         private readonly AudioService _audioService;
         private readonly INavigation _navigation;
+        private readonly IUserDialogs _dialogs;
 
 
         private PickerItem<int> _autoRecordTime;
@@ -33,7 +35,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
             AutoResetTocoService autoResetTocoService, 
             ISystemVolume systemVolume, 
             AudioService audioService,
-            INavigation navigation
+            INavigation navigation,
+            IUserDialogs dialogs
             )
         {
             _appSettings = appSettings;
@@ -42,6 +45,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _systemVolume = systemVolume;
             _audioService = audioService;
             _navigation = navigation;
+            _dialogs = dialogs;
 
             AutoRecordTime = AutoRecordTimes.FirstOrDefault(a => a.Value == _appSettings.RecordTimeMinutes);
             ChartXScale = ChartXScales.FirstOrDefault(a => a.Value == _appSettings.ChartXScaleSeconds);
@@ -256,6 +260,21 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             set
             {
+                if (value.HasValue)
+                {
+                    var weeks = value.Value.CalculatePregnantTime().weeks;
+                    if (!(weeks >= Constants.MinPregnantWeeks && weeks <= Constants.MaxPregnantWeeks))
+                    {
+                        _dialogs.Toast(new ToastConfig("Срок беременности должен быть 24-40 недель")
+                        {
+                            Position = ToastPosition.Top,
+                            BackgroundColor = Color.DeepSkyBlue,
+                            MessageTextColor = Color.White
+                        });
+                        return;
+                    }
+                }
+
                 _infoSettingsService.PregnancyStart = value;
                 OnPropertyChanged(nameof(PregnancyTime));
             }
