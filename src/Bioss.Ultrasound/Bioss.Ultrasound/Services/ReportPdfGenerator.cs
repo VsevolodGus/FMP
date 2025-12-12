@@ -111,12 +111,12 @@ namespace Bioss.Ultrasound.Services
                 docRenderer.RenderObject(graphics, tablePosition.X, tablePosition.Y, PdfOrderConstants.WidthA4, table);
 
                 graphics.DrawString(comment, page, 210, 30, PdfOrderConstants.HeaderFontSize, 0, 1, XStringAlignment.Near, XFontStyle.Bold);
-                DrawBoxWithTime(graphics, record.RecordingTime);
+                DrawBoxWithTime(graphics, record.StartTime);
             }
         }
 
         
-        private void DrawBoxWithTime(XGraphics graphics, string recordTime)
+        private void DrawBoxWithTime(XGraphics graphics, DateTime date)
         {
             // Параметры рамки
             const float xMm = 43f;
@@ -142,7 +142,7 @@ namespace Bioss.Ultrasound.Services
             
             // Рисуем прямоугольник
             graphics.DrawRectangle(XPens.Black, rect);
-            graphics.DrawString(recordTime, boxTimeFont, XBrushes.Black, rect, boxTimeFormat);
+            graphics.DrawString(date.ToString("hh:mm"), boxTimeFont, XBrushes.Black, rect, boxTimeFormat);
         }
        
 

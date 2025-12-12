@@ -29,8 +29,7 @@ namespace Bioss.Ultrasound.Tools
 
         public static DateTime GetDefaultPregnancyDate()
         {
-            return DateTime.Now
-                .AddDays(-Constants.DefaultCountWeek * Constants.DayInWeek);
+            return DateTime.Now.AddDays(-Constants.DefaultCountDays);
         }
     }
 }
