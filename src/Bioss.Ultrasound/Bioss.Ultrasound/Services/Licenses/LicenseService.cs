@@ -49,7 +49,7 @@ namespace Bioss.Ultrasound.Services.Licenses
             }
             catch
             {
-                if(!NetworkState.HasNetwork)
+                if(NetworkState.HasNetwork)
                 {
                     await _database.Connection.InsertAsync(requestData.ToEntity());
                     return true;
