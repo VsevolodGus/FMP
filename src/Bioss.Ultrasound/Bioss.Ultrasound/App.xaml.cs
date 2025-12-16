@@ -2,6 +2,7 @@
 using Bioss.Ultrasound.Data.Database;
 using Bioss.Ultrasound.DependencyExtensions;
 using Bioss.Ultrasound.DI;
+using Bioss.Ultrasound.Network;
 using Bioss.Ultrasound.Services;
 using Bioss.Ultrasound.Services.Logging;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
@@ -23,7 +24,11 @@ namespace Bioss.Ultrasound
         private readonly IUnsentLogDispatcher _unsentLogDispatcher;
         private readonly SessionCleanupService _sessionCleanup;
         public static Injector Injector { get; private set; }
-        private static bool HasNetwork => Connectivity.NetworkAccess == NetworkAccess.Internet;
+
+        /// <summary>
+        /// TODO отсюда выпилить, костыль 
+        /// </summary>
+        private bool IsLastAndroidVersion => DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 12;
         public App()
         {
             InitializeComponent();
@@ -37,18 +42,15 @@ namespace Bioss.Ultrasound
             }
 
 
-            if (HasNetwork)
+            if (NetworkState.HasNetwork)
             {
-                if (DeviceInfo.Platform == DevicePlatform.Android 
-                    && DeviceInfo.Version.Major < 12)
-                    MainPage = new StartupPage();
-                else
+                if (IsLastAndroidVersion)
                     MainPage = new MainTabbedPage();
+                else
+                    MainPage = new StartupPage(); 
             }
             else
-            {
                 MainPage = new NetworkUnvailablePage();
-            }
 
             _database = Injector.Container.Resolve<AppDatabase>();
             _serverLogger = Injector.Container.Resolve<ILogger>();
@@ -59,10 +61,10 @@ namespace Bioss.Ultrasound
 
         protected override async void OnStart()
         {
-            if (DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 12)
+            if (IsLastAndroidVersion)
                 await CheckPermissionsAsync();
 
-            if (!HasNetwork)
+            if (!NetworkState.HasNetwork)
                 return;
 
             // TODO похорошему это вызывать в конструкторе
@@ -92,19 +94,20 @@ namespace Bioss.Ultrasound
         private async void Connectivity_ConnectivityChanged(object sender, ConnectivityChangedEventArgs e)
         {
             var access = e.NetworkAccess;
-            if (access == NetworkAccess.Internet)   
+            if (NetworkState.AccessNetwork(access))   
                 await _unsentLogDispatcher.SendAllUnsentAsync();
         }
 
+        /// <summary>
+        /// TODO тоже костыль, здесь не должно быть
+        /// </summary>
+        /// <returns></returns>
         private async Task<PermissionStatus> CheckPermissionsAsync()
         {
             var ble = DependencyService.Get<IPermission>();
             var status = await ble.CheckStatusAsync();
             if (status != PermissionStatus.Granted)
-            {
                 status = await ble.RequestAsync();
-                //_logger.Log("Выдали устройству права");
-            }
 
             return status;
         }

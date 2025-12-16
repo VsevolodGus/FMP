@@ -34,7 +34,6 @@ namespace Bioss.Ultrasound.Services
 
         public CardiotocographyInfo CargiographAnalayzeWithUserSettings(DateTime pergnancyDate, Record record)
         {
-
             var heartRateResult = ConvertToArray<FhrData, float>(record.RecordingTimeSpan,
                 record.StartTime,
                 record.Fhrs,
@@ -61,6 +60,7 @@ namespace Bioss.Ultrasound.Services
         /// <param name="items">элементы которые конвертируются для рассчета</param>
         /// <param name="getTime">метод получения времени из TObject</param>
         /// <param name="getValue">метод получения значения из TObject</param>
+        /// <param name="isSampler">нужно ли заполнять пустоты между значениями или нет. Заполненяет пустоты от предыдущего до текущего элемента, значением текущего элемента</param>
         /// <returns></returns>
         private TResultItem[] ConvertToArray<TObject, TResultItem>(TimeSpan duration,
             DateTime startDate,
