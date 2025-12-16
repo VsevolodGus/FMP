@@ -25,7 +25,7 @@ namespace Bioss.Ultrasound.Services
             basalRateMin = CardiograhyConstants.MinBasalHeartRate,
             basalRateMax = CardiograhyConstants.MaxBasalHeartRate,
 
-            signDecMax = CardiograhyConstants.MaxCountDec, // TODO когда галочку ставить?
+            signDecMax = CardiograhyConstants.MaxCountDec,
             sinMax = CardiograhyConstants.AbsenseSynRhythm,
             stvMin = CardiograhyConstants.MinValueSTV,
             mphMin = CardiograhyConstants.MinMovementFrequency, //Минимальное значение частоты шевелений
@@ -34,11 +34,13 @@ namespace Bioss.Ultrasound.Services
 
         public CardiotocographyInfo CargiographAnalayzeWithUserSettings(DateTime pergnancyDate, Record record)
         {
-            var heartRateResult = ConvertToArray<FhrData, float>(record.RecordingTimeSpan, 
-                record.StartTime, 
-                record.Fhrs, 
-                obj => obj.Time, 
-                obj => obj.Fhr);
+
+            var heartRateResult = ConvertToArray<FhrData, float>(record.RecordingTimeSpan,
+                record.StartTime,
+                record.Fhrs,
+                obj => obj.Time,
+                obj => obj.Fhr,
+                true);
 
             var movementsResult = ConvertToArray(record.RecordingTimeSpan,
                 record.StartTime,
@@ -64,12 +66,13 @@ namespace Bioss.Ultrasound.Services
             DateTime startDate,
             IEnumerable<TObject> items,
             Func<TObject, DateTime> getTime,
-            Func<TObject, TResultItem> getValue)
+            Func<TObject, TResultItem> getValue,
+            bool isSampler = false)
         {
             var totalSeconds = duration.TotalSeconds;
             var arrayLength = (int)Math.Ceiling(totalSeconds * CountItemInSecond);
             var result = new TResultItem[arrayLength];
-
+            var lastIndex = 0;
             foreach (var item in items)
             {
                 TimeSpan offset = getTime(item) - startDate;
@@ -81,7 +84,16 @@ namespace Bioss.Ultrasound.Services
                 else if (index < 0 || index >= arrayLength)
                     continue;
 
-                result[index] = getValue(item);
+                var currentValue = getValue(item);
+                result[index] = currentValue;
+                
+
+                if (!isSampler)
+                    continue;
+
+                for (var i = lastIndex + 1; i < index; i++)
+                    result[i] = currentValue;
+                lastIndex = index;
             }
 
             return result;
@@ -124,7 +136,5 @@ namespace Bioss.Ultrasound.Services
     {
         public static bool IsCorrect(this ParamMark paramMark)
             => paramMark == ParamMark.ok;
-        
     }
-
 }
