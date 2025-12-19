@@ -89,6 +89,7 @@ namespace Bioss.Ultrasound
         {
             var ex = e.ExceptionObject as Exception;
             await _serverLogger.LogAsync(ex.Message, ServerLogLevel.FatalTerminationError);
+            await _sessionService.Exit();
         }
 
         private async void Connectivity_ConnectivityChanged(object sender, ConnectivityChangedEventArgs e)

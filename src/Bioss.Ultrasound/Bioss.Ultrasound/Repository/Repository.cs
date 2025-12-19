@@ -33,8 +33,8 @@ namespace Bioss.Ultrasound.Repository
         public async Task<IEnumerable<Record>> RecordsAsync()
         {
             var entities = await _database.Connection.GetAllWithChildrenAsync<RecordEntity>();
-            var records = entities.Select(a => a.ToRecord()).ToList();
-            return records.OrderByDescending(a => a.StartTime);
+            var records = entities.Select(a => a.ToRecord()).OrderByDescending(a => a.StartTime);
+            return records;
         }
 
         public async Task InsertAsync(Record record)

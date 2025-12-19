@@ -54,13 +54,16 @@ namespace Bioss.Ultrasound.Services.Sessions
             }
         }
 
-        public async Task Exit(string token = null)
+        public async ValueTask Exit(string token = null)
         {
             try
             {
+                var closeToken = token ?? _currentSession?.Token;
+                if (string.IsNullOrEmpty(closeToken))
+                    return;
                 await _serverHttpProvider.SendAsync(new SessionExitRequest
                 {
-                    SessionToken = token ?? _currentSession.Token,
+                    SessionToken = closeToken,
                     SessionId = DateTimeOffset.Now.ToUnixTimeMilliseconds()
                 });
 
