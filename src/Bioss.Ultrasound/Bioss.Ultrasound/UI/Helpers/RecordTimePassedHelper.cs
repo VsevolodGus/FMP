@@ -15,6 +15,8 @@ namespace Bioss.Ultrasound.UI.Helpers
             StartTime = startTime;
         }
 
+        public TimeSpan CurrentRecordTime => DateTime.Now - StartTime;
+
         public bool IsTimeEnd
         {
             get

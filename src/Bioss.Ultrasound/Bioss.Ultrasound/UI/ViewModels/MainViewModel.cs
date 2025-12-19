@@ -33,12 +33,12 @@ namespace Bioss.Ultrasound.UI.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private static readonly IReadOnlyCollection<string> DevicePrefixesFilter = new List<string> 
-        { 
+        private static readonly IReadOnlyCollection<string> DevicePrefixesFilter = new List<string>
+        {
             "LCeFM",
             "Doctis CTG",
-            "FMP", 
-            "DOCTIS-CTG" 
+            "FMP",
+            "DOCTIS-CTG"
         };
 
         private readonly PlottingTimeSpanHelper _plottingTimeSpanHelper = new PlottingTimeSpanHelper();
@@ -85,14 +85,14 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
         private bool _isBell;
 
-        public MainViewModel(INavigation navigation, 
-            IUserDialogs dialogs, 
-            DevicesScaner devicesScaner, 
+        public MainViewModel(INavigation navigation,
+            IUserDialogs dialogs,
+            DevicesScaner devicesScaner,
             IRepository repository,
-            AppSettingsService appSettings, 
-            IMyDevice device, 
-            IPcmPlayer pcmPlayer, 
-            AudioService audioService, 
+            AppSettingsService appSettings,
+            IMyDevice device,
+            IPcmPlayer pcmPlayer,
+            AudioService audioService,
             ISystemVolume systemVolume,
             InfoSettingsService infoSettingsService,
             ILicenseService licenseService,
@@ -276,7 +276,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 return;
 
             var isLicense = await _licenseService.CheckDeviceLicenseAsync(SelectedDevice.Name);
-            
+
             var selectedDevice = SelectedDevice;
             SelectedDevice = null;
             if (isLicense)
@@ -339,7 +339,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         },
         allowsMultipleExecutions: false);
 
-        public ICommand LongPressRecordCommand => new  AsyncCommand(async () =>
+        public ICommand LongPressRecordCommand => new AsyncCommand(async () =>
         {
             await SaveCurrentRecordAsync();
         }, allowsMultipleExecutions: false);
@@ -396,9 +396,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
             IsConnected = isConnected;
             Devices.Clear();
 
-            if(isConnected)
+            if (isConnected)
                 await _devicesScaner.StopAsync();
-            else 
+            else
                 _devicesScaner.Start();
 
 
@@ -463,13 +463,16 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 decoded[i] = (short)(decoded[i] - 512);
 
             _pcmPlayer.AddSound(decoded);
-            
+
             //
             WriteRecord(package);
 
-            if (_record is null 
+            if (_record is null
                 || !_recordTimePassedHelper.IsAutoRecord
-                || !_appSettings.IsAutoCompleteRecordByCriteria)
+                || !_appSettings.IsAutoCompleteRecordByCriteria
+                || _record.Events is null 
+                || _record.Fhrs is null
+                || _recordTimePassedHelper.CurrentRecordTime.TotalMinutes < CardiograhyConstants.MinRecordingDuration)
                 return;
 
             var pregnancyDate = _infoSettingsService.PregnancyStart ?? DateTools.GetDefaultPregnancyDate();
