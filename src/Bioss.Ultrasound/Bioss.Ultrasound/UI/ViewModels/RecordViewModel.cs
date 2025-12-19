@@ -23,7 +23,7 @@ using System;
 using Rg.Plugins.Popup.Services;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Services.Abstracts;
-using Bioss.Ultrasound.Tools.PdfTests;
+using Bioss.Ultrasound.Tools;
 
 namespace Bioss.Ultrasound.UI.ViewModels
 {
@@ -134,7 +134,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
         public ICommand ExportToPdfCommand => new AsyncCommand(async () =>
         {
             var recoringStartTime = _record.StartTime;
-            var fileName = Path.Combine(Path.GetTempPath(), $"Fetal Monitor Report - {recoringStartTime:yyyy-MM-dd-HH-mm}.pdf");
+            var pergancyStart = _infoService.PregnancyStart ?? DateTools.GetDefaultPregnancyDate();
+            var (week, days) = pergancyStart.CalculatePregnantTime();
+            var fileName = Path.Combine(Path.GetTempPath(), $"{_record.DeviceSerialNumber}_{week}({days})_{recoringStartTime:yyyy-MM-dd_HH-mm}.pdf");
 
             _pdfGenerator.GenerateToFile(fileName, _record);
 
