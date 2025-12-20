@@ -475,9 +475,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 || _recordTimePassedHelper.CurrentRecordTime.TotalMinutes < CardiograhyConstants.MinRecordingDuration)
                 return;
 
-            var pregnancyDate = _infoSettingsService.PregnancyStart ?? DateTools.GetDefaultPregnancyDate();
-            var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(pregnancyDate, _record);
-
+            var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(_record);
             await StopRecord(cardiografy.IsRoodDawsonCriteriaValid(), AppStrings.Dialog_CriteriaMet);
         }
 

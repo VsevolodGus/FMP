@@ -77,19 +77,17 @@ namespace Bioss.Ultrasound.Services
 
             var plottingHelper = new PlottingHelper();
             plottingHelper.Scale = minutesCountInPage * Constants.CountMinuteInHours;
-            var pregnancyDate = _infoService.PregnancyStart ?? DateTools.GetDefaultPregnancyDate();
 
-            var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(pregnancyDate, record);
+            var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(record);
             var comment = cardiografy.IsRoodDawsonCriteriaValid()
               ? AppStrings.PDF_DawsonRedmanCriteriaMet
               : string.Format(AppStrings.PDF_DawsonRedmanCriteriaNoMet, cardiografy.CountRoodDawsonCriteriaValid());
             
-            var (tableDocument, table) = DrawDataInTable(record, cardiografy, pregnancyDate);
+            var (tableDocument, table) = DrawDataInTable(record, cardiografy);
             var tablePosition = new XPoint(XUnit.FromMillimeter(10), XUnit.FromMillimeter(25));
             var docRenderer = new DocumentRenderer(tableDocument);
             docRenderer.PrepareDocument();
 
-            //var dateTimeNow = DateTime.Now;
             for (var i = 0; i < pages; ++i)
             {
                 var page = document.AddPage();
@@ -102,7 +100,8 @@ namespace Bioss.Ultrasound.Services
                 oxyHelper.DrawChart(graphics, model);
                 oxyHelper.DrawChartTitles(graphics, page, _infoService.PdfRecordingSpeed);
 
-                graphics.DrawHeader(page, hospital, record.StartTime, patient, doctor, _infoService.PregnancyStart, pregnancyDate);
+                // TODO решить вопрос с false
+                graphics.DrawHeader(page, hospital, record.StartTime, patient, doctor, _infoService.PregnancyWeek, _infoService.PregnancyDay, false);
                 graphics.DrawPageNumbers(page, i + 1, pages);
                 graphics.DrawDeviceSerialNumber(page, record.DeviceSerialNumber ?? string.Empty);
 
@@ -113,7 +112,7 @@ namespace Bioss.Ultrasound.Services
         }
 
         #region Построение таблицы
-        public (Document, Table) DrawDataInTable(Record record, CardiotocographyInfo cardiografy, DateTime pregnancyStart)
+        public (Document, Table) DrawDataInTable(Record record, CardiotocographyInfo cardiografy)
         {
             var document = new Document();
             var section = document.AddSection();
@@ -152,7 +151,7 @@ namespace Bioss.Ultrasound.Services
             var row2 = BuildRow2(table, cardiografy, record.Biometric);
             var row3 = BuildRow3(table, cardiografy, record.Biometric);
             var row4 = BuildRow4(table, cardiografy, record.Biometric);
-            var row5 = BuildRow5(table, cardiografy, pregnancyStart);
+            var row5 = BuildRow5(table, cardiografy);
             var row6 = BuildRow6(table, cardiografy);
             var row7 = BuildRow7(table, cardiografy);
             #endregion
@@ -168,8 +167,7 @@ namespace Bioss.Ultrasound.Services
 
             #region Текст под *
             var cell63 = row6[3];
-            var (week, _) = pregnancyStart.CalculatePregnantTime();
-            if (week >= Constants.BoundaryWeekOfTimeDependentParameters)
+            if (_infoService.PregnancyWeek >= Constants.BoundaryWeekOfTimeDependentParameters)
                 cell63.AddParagraph(AppStrings.PDF_EpisodeCondition28Plus);
             else
                 cell63.AddParagraph(AppStrings.PDF_EpisodeConditionSTV);
@@ -296,7 +294,7 @@ namespace Bioss.Ultrasound.Services
             return row;
         }
 
-        private Row BuildRow5(Table table, CardiotocographyInfo cardiotocography, DateTime pregnancyStart)
+        private Row BuildRow5(Table table, CardiotocographyInfo cardiotocography)
         {
             var row = table.AddRow();
             row.Height = PdfOrderConstants.SizeRow;
@@ -309,8 +307,7 @@ namespace Bioss.Ultrasound.Services
             row.Cells[3].FillBoolCell(cardiotocography.IsTimeDependentParameters);
 
             row.Cells[4].FillCell(AppStrings.PDF_TimeDependentParameters);
-            (var weeks, var days) = pregnancyStart.CalculatePregnantTime();
-            row.Cells[5].FillCell($"{weeks}/{days}");
+            row.Cells[5].FillCell($"{_infoService.PregnancyWeek}/{_infoService.PregnancyDay}");
 
             // ------
             var cell6 = row.Cells[6];

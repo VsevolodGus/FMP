@@ -134,12 +134,22 @@
                         Description="{Binding PatientAge}"
                         IsVisible="{Binding IsPersonalDevice}"/>
 
-            <sv:DatePickerCell
-                        Title="{x:Static lang:AppStrings.Settings_PregnancyStart}"
-                        Date="{Binding PregnancyStart}"
-                        ValueTextFontSize="Body"
-                        Description="{Binding PregnancyTime}"
-                        IsVisible="{Binding IsPersonalDevice}"/>
+            <sv:NumberPickerCell
+                         Title="{x:Static lang:AppStrings.BiometricPopup_Pulse}"
+                         PickerTitle="{x:Static lang:AppStrings.BiometricPopup_Pulse}"
+                         ValueTextFontSize="Body"
+                         Min="24" Max="40"
+                         Number="{Binding PregnancyWeek}"
+                         IsVisible="{Binding IsPersonalDevice}"/>
+            
+            <sv:NumberPickerCell
+                         Title="{x:Static lang:AppStrings.BiometricPopup_Diastolic}"
+                         PickerTitle="{x:Static lang:AppStrings.BiometricPopup_Diastolic}"
+                         ValueTextFontSize="Body"
+                         Min="1" Max="6"
+                         Number="{Binding PregnancyDay}"
+                         IsVisible="{Binding IsPersonalDevice}"/>   
+
 
             <sv:NumberPickerCell
                         Title="{x:Static lang:AppStrings.Settings_PregnancyNumber}"

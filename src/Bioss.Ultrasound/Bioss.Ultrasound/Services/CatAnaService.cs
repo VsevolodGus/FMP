@@ -16,7 +16,8 @@ namespace Bioss.Ultrasound.Services
         /// </summary>
         private const byte CountItemInSecond = 16;
 
-        private readonly CatAna _catAna = new CatAna();
+        private readonly CatAna _catAna;
+        private readonly InfoSettingsService _infoSettingsService;
         private readonly static UserCriterion marksUser = new UserCriterion()
         {
             recordLenMin = CardiograhyConstants.MinRecordingDuration,
@@ -32,7 +33,14 @@ namespace Bioss.Ultrasound.Services
             periodDependent = true //Срокозависимые параметры
         };
 
-        public CardiotocographyInfo CargiographAnalayzeWithUserSettings(DateTime pergnancyDate, Record record)
+
+        public CatAnaService(InfoSettingsService infoSettingsService) 
+        {
+            _catAna = new CatAna();
+            _infoSettingsService = infoSettingsService;
+        }  
+
+        public CardiotocographyInfo CargiographAnalayzeWithUserSettings(Record record)
         {
             var heartRateResult = ConvertToArray<FhrData, float>(record.RecordingTimeSpan,
                 record.StartTime,
@@ -47,7 +55,7 @@ namespace Bioss.Ultrasound.Services
                 obj => obj.Time,
                 obj => obj.Event == Events.FetalMovement);
 
-            return CargiographAnalayzeWithUserSettings(pergnancyDate.CalculatePregnantTime().weeks, heartRateResult, movementsResult);
+            return CargiographAnalayzeWithUserSettings(_infoSettingsService.PregnancyWeek, heartRateResult, movementsResult);
         }
 
         /// <summary>

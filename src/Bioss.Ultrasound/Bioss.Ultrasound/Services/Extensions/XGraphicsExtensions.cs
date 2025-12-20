@@ -15,8 +15,9 @@ namespace Bioss.Ultrasound.Services.Extensions
             DateTime dateOfResearch,
             string patient,
             string doctor,
-            DateTime? pregnancyDate,
-            DateTime defaultPregnancyDate
+            int pregnancyWeek,
+            int pregnancyDay,
+            bool isDefaultPregnancyDate
             )
         {
             var settings = new DrawStringSettings
@@ -49,67 +50,20 @@ namespace Bioss.Ultrasound.Services.Extensions
             settings.DrawString(PdfOrderConstants.DefaultFontSize, 1, XStringAlignment.Center, AppStrings.PDF_HeaderPatient);
             
             settings.DrawString(PdfOrderConstants.HeaderFontSize, 2, XStringAlignment.Center, $"{patient}");
-            settings.DrawString(PdfOrderConstants.HeaderFontSize, 3, XStringAlignment.Center, GetStringPergnancyTime(pregnancyDate, defaultPregnancyDate));
+            settings.DrawString(PdfOrderConstants.HeaderFontSize, 3, XStringAlignment.Center, GetStringPergnancyTime(pregnancyWeek, pregnancyDay, isDefaultPregnancyDate));
 
             // отображение левых элементов
             settings.DrawString(PdfOrderConstants.DefaultFontSize, 2, XStringAlignment.Far, AppStrings.PDF_HeaderDoctor);
             settings.DrawString(PdfOrderConstants.HeaderFontSize, 3, XStringAlignment.Far, doctor);
         }
 
-        private static string GetStringPergnancyTime(DateTime? pergnancyTime, DateTime defaultPregnancyDate)
+        private static string GetStringPergnancyTime(int week, int day, bool isDefaultPregnancyDate)
         {
-            var (weeks, days) = pergnancyTime.HasValue
-                ? pergnancyTime.Value.CalculatePregnantTime()
-                : defaultPregnancyDate.CalculatePregnantTime();
+            var prefix = isDefaultPregnancyDate
+                ? AppStrings.PDF_GestationalAgeByDefault
+                : AppStrings.PDF_GestationalAge;
 
-            var prefix = pergnancyTime.HasValue
-                ? AppStrings.PDF_GestationalAge
-                : AppStrings.PDF_GestationalAgeByDefault;
-
-            return $"{prefix} {weeks} / {days}";
-        }
-
-        public static void DrawData(this XGraphics gfx,
-            PdfPage page,
-            Biometric biometric,
-            TimeSpan recordTime,
-            int fetalsCount,
-            DateTime dateOfResearch,
-            DateTime? pregnancyStart)
-        {
-            biometric ??= new Biometric();
-
-            var settings = new DrawStringSettings
-            {
-                Page = page,
-                Graphics = gfx,
-                LineHeight = XUnit.FromMillimeter(4.5),
-                PaddingTop = XUnit.FromMillimeter(25),
-                PaddingLeft = XUnit.FromMillimeter(10),
-                PaddingRight = XUnit.FromMillimeter(10),
-            };
-
-            settings.DrawString(PdfOrderConstants.DefaultFontSize, 0, XStringAlignment.Near, $"{AppStrings.PDF_RecordingDuration}: {recordTime.Minutes} {AppStrings.Unit_min}");
-            settings.DrawString(PdfOrderConstants.DefaultFontSize, 1, XStringAlignment.Near, $"{AppStrings.PDF_FetalMovements}: {fetalsCount}");
-            if (pregnancyStart.HasValue)
-            {
-                var time = pregnancyStart.Value.CalculatePregnantTime(dateOfResearch);
-                settings.DrawString(PdfOrderConstants.DefaultFontSize, 2, XStringAlignment.Near, $"{AppStrings.PDF_GestationalAge}: {time.weeks}/{time.days}");
-
-            }
-
-            settings.PaddingLeft = XUnit.FromMillimeter(60);
-            var empty = PdfOrderConstants.DefaultValue;    
-            settings.DrawString(PdfOrderConstants.DefaultFontSize, 0, XStringAlignment.Near, $"{AppStrings.PDF_Temperature}: {biometric.Temperature.ToStringOrEmptyString(empty)}{AppStrings.Unit_Celsius}");
-            settings.DrawString(PdfOrderConstants.DefaultFontSize, 1, XStringAlignment.Near, $"{AppStrings.PDF_Pulse}: {biometric.Pulse.ToStringOrEmptyString(empty)} {AppStrings.Unit_HeartRate}");
-            settings.DrawString(PdfOrderConstants.DefaultFontSize, 2, XStringAlignment.Near, $"{AppStrings.PDF_Sugar}: {biometric.Sugar.ToStringOrEmptyString(empty)} {AppStrings.Unit_BloodGlucose}");
-            settings.DrawString(PdfOrderConstants.DefaultFontSize, 3, XStringAlignment.Near, $"{AppStrings.PDF_HeartRate}: {biometric.Systolic.ToStringOrEmptyString(empty)}/{biometric.Diastolic.ToStringOrEmptyString(empty)} {AppStrings.Unit_MillimetreOfMercury}");
-
-            settings.PaddingLeft = XUnit.FromMillimeter(60 + 45);
-            settings.LineHeight = XUnit.FromMillimeter(4.5);
-
-            settings.DrawMultilineString(PdfOrderConstants.DefaultFontSize, 0, 2, $"{AppStrings.PDF_Comment}: {biometric.Comment}");
-            settings.DrawMultilineString(PdfOrderConstants.DefaultFontSize, 2, 2, $"{AppStrings.PDF_DoctorsConclusion}:");
+            return $"{prefix} {week} / {day}";
         }
 
         public static void DrawPageNumbers(this XGraphics gfx,

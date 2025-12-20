@@ -134,9 +134,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         public ICommand ExportToPdfCommand => new AsyncCommand(async () =>
         {
             var recoringStartTime = _record.StartTime;
-            var pergancyStart = _infoService.PregnancyStart ?? DateTools.GetDefaultPregnancyDate();
-            var (week, days) = pergancyStart.CalculatePregnantTime();
-            var fileName = Path.Combine(Path.GetTempPath(), $"{_record.DeviceSerialNumber}_{week}({days})_{recoringStartTime:yyyy-MM-dd_HH-mm}.pdf");
+            var fileName = Path.Combine(Path.GetTempPath(), $"{_record.DeviceSerialNumber}_{_infoService.PregnancyWeek}({_infoService.PregnancyDay})_{recoringStartTime:yyyy-MM-dd_HH-mm}.pdf");
 
             _pdfGenerator.GenerateToFile(fileName, _record);
 

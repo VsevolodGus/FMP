@@ -207,15 +207,28 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             set
             {
+                if (_infoSettingsService.IsPersonalDevice == value)
+                    return;
+
                 _infoSettingsService.IsPersonalDevice = value;
                 OnPropertyChanged();
 
                 if (!value)
                 {
-                    Patient = string.Empty;
-                    Birthday = null;
-                    PregnancyStart = null;
-                    PregnancyNumber = 1;
+                    // Используйте прямое присваивание без вызова сеттеров
+                    _infoSettingsService.Patient = string.Empty;
+                    _infoSettingsService.Birthday = null;
+                    _infoSettingsService.PregnancyWeek = 32;
+                    _infoSettingsService.PregnancyDay = 1;
+                    _infoSettingsService.PregnancyNumber = 1;
+
+                    // Уведомить об изменениях
+                    OnPropertyChanged(nameof(Patient));
+                    OnPropertyChanged(nameof(Birthday));
+                    OnPropertyChanged(nameof(PatientAge));
+                    OnPropertyChanged(nameof(PregnancyWeek));
+                    OnPropertyChanged(nameof(PregnancyDay));
+                    OnPropertyChanged(nameof(PregnancyNumber));
                 }
             }
         }
@@ -254,41 +267,23 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
         }
 
-        public DateTime? PregnancyStart
+        public int PregnancyWeek
         {
-            get => _infoSettingsService.PregnancyStart;
-
+            get => _infoSettingsService.PregnancyWeek;
             set
             {
-                if (value.HasValue)
-                {
-                    var weeks = value.Value.CalculatePregnantTime().weeks;
-                    if (!(weeks >= Constants.MinPregnantWeeks && weeks <= Constants.MaxPregnantWeeks))
-                    {
-                        _dialogs.Toast(new ToastConfig(AppStrings.Dialog_PregnancyStartNotCorrect)
-                        {
-                            Position = ToastPosition.Top,
-                            BackgroundColor = Color.DeepSkyBlue,
-                            MessageTextColor = Color.White
-                        });
-                        return;
-                    }
-                }
-
-                _infoSettingsService.PregnancyStart = value;
-                OnPropertyChanged(nameof(PregnancyTime));
+                _infoSettingsService.PregnancyWeek = value;
+                OnPropertyChanged();
             }
-        }
-
-        public string PregnancyTime
+        } 
+        
+        public int PregnancyDay
         {
-            get
+            get => _infoSettingsService.PregnancyDay;
+            set
             {
-                if (!PregnancyStart.HasValue)
-                    return AppStrings.Settings_PregnancyStartDescriptionNotSelected;
-
-                var time = DateTools.CalculatePregnantTime(PregnancyStart.Value);
-                return string.Format(AppStrings.Settings_PregnancyStartDescriptionTime, time.weeks, time.days);
+                _infoSettingsService.PregnancyDay = value;
+                //OnPropertyChanged();
             }
         }
 
@@ -298,7 +293,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             set
             {
                 _infoSettingsService.PregnancyNumber = value;
-                OnPropertyChanged();
+                //OnPropertyChanged();
             }
         }
 
