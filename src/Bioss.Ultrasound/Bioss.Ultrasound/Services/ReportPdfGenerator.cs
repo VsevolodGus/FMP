@@ -4,6 +4,7 @@ using Bioss.Ultrasound.Domain.Plotting;
 using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Services.Abstracts;
 using Bioss.Ultrasound.Services.Extensions;
+using Bioss.Ultrasound.Services.Logging;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Tools;
 using MigraDocCore.DocumentObjectModel;
@@ -28,9 +29,10 @@ namespace Bioss.Ultrasound.Services
         public ReportPdfGenerator(
             ILogger logger,
             CatAnaService catAnaService,
-            InfoSettingsService infoService
-            )
+            InfoSettingsService infoService)
         {
+            MyFontResolver.Apply();
+
             _logger = logger;
             _infoService = infoService;
             _catAnaService = catAnaService;
@@ -39,12 +41,17 @@ namespace Bioss.Ultrasound.Services
         // A4 210 × 297 mm
         public void GenerateToFile(string fileName, Record record)
         {
-            MyFontResolver.Apply();
-
-            _logger.Log("Export record to PDF");
-            var document = CreateDocument();
-            AddData(document, record);
-            document.Save(fileName);
+            try
+            {
+                var document = CreateDocument();
+                AddData(document, record);
+                document.Save(fileName);
+                _logger.Log("Export record to PDF");
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Ошибка при формировании отчета. Error({ex.Message}. StackTrace({ex.StackTrace}))", ServerLogLevel.CriticalFunctionalityError);
+            }
         }
 
         private PdfDocument CreateDocument()

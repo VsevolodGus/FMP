@@ -29,6 +29,7 @@ namespace Bioss.Ultrasound
         /// TODO отсюда выпилить, костыль 
         /// </summary>
         private bool IsLastAndroidVersion => DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 12;
+        private Task ConnectDb; 
         public App()
         {
             InitializeComponent();
@@ -41,9 +42,15 @@ namespace Bioss.Ultrasound
                 Injector.RunWithMappedTypes(new Dictionary<Type, Type>());
             }
 
+            _database = Injector.Container.Resolve<AppDatabase>();
+            _serverLogger = Injector.Container.Resolve<ILogger>();
+            _sessionService = Injector.Container.Resolve<ISessionManager>();
+            _unsentLogDispatcher = Injector.Container.Resolve<IUnsentLogDispatcher>();
+            _sessionCleanup = Injector.Container.Resolve<SessionCleanupService>();
 
             if (NetworkState.HasNetwork)
             {
+                ConnectDb = _database.ConnectAsync();
                 if (IsLastAndroidVersion)
                     MainPage = new MainTabbedPage();
                 else
@@ -51,12 +58,6 @@ namespace Bioss.Ultrasound
             }
             else
                 MainPage = new NetworkUnvailablePage();
-
-            _database = Injector.Container.Resolve<AppDatabase>();
-            _serverLogger = Injector.Container.Resolve<ILogger>();
-            _sessionService = Injector.Container.Resolve<ISessionManager>();
-            _unsentLogDispatcher = Injector.Container.Resolve<IUnsentLogDispatcher>();
-            _sessionCleanup = Injector.Container.Resolve<SessionCleanupService>();
         }
 
         protected override async void OnStart()
@@ -67,12 +68,7 @@ namespace Bioss.Ultrasound
             if (!NetworkState.HasNetwork)
                 return;
 
-            // TODO похорошему это вызывать в конструкторе
-            // но т.к. в синхронном режиме это работает долго, то сделал здесь
-            // иначе белый экран в начале долго грузит
-            // все инициализации страниц должны быть ленивыми
-            await _database.ConnectAsync();
-
+            await ConnectDb;
             await _sessionService.StartSessionAsync();
             await _sessionCleanup.RemoveOldSessionsAsync();
             await _unsentLogDispatcher.SendAllUnsentAsync();

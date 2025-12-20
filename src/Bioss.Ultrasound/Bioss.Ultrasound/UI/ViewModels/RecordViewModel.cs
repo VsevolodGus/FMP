@@ -23,7 +23,6 @@ using System;
 using Rg.Plugins.Popup.Services;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Services.Abstracts;
-using Bioss.Ultrasound.Tools;
 
 namespace Bioss.Ultrasound.UI.ViewModels
 {
@@ -138,8 +137,10 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             _pdfGenerator.GenerateToFile(fileName, _record);
 
-            var files = new List<ShareFile>();
-            files.Add(new ShareFile(fileName));
+            var files = new List<ShareFile>
+            {
+                new ShareFile(fileName)
+            };
             await Share.RequestAsync(new ShareMultipleFilesRequest
             {
                 Title = $"Fetal Monitor Report - {recoringStartTime:g}",

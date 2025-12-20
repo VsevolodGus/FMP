@@ -65,7 +65,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
             if (_isFirstLoading)
                 return;
             _isFirstLoading = true;
-            //
 
             var records = await _repository.RecordsAsync();
             foreach (var record in records)
