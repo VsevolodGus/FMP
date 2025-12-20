@@ -89,7 +89,7 @@ namespace Bioss.Ultrasound.Services
             var docRenderer = new DocumentRenderer(tableDocument);
             docRenderer.PrepareDocument();
 
-            var dateTimeNow = DateTime.Now;
+            //var dateTimeNow = DateTime.Now;
             for (var i = 0; i < pages; ++i)
             {
                 var page = document.AddPage();
@@ -100,7 +100,7 @@ namespace Bioss.Ultrasound.Services
                 var model = oxyHelper.GetPlotModel(record, plottingHelper);
                 var time = i * minutesCountInPage;
                 plottingHelper.ResetAxisWithMin(TimeSpan.FromMinutes(time));
-                oxyHelper.DrawChart(graphics, model);
+                oxyHelper.DrawChart(graphics, model, record.StartTime);
 
                 oxyHelper.DrawChartTitles(graphics, page, _infoService.PdfRecordingSpeed);
 
@@ -111,7 +111,7 @@ namespace Bioss.Ultrasound.Services
                 docRenderer.RenderObject(graphics, tablePosition.X, tablePosition.Y, PdfOrderConstants.WidthA4, table);
 
                 graphics.DrawString(comment, page, 210, 30, PdfOrderConstants.HeaderFontSize, 0, 1, XStringAlignment.Near, XFontStyle.Bold);
-                DrawBoxWithTime(graphics, dateTimeNow);
+                //DrawBoxWithTime(graphics, dateTimeNow);
             }
         }
 

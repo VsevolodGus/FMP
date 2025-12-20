@@ -7,6 +7,7 @@ using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Services.Extensions;
 using Bioss.Ultrasound.UI.Helpers;
 using OxyPlot;
+using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using PdfSharpCore.Drawing;
@@ -15,48 +16,6 @@ using PdfSharpCore.Pdf.IO;
 
 namespace Bioss.Ultrasound.Services
 {
-    public static class Helper
-    {
-        public static void DrawString(this XGraphics gfx, string text, PdfPage page, XUnit paddingTop, XUnit paddingLeft, int fontSize, XUnit lineHeight, int lineNumber, XStringAlignment textAlignment, XFontStyle fontStyle = XFontStyle.Regular)
-        {
-            var heightPoints = lineHeight.Point;
-            var paddingTopPoints = paddingTop.Point;
-            var paddingLeftPoints = paddingLeft.Point;
-            var widthPoints = page.Width.Point - paddingLeftPoints * 2;
-
-            var yPoints = paddingTopPoints + (heightPoints * lineNumber);
-            var rect = new XRect(paddingLeftPoints, yPoints, widthPoints, heightPoints);
-
-            var format = new XStringFormat
-            {
-                LineAlignment = XLineAlignment.Center,
-                Alignment = textAlignment
-            };
-            var font = new XFont(PdfOrderConstants.FontName, fontSize, fontStyle);
-            gfx.DrawString(text, font, XBrushes.Black, rect, format);
-        }
-
-        public static void DrawString(this DrawStringSettings settings, int fontSize, int lineNumber, XStringAlignment textAlignment, string text)
-        {
-            var heightPoints = settings.LineHeight.Point;
-            var paddingTopPoints = settings.PaddingTop.Point;
-            var paddingLeftPoints = settings.PaddingLeft.Point;
-            var paddingRightPoints = settings.PaddingRight.Point;
-            var widthPoints = settings.Page.Width.Point - paddingLeftPoints - paddingRightPoints;
-
-            var yPoints = paddingTopPoints + (heightPoints * lineNumber);
-            var rect = new XRect(paddingLeftPoints, yPoints, widthPoints, heightPoints);
-
-            var format = new XStringFormat
-            {
-                LineAlignment = XLineAlignment.Center,
-                Alignment = textAlignment
-            };
-            var font = new XFont(PdfOrderConstants.FontName, fontSize);
-            settings.Graphics.DrawString(text, font, XBrushes.Black, rect, format);
-        }
-    }
-
     public class OxyPdfHelper
     {
         private SizeHelper _horizontalSize = SizeHelper.HorizontalSize;
@@ -99,7 +58,7 @@ namespace Bioss.Ultrasound.Services
             var tocoLine = (LineSeries)chartDrawer.Model.Series.First(a => ((LineSeries)a).YAxisKey == ChartDrawer.KEY_TOCO);
             tocoLine.StrokeThickness = 1;
 
-            var xAxes = chartDrawer.Model.Axes.First(a => a.Position == AxisPosition.Bottom); ;
+            var xAxes = chartDrawer.Model.Axes.First(a => a.Position == AxisPosition.Bottom);
             xAxes.MinorGridlineThickness = .5;
             xAxes.MajorGridlineThickness = 1;
             xAxes.MinorGridlineColor = lightGridColor;
@@ -108,6 +67,7 @@ namespace Bioss.Ultrasound.Services
             xAxes.MajorStep = 3 * 60;
             xAxes.MinorStep = 60;
             xAxes.LabelFormatter = (d) => $"{d / 60}";
+            //xAxes.
 
             //
             chartDrawer.ResetFhrMinMax(30, 240);
@@ -115,25 +75,14 @@ namespace Bioss.Ultrasound.Services
             chartDrawer.Fill(record);
             return chartDrawer.Model;
         }
+       
 
-        public void DrawChart(XGraphics gfx, PlotModel model)
-        {
-            var chartFileName = Path.GetTempFileName();
-
-            SavePlotToPdfFile(chartFileName, model);
-
-            XImage image = XImage.FromFile(chartFileName);
-
-            var top = XUnit.FromMillimeter(88).Point;
-            var left = XUnit.FromMillimeter(5).Point;
-
-            double width = image.PixelWidth * 72 / image.HorizontalResolution;
-            double height = image.PixelHeight * 72 / image.HorizontalResolution;
-
-            gfx.DrawImage(image, left, top, width, height);
-        }
-
-        //  эта функция рисует заголовки для осей координат, так как OxyPlot не поддерживает Unicode
+        /// <summary>
+        /// эта функция рисует заголовки для осей координат, так как OxyPlot не поддерживает Unicode
+        /// </summary>
+        /// <param name="graphics"></param>
+        /// <param name="page"></param>
+        /// <param name="recordingSpeed"></param>
         public void DrawChartTitles(XGraphics graphics, PdfPage page, int recordingSpeed)
         {
             var settings = new DrawStringSettings
@@ -161,6 +110,24 @@ namespace Bioss.Ultrasound.Services
             graphics.RotateAtTransform(90, rotatePoint);
         }
 
+        public void DrawChart(XGraphics gfx, PlotModel model, DateTime startTime)
+        {
+            AddTimeBoxAnnotationsToModel(model, startTime);
+            var chartFileName = Path.GetTempFileName();
+
+            SavePlotToPdfFile(chartFileName, model);
+
+            XImage image = XImage.FromFile(chartFileName);
+
+            var top = XUnit.FromMillimeter(88).Point;
+            var left = XUnit.FromMillimeter(5).Point;
+
+            double width = image.PixelWidth * 72 / image.HorizontalResolution;
+            double height = image.PixelHeight * 72 / image.HorizontalResolution;
+
+            gfx.DrawImage(image, left, top, width, height);
+            //DrawTimeSquaresAboveGrid(gfx, model, top, width, height, startTime);
+        }
         //  todo: нужно передавать размеры
         private void SavePlotToPdfFile(string fileName, PlotModel model)
         {
@@ -183,6 +150,54 @@ namespace Bioss.Ultrasound.Services
         {
             var exporter = new PdfExporter { Width = width, Height = height, Background = background };
             exporter.Export(model, stream);
+        }
+
+        private void AddTimeBoxAnnotationsToModel(PlotModel model, DateTime startTime)
+        {
+            var fhrAxis = model.Axes.First(a => a.Key == ChartDrawer.KEY_FHR);
+            var xAxis = model.Axes.First(a => a.Position == AxisPosition.Bottom);
+            if (xAxis == null || fhrAxis == null)
+                return;
+
+            // Параметры сетки (должны совпадать с настройками в GetPlotModel)
+            var majorStepSeconds = xAxis.MajorStep;
+
+            // ВАЖНО: Теперь ActualMinimum и ActualMaximum должны быть установлены
+            double xMin = xAxis.ActualMinimum;
+            double xMax = xAxis.ActualMaximum;
+
+            // Размеры квадрата в единицах данных
+            double boxWidthSeconds = majorStepSeconds * 0.5;
+            double boxHeightValue = (fhrAxis.ActualMaximum - fhrAxis.ActualMinimum) * 0.025;
+
+            // Позиция квадратов - выше графика
+            double boxTopValue = fhrAxis.ActualMaximum * 1.12;
+
+            var textPositionY = boxTopValue + boxHeightValue / 2;
+            // Добавляем квадраты для каждой мажорной линии сетки
+            // Пропускаем первую линию (0 минут) и добавляем для 3, 6, 9... минут
+            for (double xSeconds = majorStepSeconds; xSeconds < xMax; xSeconds += majorStepSeconds)
+            {
+                // Пропускаем, если квадрат выйдет за границы графика
+                if (xSeconds - boxWidthSeconds / 2 < xMin || xSeconds + boxWidthSeconds / 2 > xMax)
+                    continue;
+
+                //Добавляем текст времени
+                var timeText = startTime.AddSeconds(xSeconds).ToString("HH:mm");
+                var textAnnotation = new TextAnnotation
+                {
+                    Text = timeText,
+                    TextPosition = new DataPoint(xSeconds, textPositionY),
+                    FontSize = 8,
+                    FontWeight = FontWeights.Bold,
+                    TextColor = OxyColors.Black,
+                    TextHorizontalAlignment = HorizontalAlignment.Center,
+                    TextVerticalAlignment = VerticalAlignment.Middle,
+                    Layer = AnnotationLayer.AboveSeries // Поверх квадрата
+                };
+
+                model.Annotations.Add(textAnnotation);
+            }
         }
 
         class SizeHelper
