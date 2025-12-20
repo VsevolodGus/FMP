@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Bioss.Ultrasound.Domain.Models;
@@ -24,7 +26,7 @@ namespace Bioss.Ultrasound.Services
         public XUnit ChartLength => _horizontalSize.ChartLength;
         public XUnit ChartHeight => _verticalSize.ChartLength;
 
-        public PlotModel GetPlotModel(Record record, PlottingHelper plottingHelper)
+        public PlotModel GetPlotModel(Record record, PlottingHelper plottingHelper, double pageTime, int pageNumber)
         {
             var chartDrawer = new ChartDrawer(plottingHelper);
 
@@ -67,15 +69,69 @@ namespace Bioss.Ultrasound.Services
             xAxes.MajorStep = 3 * 60;
             xAxes.MinorStep = 60;
             xAxes.LabelFormatter = (d) => $"{d / 60}";
-            //xAxes.
 
             //
             chartDrawer.ResetFhrMinMax(30, 240);
             //
             chartDrawer.Fill(record);
+            plottingHelper.ResetAxisWithMin(TimeSpan.FromMinutes(pageTime));
+            foreach(var annotaion in AddTimeBoxAnnotationsToModel(fhrAxes, xAxes, record.StartTime, pageNumber))
+                chartDrawer.Model.Annotations.Add(annotaion);
+
             return chartDrawer.Model;
         }
-       
+
+        /// <summary>
+        /// Добавление квадратов с времени на мажорных линиях
+        /// Вызывать после вызова plottingHelper.ResetAxisWithMin
+        /// </summary>
+        /// <param name="fhrAxis">используется для рассчета размера коробки </param>
+        /// <param name="xAxis">используется для рассчета расположения квадратов</param>
+        /// <param name="startTime">время начала записи</param>
+        /// <param name="pageNumber">номер страницы</param>
+        /// <returns>анотации графика</returns>
+        private IEnumerable<TextAnnotation> AddTimeBoxAnnotationsToModel(Axis fhrAxis, Axis xAxis, DateTime startTime, int pageNumber)
+        {
+            // Параметры сетки (должны совпадать с настройками в GetPlotModel)
+            var majorStepSeconds = xAxis.MajorStep;
+            var minorStepSeconds = xAxis.MinorStep;
+
+            double xMin = xAxis.ActualMinimum;
+            double xMax = xAxis.ActualMaximum;
+
+            // Размеры квадрата в единицах данных
+            double boxWidthSeconds = majorStepSeconds * 0.5;
+            double boxHeightValue = (fhrAxis.ActualMaximum - fhrAxis.ActualMinimum) * 0.025;
+
+            // Позиция квадратов - выше графика
+            double boxTopValue = fhrAxis.ActualMaximum * 1.12;
+
+            var textPositionY = boxTopValue + boxHeightValue / 2;
+            // Добавляем квадраты для каждой мажорной линии сетки
+            // Пропускаем первую линию (0 минут) и добавляем для 3, 6, 9... минут
+            for (double xSeconds = 0; xSeconds < xMax - boxWidthSeconds; xSeconds += majorStepSeconds)
+            {
+                // Пропускаем, если квадрат выйдет за границы графика
+                var seconds = xSeconds + (xMax + minorStepSeconds) * pageNumber;
+                if (seconds % xMax - boxWidthSeconds / 2 < xMin || seconds % xMax + boxWidthSeconds / 2 > xMax)
+                    continue;
+
+                //Добавляем текст времени
+                var timeText = startTime.AddSeconds(seconds).ToString("HH:mm");
+                yield return new TextAnnotation
+                {
+                    Text = timeText,
+                    TextPosition = new DataPoint(seconds, textPositionY),
+                    FontSize = PdfOrderConstants.FontSizeGrafic,
+                    FontWeight = FontWeights.Bold,
+                    TextColor = OxyColors.Black,
+                    TextHorizontalAlignment = HorizontalAlignment.Center,
+                    TextVerticalAlignment = VerticalAlignment.Middle,
+                    Layer = AnnotationLayer.AboveSeries // Поверх квадрата
+                };
+            }
+        }
+
 
         /// <summary>
         /// эта функция рисует заголовки для осей координат, так как OxyPlot не поддерживает Unicode
@@ -91,7 +147,7 @@ namespace Bioss.Ultrasound.Services
                 LineHeight = XUnit.FromMillimeter(2.5),
                 PaddingLeft = XUnit.FromMillimeter(265),
                 PaddingRight = XUnit.FromMillimeter(17),
-                PaddingTop = XUnit.FromMillimeter(_verticalSize.CanvasLength.Millimeter + 83),
+                PaddingTop = XUnit.FromMillimeter(_verticalSize.CanvasLength.Millimeter + 73),
                 Page = page,
             };
 
@@ -110,23 +166,21 @@ namespace Bioss.Ultrasound.Services
             graphics.RotateAtTransform(90, rotatePoint);
         }
 
-        public void DrawChart(XGraphics gfx, PlotModel model, DateTime startTime)
+        public void DrawChart(XGraphics gfx, PlotModel model)
         {
-            AddTimeBoxAnnotationsToModel(model, startTime);
             var chartFileName = Path.GetTempFileName();
 
             SavePlotToPdfFile(chartFileName, model);
 
             XImage image = XImage.FromFile(chartFileName);
 
-            var top = XUnit.FromMillimeter(88).Point;
+            var top = XUnit.FromMillimeter(78).Point;
             var left = XUnit.FromMillimeter(5).Point;
 
             double width = image.PixelWidth * 72 / image.HorizontalResolution;
             double height = image.PixelHeight * 72 / image.HorizontalResolution;
 
             gfx.DrawImage(image, left, top, width, height);
-            //DrawTimeSquaresAboveGrid(gfx, model, top, width, height, startTime);
         }
         //  todo: нужно передавать размеры
         private void SavePlotToPdfFile(string fileName, PlotModel model)
@@ -150,54 +204,6 @@ namespace Bioss.Ultrasound.Services
         {
             var exporter = new PdfExporter { Width = width, Height = height, Background = background };
             exporter.Export(model, stream);
-        }
-
-        private void AddTimeBoxAnnotationsToModel(PlotModel model, DateTime startTime)
-        {
-            var fhrAxis = model.Axes.First(a => a.Key == ChartDrawer.KEY_FHR);
-            var xAxis = model.Axes.First(a => a.Position == AxisPosition.Bottom);
-            if (xAxis == null || fhrAxis == null)
-                return;
-
-            // Параметры сетки (должны совпадать с настройками в GetPlotModel)
-            var majorStepSeconds = xAxis.MajorStep;
-
-            // ВАЖНО: Теперь ActualMinimum и ActualMaximum должны быть установлены
-            double xMin = xAxis.ActualMinimum;
-            double xMax = xAxis.ActualMaximum;
-
-            // Размеры квадрата в единицах данных
-            double boxWidthSeconds = majorStepSeconds * 0.5;
-            double boxHeightValue = (fhrAxis.ActualMaximum - fhrAxis.ActualMinimum) * 0.025;
-
-            // Позиция квадратов - выше графика
-            double boxTopValue = fhrAxis.ActualMaximum * 1.12;
-
-            var textPositionY = boxTopValue + boxHeightValue / 2;
-            // Добавляем квадраты для каждой мажорной линии сетки
-            // Пропускаем первую линию (0 минут) и добавляем для 3, 6, 9... минут
-            for (double xSeconds = majorStepSeconds; xSeconds < xMax; xSeconds += majorStepSeconds)
-            {
-                // Пропускаем, если квадрат выйдет за границы графика
-                if (xSeconds - boxWidthSeconds / 2 < xMin || xSeconds + boxWidthSeconds / 2 > xMax)
-                    continue;
-
-                //Добавляем текст времени
-                var timeText = startTime.AddSeconds(xSeconds).ToString("HH:mm");
-                var textAnnotation = new TextAnnotation
-                {
-                    Text = timeText,
-                    TextPosition = new DataPoint(xSeconds, textPositionY),
-                    FontSize = 8,
-                    FontWeight = FontWeights.Bold,
-                    TextColor = OxyColors.Black,
-                    TextHorizontalAlignment = HorizontalAlignment.Center,
-                    TextVerticalAlignment = VerticalAlignment.Middle,
-                    Layer = AnnotationLayer.AboveSeries // Поверх квадрата
-                };
-
-                model.Annotations.Add(textAnnotation);
-            }
         }
 
         class SizeHelper

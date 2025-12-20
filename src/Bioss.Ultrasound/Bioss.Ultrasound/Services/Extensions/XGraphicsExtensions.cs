@@ -118,7 +118,7 @@ namespace Bioss.Ultrasound.Services.Extensions
             int pageCount)
         {
             var lineHeight = XUnit.FromMillimeter(2.5);
-            var padding = XUnit.FromMillimeter(page.Height.Millimeter - 5);
+            var padding = XUnit.FromMillimeter(page.Height.Millimeter - 10);
             var paddingLeft = XUnit.FromMillimeter(10);
             gfx.DrawString(string.Format(AppStrings.PDF_FooterPageNumbers, pageNumber, pageCount), page, padding, paddingLeft, 10, lineHeight, 0, XStringAlignment.Far);
         }
@@ -126,7 +126,7 @@ namespace Bioss.Ultrasound.Services.Extensions
         public static void DrawDeviceSerialNumber(this XGraphics gfx, PdfPage page, string serialNumber)
         {
             var lineHeight = XUnit.FromMillimeter(2.5);
-            var padding = XUnit.FromMillimeter(page.Height.Millimeter - 5);
+            var padding = XUnit.FromMillimeter(page.Height.Millimeter - 10);
             var paddingLeft = XUnit.FromMillimeter(10);
             gfx.DrawString(string.Format(AppStrings.PDF_FooterSN, serialNumber), page, padding, paddingLeft, 10, lineHeight, 0, XStringAlignment.Near);
         }

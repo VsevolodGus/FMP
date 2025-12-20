@@ -96,12 +96,10 @@ namespace Bioss.Ultrasound.Services
                 page.Orientation = PdfSharpCore.PageOrientation.Landscape;
                 using var graphics = XGraphics.FromPdfPage(page);
                 graphics.MUH = PdfFontEncoding.Unicode;
-
-                var model = oxyHelper.GetPlotModel(record, plottingHelper);
+                
                 var time = i * minutesCountInPage;
-                plottingHelper.ResetAxisWithMin(TimeSpan.FromMinutes(time));
-                oxyHelper.DrawChart(graphics, model, record.StartTime);
-
+                var model = oxyHelper.GetPlotModel(record, plottingHelper, time, i);
+                oxyHelper.DrawChart(graphics, model);
                 oxyHelper.DrawChartTitles(graphics, page, _infoService.PdfRecordingSpeed);
 
                 graphics.DrawHeader(page, hospital, record.StartTime, patient, doctor, _infoService.PregnancyStart, pregnancyDate);
@@ -110,41 +108,9 @@ namespace Bioss.Ultrasound.Services
 
                 docRenderer.RenderObject(graphics, tablePosition.X, tablePosition.Y, PdfOrderConstants.WidthA4, table);
 
-                graphics.DrawString(comment, page, 210, 30, PdfOrderConstants.HeaderFontSize, 0, 1, XStringAlignment.Near, XFontStyle.Bold);
-                //DrawBoxWithTime(graphics, dateTimeNow);
+                graphics.DrawString(comment, page, 205, 30, PdfOrderConstants.HeaderFontSize, 0, 1, XStringAlignment.Near, XFontStyle.Bold);
             }
         }
-
-        
-        private void DrawBoxWithTime(XGraphics graphics, DateTime date)
-        {
-            // Параметры рамки
-            const float xMm = 43f;
-            const float yMm = 80f;
-            const float widthMm = 15f;
-            const float heightMm = 8f;
-
-            // Создаем рамку
-            var rect = new XRect(
-                XUnit.FromMillimeter(xMm),
-                XUnit.FromMillimeter(yMm),
-                XUnit.FromMillimeter(widthMm),
-                XUnit.FromMillimeter(heightMm)
-            );
-            
-            
-            var boxTimeFont = new XFont(PdfOrderConstants.FontName, PdfOrderConstants.HeaderFontSize);
-            var boxTimeFormat = new XStringFormat
-            {
-                Alignment = XStringAlignment.Center,
-                LineAlignment = XLineAlignment.Center
-            };
-            
-            // Рисуем прямоугольник
-            graphics.DrawRectangle(XPens.Black, rect);
-            graphics.DrawString(date.ToString("hh:mm"), boxTimeFont, XBrushes.Black, rect, boxTimeFormat);
-        }
-       
 
         #region Построение таблицы
         public (Document, Table) DrawDataInTable(Record record, CardiotocographyInfo cardiografy, DateTime pregnancyStart)
