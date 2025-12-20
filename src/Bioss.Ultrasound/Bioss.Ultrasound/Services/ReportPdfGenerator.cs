@@ -100,8 +100,7 @@ namespace Bioss.Ultrasound.Services
                 oxyHelper.DrawChart(graphics, model);
                 oxyHelper.DrawChartTitles(graphics, page, _infoService.PdfRecordingSpeed);
 
-                // TODO решить вопрос с false
-                graphics.DrawHeader(page, hospital, record.StartTime, patient, doctor, _infoService.PregnancyWeek, _infoService.PregnancyDay, false);
+                graphics.DrawHeader(page, hospital, record.StartTime, patient, doctor, _infoService.PregnancyWeek, _infoService.PregnancyDay);
                 graphics.DrawPageNumbers(page, i + 1, pages);
                 graphics.DrawDeviceSerialNumber(page, record.DeviceSerialNumber ?? string.Empty);
 

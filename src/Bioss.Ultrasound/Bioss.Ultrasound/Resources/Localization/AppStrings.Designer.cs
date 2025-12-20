@@ -1381,6 +1381,18 @@ namespace Bioss.Ultrasound.Resources.Localization {
             get {
                 return ResourceManager.GetString("Dialog_PregnancyStartNotCorrect", resourceCulture);
             }
+        } 
+        
+        internal static string Settings_PregnancyWeek {
+            get {
+                return ResourceManager.GetString("Settings_PregnancyWeek", resourceCulture);
+            }
+        }
+        
+        internal static string Settings_PregnancyDay {
+            get {
+                return ResourceManager.GetString("Settings_PregnancyDay", resourceCulture);
+            }
         }
     }
 }

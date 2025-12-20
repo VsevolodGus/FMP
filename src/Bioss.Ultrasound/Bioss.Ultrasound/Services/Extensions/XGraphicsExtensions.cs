@@ -16,8 +16,7 @@ namespace Bioss.Ultrasound.Services.Extensions
             string patient,
             string doctor,
             int pregnancyWeek,
-            int pregnancyDay,
-            bool isDefaultPregnancyDate
+            int pregnancyDay
             )
         {
             var settings = new DrawStringSettings
@@ -50,20 +49,11 @@ namespace Bioss.Ultrasound.Services.Extensions
             settings.DrawString(PdfOrderConstants.DefaultFontSize, 1, XStringAlignment.Center, AppStrings.PDF_HeaderPatient);
             
             settings.DrawString(PdfOrderConstants.HeaderFontSize, 2, XStringAlignment.Center, $"{patient}");
-            settings.DrawString(PdfOrderConstants.HeaderFontSize, 3, XStringAlignment.Center, GetStringPergnancyTime(pregnancyWeek, pregnancyDay, isDefaultPregnancyDate));
+            settings.DrawString(PdfOrderConstants.HeaderFontSize, 3, XStringAlignment.Center, $"{AppStrings.PDF_GestationalAge} {pregnancyWeek} / {pregnancyDay}");
 
             // отображение левых элементов
             settings.DrawString(PdfOrderConstants.DefaultFontSize, 2, XStringAlignment.Far, AppStrings.PDF_HeaderDoctor);
             settings.DrawString(PdfOrderConstants.HeaderFontSize, 3, XStringAlignment.Far, doctor);
-        }
-
-        private static string GetStringPergnancyTime(int week, int day, bool isDefaultPregnancyDate)
-        {
-            var prefix = isDefaultPregnancyDate
-                ? AppStrings.PDF_GestationalAgeByDefault
-                : AppStrings.PDF_GestationalAge;
-
-            return $"{prefix} {week} / {day}";
         }
 
         public static void DrawPageNumbers(this XGraphics gfx,

@@ -2,8 +2,8 @@
 {
     internal struct Constants
     {
+        public const int DefaultCountDay = 1;
         public const int DefaultCountWeek = 32;
-        public const int DefaultDayInMenu = 1;
 
         public const int DayInWeek = 7;
         public const int CountMinuteInHours = 60;

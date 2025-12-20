@@ -594,4 +594,10 @@
   <data name="Dialog_PregnancyStartNotCorrect" xml:space="preserve">
     <value>The acceptable range of gestation period is 24-40 weeks.</value>
   </data>
+  <data name="Settings_PregnancyWeek" xml:space="preserve">
+    <value>Week of pregnancy</value>
+  </data>
+  <data name="Settings_PregnancyDay" xml:space="preserve">
+    <value>Pregnancy Day</value>
+  </data>
 </root>

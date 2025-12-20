@@ -17,7 +17,6 @@ namespace Bioss.Ultrasound.Services
         private const string PREGNANCY_NUMBER = "pregnancyNumber";
         private const string PREGNANCY_WEEK = "pregnancyWeek";
         private const string PREGNANCY_DAY = "pregnancyDay";
-        private const string PREGNANCY_IS_DEFAULT = "isDefaultPregnancy";
         private const string PDF_RECORDING_SPEED = "pdfRecordingSpeed";
 
         public string Organization
@@ -61,7 +60,7 @@ namespace Bioss.Ultrasound.Services
 
         public int PregnancyDay
         {
-            get => Preferences.Get(PREGNANCY_DAY, Constants.DefaultDayInMenu, NAME);
+            get => Preferences.Get(PREGNANCY_DAY, Constants.DefaultCountDay, NAME);
             set => Preferences.Set(PREGNANCY_DAY, value, NAME);
         }
 
