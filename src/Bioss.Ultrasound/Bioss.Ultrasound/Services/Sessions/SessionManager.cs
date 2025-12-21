@@ -68,6 +68,7 @@ namespace Bioss.Ultrasound.Services.Sessions
                 });
 
                 await _database.Connection.DeleteAsync(_currentSession.ToEntity());
+                _currentSession = null;
             }
             catch
             {
