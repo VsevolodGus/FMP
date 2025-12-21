@@ -160,7 +160,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
             catch (Exception ex)
             {
-                _logger.Log($"Error when generating the report: {fileName}. Error({ex.Message}. StackTrace({ex.StackTrace}))", ServerLogLevel.CriticalFunctionalityError);
+                _logger.Log($"Error when generating the report: {fileName}. Error({ex.Message}. StackTrace({ex.StackTrace})", ServerLogLevel.CriticalFunctionalityError);
             }
         }, allowsMultipleExecutions: false);
 

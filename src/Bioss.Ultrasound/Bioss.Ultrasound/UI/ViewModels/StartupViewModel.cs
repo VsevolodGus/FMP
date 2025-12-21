@@ -1,7 +1,6 @@
 ﻿using Acr.UserDialogs;
 using Bioss.Ultrasound.DependencyExtensions;
 using Bioss.Ultrasound.Resources.Localization;
-using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.UI.Pages;
 using Libs.DI.ViewModels;
 using System.Threading.Tasks;
@@ -13,13 +12,10 @@ namespace Bioss.Ultrasound.UI.ViewModels
 {
     public class StartupViewModel : ViewModelBase
     {
-        private readonly ILogger _logger;
         private readonly IUserDialogs _dialogs;
 
-        public StartupViewModel(ILogger logger, 
-            IUserDialogs dialogs)
+        public StartupViewModel(IUserDialogs dialogs)
         {
-            _logger = logger;
             _dialogs = dialogs;
         }
 
@@ -49,7 +45,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
             if (status != PermissionStatus.Granted)
             {
                 status = await ble.RequestAsync();
-                _logger.Log("Выдали устройству права");
             }
 
             return status;

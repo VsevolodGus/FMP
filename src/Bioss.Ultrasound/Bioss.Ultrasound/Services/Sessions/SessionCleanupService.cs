@@ -44,7 +44,7 @@ namespace Bioss.Ultrasound.Services.Sessions
                 catch (Exception ex)
                 {
                     var errorMessage = $"Not close session, request failed with error: {ex.Message}";
-                    _serverLogger.Log(errorMessage, ServerLogLevel.CriticalFunctionalityError);
+                    _serverLogger.Log(errorMessage, ServerLogLevel.ServerError);
                 }
             });
 

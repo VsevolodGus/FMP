@@ -56,7 +56,7 @@
     <BundleAssemblies>false</BundleAssemblies>
     <DebugSymbols>false</DebugSymbols>
     <EmbedAssembliesIntoApk>true</EmbedAssembliesIntoApk>
-    <AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
+    <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
     <AndroidUseAapt2>true</AndroidUseAapt2>
     <AndroidTlsProvider>
     </AndroidTlsProvider>

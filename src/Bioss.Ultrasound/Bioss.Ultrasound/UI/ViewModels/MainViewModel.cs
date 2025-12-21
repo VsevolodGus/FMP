@@ -342,7 +342,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             IsRecording = true;
 
-            _logger.Log($"Начали запись с устройством {_device.Name}");
+            _logger.Log($"Started recording with {_device.Name}");
             _record = new Record
             {
                 StartTime = DateTime.Now,
@@ -581,7 +581,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
             catch (Exception ex)
             {
-                _logger.Log($"Error when save record: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+                _logger.Log($"Error when save record for {_device.Name}: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
             }
         }
 

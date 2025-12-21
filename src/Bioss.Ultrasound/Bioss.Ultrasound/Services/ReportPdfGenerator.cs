@@ -43,7 +43,7 @@ namespace Bioss.Ultrasound.Services
             var document = CreateDocument();
             AddData(document, record);
             document.Save(fileName);
-            _logger.Log("Export record to PDF");
+            _logger.Log("Convert record to PDF");
         }
 
         private PdfDocument CreateDocument()

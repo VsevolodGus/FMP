@@ -72,8 +72,6 @@ namespace Bioss.Ultrasound.Droid
                 }
             }
 
-
-            await CloseSession();
             Rg.Plugins.Popup.Popup.SendBackPressed(base.OnBackPressed);
         }
 
