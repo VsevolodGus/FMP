@@ -81,19 +81,33 @@ namespace Bioss.Ultrasound.Droid
 
             base.OnDestroy();
         }
-
         public override async void Finish()
         {
             await CloseSession();
-
             base.Finish();
         }
-
+        public override async void FinishAndRemoveTask()
+        {
+            await CloseSession();
+            base.FinishAndRemoveTask();
+        }
+        public override async void FinishAffinity()
+        {
+            await CloseSession();
+            base.FinishAffinity();
+        }
         public override async void FinishActivity(int requestCode)
         {
             await CloseSession();
 
             base.FinishActivity(requestCode);
+            base.OnStop();
+        }
+        protected override async void OnStop()
+        {
+            await CloseSession();
+
+            base.OnStop();
         }
 
         private async Task CloseSession()
@@ -107,7 +121,6 @@ namespace Bioss.Ultrasound.Droid
             {
                 System.Diagnostics.Debug.WriteLine("Ошибка при закрытии сессии");
             }
-
         }
     }
 

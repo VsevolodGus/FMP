@@ -37,13 +37,6 @@ namespace Bioss.Ultrasound.Data.Database
                 Connection.CreateTableAsync<AudioEntity>(),
                 Connection.CreateTableAsync<BiometricEntity>()
                 );
-            //await Connection.CreateTableAsync<LogEntity>();
-            //await Connection.CreateTableAsync<SessionEntity>();
-            //await Connection.CreateTableAsync<RecordEntity>();
-            //await Connection.CreateTableAsync<DataEntity>();
-            //await Connection.CreateTableAsync<EventEntity>();
-            //await Connection.CreateTableAsync<AudioEntity>();
-            //await Connection.CreateTableAsync<BiometricEntity>();
         }
 
         public override List<IMigration> Migrations()
