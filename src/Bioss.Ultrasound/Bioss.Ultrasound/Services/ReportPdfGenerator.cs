@@ -4,7 +4,6 @@ using Bioss.Ultrasound.Domain.Plotting;
 using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Services.Abstracts;
 using Bioss.Ultrasound.Services.Extensions;
-using Bioss.Ultrasound.Services.Logging;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Tools;
 using MigraDocCore.DocumentObjectModel;
@@ -41,17 +40,10 @@ namespace Bioss.Ultrasound.Services
         // A4 210 × 297 mm
         public void GenerateToFile(string fileName, Record record)
         {
-            try
-            {
-                var document = CreateDocument();
-                AddData(document, record);
-                document.Save(fileName);
-                _logger.Log("Export record to PDF");
-            }
-            catch (Exception ex)
-            {
-                _logger.Log($"Ошибка при формировании отчета. Error({ex.Message}. StackTrace({ex.StackTrace}))", ServerLogLevel.CriticalFunctionalityError);
-            }
+            var document = CreateDocument();
+            AddData(document, record);
+            document.Save(fileName);
+            _logger.Log("Export record to PDF");
         }
 
         private PdfDocument CreateDocument()

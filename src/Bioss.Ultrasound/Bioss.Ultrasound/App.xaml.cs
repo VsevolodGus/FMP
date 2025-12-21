@@ -47,10 +47,10 @@ namespace Bioss.Ultrasound
             _sessionService = Injector.Container.Resolve<ISessionManager>();
             _unsentLogDispatcher = Injector.Container.Resolve<IUnsentLogDispatcher>();
             _sessionCleanup = Injector.Container.Resolve<SessionCleanupService>();
+            ConnectDb = _database.ConnectAsync();
 
             if (NetworkState.HasNetwork)
             {
-                ConnectDb = _database.ConnectAsync();
                 if (IsLastAndroidVersion)
                     MainPage = new MainTabbedPage();
                 else

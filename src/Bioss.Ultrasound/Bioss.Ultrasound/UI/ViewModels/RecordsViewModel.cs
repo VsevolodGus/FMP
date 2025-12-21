@@ -1,7 +1,10 @@
 ﻿using Bioss.Ultrasound.Domain.Models;
 using Bioss.Ultrasound.Repository.Abstracts;
+using Bioss.Ultrasound.Services.Logging;
+using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.UI.Pages;
 using Libs.DI.ViewModels;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
@@ -14,13 +17,18 @@ namespace Bioss.Ultrasound.UI.ViewModels
     {
         private readonly INavigation _navigation;
         private readonly IRepository _repository;
+        private readonly ILogger _logger;
 
         private bool _isFirstLoading = false;
 
         private Record _selectedRecord;
 
-        public RecordsViewModel(INavigation navigation, IRepository repository)
+        public RecordsViewModel(
+            ILogger logger,
+            INavigation navigation,
+            IRepository repository)
         {
+            _logger = logger;
             _navigation = navigation;
             _repository = repository;
             _repository.NewItem += OnNewFile;
@@ -66,9 +74,16 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 return;
             _isFirstLoading = true;
 
-            var records = await _repository.RecordsAsync();
-            foreach (var record in records)
-                Records.Add(record);
+            try
+            {
+                var records = await _repository.RecordsAsync();
+                foreach (var record in records)
+                    Records.Add(record);
+            }
+            catch(Exception ex)
+            {
+                _logger.Log($"Error when uploading records: {ex.Message}", ServerLogLevel.CriticalFunctionalityError);
+            }
         });
     }
 }

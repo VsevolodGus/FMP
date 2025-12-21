@@ -11,8 +11,8 @@ using Bioss.Ultrasound.Repository.Abstracts;
 using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Services;
 using Bioss.Ultrasound.Services.Licenses;
+using Bioss.Ultrasound.Services.Logging;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
-using Bioss.Ultrasound.Tools;
 using Bioss.Ultrasound.UI.Helpers;
 using Bioss.Ultrasound.UI.Popups;
 using Libs.DI.ViewModels;
@@ -266,8 +266,15 @@ namespace Bioss.Ultrasound.UI.ViewModels
         #region ICommand
         public ICommand AppearingCommand => new Command(a =>
         {
-            _plottingHelper.Scale = _appSettings.ChartXScaleSeconds;
-            _chartDrawer.ResetFhrMinMax(_appSettings.ChartYMinimum, _appSettings.ChartYMaximum);
+            try
+            {
+                _plottingHelper.Scale = _appSettings.ChartXScaleSeconds;
+                _chartDrawer.ResetFhrMinMax(_appSettings.ChartYMinimum, _appSettings.ChartYMaximum);
+            }
+            catch(Exception ex)
+            {
+                _logger.Log($"Error when opening main page. Error: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+            }
         });
 
         public ICommand SelectedDeviceCommand => new AsyncCommand(async () =>
@@ -275,20 +282,27 @@ namespace Bioss.Ultrasound.UI.ViewModels
             if (SelectedDevice is null)
                 return;
 
-            var isLicense = await _licenseService.CheckDeviceLicenseAsync(SelectedDevice.Name);
-
-            var selectedDevice = SelectedDevice;
-            SelectedDevice = null;
-            if (isLicense)
-                await _device.ConnectAsync(selectedDevice);
-            else
+            try
             {
-                _dialogs.Toast(new ToastConfig(AppStrings.Main_DeviceNotLicense)
+                var isLicense = await _licenseService.CheckDeviceLicenseAsync(SelectedDevice.Name);
+
+                var selectedDevice = SelectedDevice;
+                SelectedDevice = null;
+                if (isLicense)
+                    await _device.ConnectAsync(selectedDevice);
+                else
                 {
-                    Position = ToastPosition.Top,
-                    BackgroundColor = Color.DeepSkyBlue,
-                    MessageTextColor = Color.White
-                });
+                    _dialogs.Toast(new ToastConfig(AppStrings.Main_DeviceNotLicense)
+                    {
+                        Position = ToastPosition.Top,
+                        BackgroundColor = Color.DeepSkyBlue,
+                        MessageTextColor = Color.White
+                    });
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.Log($"Error when selectively connecting to the device({_device.Name}). Error: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
             }
 
         }, allowsMultipleExecutions: false);
@@ -298,9 +312,16 @@ namespace Bioss.Ultrasound.UI.ViewModels
             if (!await _dialogs.ConfirmAsync(AppStrings.Dialog_DisconnectMessage, string.Empty, AppStrings.Yes, AppStrings.Cancel))
                 return;
 
-            _logger.Log($"Отключили устройство {_device.Name}");
-            await _device.DisconnectAsync();
-
+            try
+            {
+                await _device.DisconnectAsync();
+                _logger.Log($"Disconnected the device {_device.Name}");
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Errors when trying to disconnect the device({_device.Name}). Error: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+            }
+            
             //  На всякий случай останавливаем звуковой сигнал, если он вдруг включен
             BatteryLevel = 100;
             IsBell = false;
@@ -414,69 +435,79 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
         private async void OnNewPackage(object sender, Package package)
         {
-            RecordTimePassed = _recordTimePassedHelper.DisplayTimePassed();
-
-            await StopRecord(_recordTimePassedHelper.IsTimeEnd, AppStrings.Dialog_RecordCompleted);
-            if (package.FHRPackage != null)
+            try
             {
-                var fhrPackage = package.FHRPackage;
+                RecordTimePassed = _recordTimePassedHelper.DisplayTimePassed();
 
-                FHR = fhrPackage.Fhr1;
-                Toco = fhrPackage.Toco;
+                if (await StopRecord(_recordTimePassedHelper.IsTimeEnd, AppStrings.Dialog_RecordCompleted))
+                    _logger.Log("The timer recording was stopped");
 
-                switch (fhrPackage.Status2.BatteryLevel)
+                if (package.FHRPackage != null)
                 {
-                    case Ble.Models.Enums.BatteryLevel.Excellent:
-                        BatteryLevel = 100;
-                        break;
-                    case Ble.Models.Enums.BatteryLevel.Good:
-                        BatteryLevel = 75;
-                        break;
-                    case Ble.Models.Enums.BatteryLevel.Normal:
-                        BatteryLevel = 50;
-                        break;
-                    case Ble.Models.Enums.BatteryLevel.Bad:
-                        BatteryLevel = 25;
-                        break;
-                    case Ble.Models.Enums.BatteryLevel.Critical:
-                        BatteryLevel = 0;
-                        break;
+                    var fhrPackage = package.FHRPackage;
+
+                    FHR = fhrPackage.Fhr1;
+                    Toco = fhrPackage.Toco;
+
+                    switch (fhrPackage.Status2.BatteryLevel)
+                    {
+                        case Ble.Models.Enums.BatteryLevel.Excellent:
+                            BatteryLevel = 100;
+                            break;
+                        case Ble.Models.Enums.BatteryLevel.Good:
+                            BatteryLevel = 75;
+                            break;
+                        case Ble.Models.Enums.BatteryLevel.Normal:
+                            BatteryLevel = 50;
+                            break;
+                        case Ble.Models.Enums.BatteryLevel.Bad:
+                            BatteryLevel = 25;
+                            break;
+                        case Ble.Models.Enums.BatteryLevel.Critical:
+                            BatteryLevel = 0;
+                            break;
+                    }
+
+                    UpdatePlots(FHR, Toco);
+
+                    _lossHelper.Add(FHR);
+
+                    LossPercentageMinute = _lossHelper.IsQueryFull
+                        ? $"{Math.Round(_lossHelper.PercentInMin() * 100, 0)}"
+                        : "-";
+                    LossPercentage = Math.Round(_lossHelper.PercentAll() * 100, 0);
+
+                    IsLossData = _lossHelper.IsError && IsRecording;
                 }
 
-                UpdatePlots(FHR, Toco);
+                var sound = package.SoundPackage;
+                var decoded = sound.Decompress();
 
-                _lossHelper.Add(FHR);
+                //  опускаем сигнал вниз, так как при отсутствии значений, он равен 512
+                for (var i = 0; i < decoded.Length; ++i)
+                    decoded[i] = (short)(decoded[i] - 512);
 
-                LossPercentageMinute = _lossHelper.IsQueryFull
-                    ? $"{Math.Round(_lossHelper.PercentInMin() * 100, 0)}"
-                    : "-";
-                LossPercentage = Math.Round(_lossHelper.PercentAll() * 100, 0);
+                _pcmPlayer.AddSound(decoded);
 
-                IsLossData = _lossHelper.IsError && IsRecording;
+                //
+                WriteRecord(package);
+
+                if (_record is null
+                    || !_recordTimePassedHelper.IsAutoRecord
+                    || !_appSettings.IsAutoCompleteRecordByCriteria
+                    || _record.Events is null
+                    || _record.Fhrs is null
+                    || _recordTimePassedHelper.CurrentRecordTime.TotalMinutes < CardiograhyConstants.MinRecordingDuration)
+                    return;
+
+                var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(_record);
+                if (await StopRecord(cardiografy.IsRoodDawsonCriteriaValid(), AppStrings.Dialog_CriteriaMet))
+                    _logger.Log("The recording was stopped according to the Dawes-Redman criteria");
             }
-
-            var sound = package.SoundPackage;
-            var decoded = sound.Decompress();
-
-            //  опускаем сигнал вниз, так как при отсутствии значений, он равен 512
-            for (var i = 0; i < decoded.Length; ++i)
-                decoded[i] = (short)(decoded[i] - 512);
-
-            _pcmPlayer.AddSound(decoded);
-
-            //
-            WriteRecord(package);
-
-            if (_record is null
-                || !_recordTimePassedHelper.IsAutoRecord
-                || !_appSettings.IsAutoCompleteRecordByCriteria
-                || _record.Events is null 
-                || _record.Fhrs is null
-                || _recordTimePassedHelper.CurrentRecordTime.TotalMinutes < CardiograhyConstants.MinRecordingDuration)
-                return;
-
-            var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(_record);
-            await StopRecord(cardiografy.IsRoodDawsonCriteriaValid(), AppStrings.Dialog_CriteriaMet);
+            catch(Exception ex)
+            {
+                _logger.Log($"Error when getting new package: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.Warn);
+            }
         }
 
         private async void OnDeviceDiscovered(object sender, IDevice device)
@@ -494,18 +525,23 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             if (_appSettings.IsAutoConnect && !_device.IsConnected)
             {
-                if (await _licenseService.CheckDeviceLicenseAsync(device.Name))
+                try
                 {
-                    await _device.ConnectAsync(device);
+                    if (await _licenseService.CheckDeviceLicenseAsync(device.Name))
+                        await _device.ConnectAsync(device);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Log($"Error when auto-connecting to the device({_device.Name}). Error: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
                 }
             }       
         }
         #endregion
 
-        private async Task StopRecord(bool conditionStop, string confirmText)
+        private async Task<bool> StopRecord(bool conditionStop, string confirmText)
         {
             if (!conditionStop)
-                return;
+                return false;
             
 
             _recordTimePassedHelper.IsAutoRecord = false;
@@ -518,27 +554,35 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 _audioService.Stop(Sounds.Attention);
 
                 if (!result)
-                    return;
+                    return false;
             }
 
             // Реальная остановка находится внутри метода SaveCurrentRecordAsync
             await SaveCurrentRecordAsync();
+            return true;
         }
 
         private async Task SaveCurrentRecordAsync()
         {
-            IsRecording = false;
-            var recordToSave = _record;
-            _record = null;
-
-            recordToSave.StopTime = DateTime.Now;
-            using (var loading = UserDialogs.Instance.Loading(AppStrings.PleaseWait))
+            try
             {
-                await _repository.InsertAsync(recordToSave);
-            }
+                IsRecording = false;
+                var recordToSave = _record;
+                _record = null;
 
-            var duretionRecord = recordToSave.StopTime - recordToSave.StartTime;
-            _logger.Log($"Законсилась запись {_device.Name}, запись длилась {duretionRecord}");
+                recordToSave.StopTime = DateTime.Now;
+                using (var loading = UserDialogs.Instance.Loading(AppStrings.PleaseWait))
+                {
+                    await _repository.InsertAsync(recordToSave);
+                }
+
+                var duretionRecord = recordToSave.StopTime - recordToSave.StartTime;
+                _logger.Log($"Recording ended on the device{_device.Name}, the recording lasted {duretionRecord}");
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error when save record: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+            }
         }
 
         private void WriteRecord(Package package)

@@ -23,6 +23,7 @@ using System;
 using Rg.Plugins.Popup.Services;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Services.Abstracts;
+using Bioss.Ultrasound.Services.Logging;
 
 namespace Bioss.Ultrasound.UI.ViewModels
 {
@@ -122,47 +123,68 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
         public ICommand DeleteCommand => new AsyncCommand(async () =>
         {
-            if (!await _dialogs.ConfirmAsync(AppStrings.Record_DialogDeleteMessage, AppStrings.Record_DialogDeleteTitle, AppStrings.Yes, AppStrings.Cancel))
-                return;
+            try
+            {
+                if (!await _dialogs.ConfirmAsync(AppStrings.Record_DialogDeleteMessage, AppStrings.Record_DialogDeleteTitle, AppStrings.Yes, AppStrings.Cancel))
+                    return;
 
-            _logger.Log("Удалили запись");
-            await _repository.DeleteAsync(_record);
+                await _repository.DeleteAsync(_record);
+                _logger.Log("Delete record");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error when deleted record: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+            }
             await _navigation.PopAsync();
+
         }, allowsMultipleExecutions: false);
 
         public ICommand ExportToPdfCommand => new AsyncCommand(async () =>
         {
             var recoringStartTime = _record.StartTime;
             var fileName = Path.Combine(Path.GetTempPath(), $"{_record.DeviceSerialNumber}_{_infoService.PregnancyWeek}({_infoService.PregnancyDay})_{recoringStartTime:yyyy-MM-dd_HH-mm}.pdf");
-
-            _pdfGenerator.GenerateToFile(fileName, _record);
-
-            var files = new List<ShareFile>
+            try
             {
-                new ShareFile(fileName)
-            };
-            await Share.RequestAsync(new ShareMultipleFilesRequest
-            {
-                Title = $"Fetal Monitor Report - {recoringStartTime:g}",
-                Files = files
-            });
+                _pdfGenerator.GenerateToFile(fileName, _record);
 
+                var files = new List<ShareFile>
+                {
+                    new ShareFile(fileName)
+                };
+                await Share.RequestAsync(new ShareMultipleFilesRequest
+                {
+                    Title = $"Fetal Monitor Report - {recoringStartTime:g}",
+                    Files = files
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error when generating the report: {fileName}. Error({ex.Message}. StackTrace({ex.StackTrace}))", ServerLogLevel.CriticalFunctionalityError);
+            }
         }, allowsMultipleExecutions: false);
 
         public ICommand BiometricCommand => new AsyncCommand(async () =>
         {
-            var popup = new BiometricPopup(_dialogs, _record.Biometric);
-            await PopupNavigation.Instance.PushAsync(popup);
-            var result = await popup.PopupClosedTask;
-
-            if (result.Ok)
+            try
             {
-                _logger.Log("Обновили у сохраненной записи показатели пациента");
-                var biom = result.Biometric;
-                await _repository.InsertOrUpdateAsync(biom);
-                _record.Biometric = biom;
-            }
+                var popup = new BiometricPopup(_dialogs, _record.Biometric);
+                await PopupNavigation.Instance.PushAsync(popup);
+                var result = await popup.PopupClosedTask;
 
+                if (result.Ok)
+                {
+
+                    var biom = result.Biometric;
+                    await _repository.InsertOrUpdateAsync(biom);
+                    _record.Biometric = biom;
+                    _logger.Log("Updated the patient's indicators for the saved record");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error when trying to update patient data. Error: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+            }
         }, allowsMultipleExecutions: false);
 
         private void PlotModel_Updated(object sender, System.EventArgs e)
