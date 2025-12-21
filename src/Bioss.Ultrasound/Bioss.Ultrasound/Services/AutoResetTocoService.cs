@@ -1,6 +1,7 @@
 ﻿using Bioss.Ultrasound.Ble.Devices;
 using Bioss.Ultrasound.Ble.Models;
 using Bioss.Ultrasound.Domain.Constants;
+using System;
 using System.Diagnostics;
 using Xamarin.Forms;
 
@@ -48,8 +49,8 @@ namespace Bioss.Ultrasound.Services
             //  Если TOCO превышает порог несколько секунд, то сбросим его
             if (_stopwatch.IsRunning && _stopwatch.ElapsedMilliseconds >= MAX_MILLISECONDS_EXCEEDED)
             {
-                await _device.ResetTocoAsync();
                 _stopwatch.Stop();
+                await _device.ResetTocoAsync();
                 MessagingCenter.Send<object>(this, MessagingCenterConstants.TocoReseting);
             }
         }

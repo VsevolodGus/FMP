@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:lang="clr-namespace:Bioss.Ultrasound.Resources.Localization"
+             x:Class="Bioss.Ultrasound.UI.Pages.NetworkUnvailablePage">
+    <ContentPage.Content>
+        <StackLayout VerticalOptions="Center" 
+             HorizontalOptions="Center"
+             Padding="20"
+             Spacing="20">
+
+            <Grid HorizontalOptions="Center" 
+                  VerticalOptions="Center"
+                  WidthRequest="75"
+                  HeightRequest="75">
+
+                <!-- Эмодзи WiFi -->
+                <Label Text="📶"
+                       FontSize="44"
+                       HorizontalOptions="Center"
+                       VerticalOptions="Center"
+                       Opacity="0.7"/>
+
+                <!-- Зачеркивающая линия с эффектом -->
+                <BoxView Color="#E53935"
+                         HeightRequest="3.5"
+                         WidthRequest="58"
+                         Rotation="135"
+                         HorizontalOptions="Center"
+                         VerticalOptions="Center"
+                         CornerRadius="1.8"/>
+            </Grid>
+
+            <!-- Основной текст -->
+            <Label Text="{x:Static lang:AppStrings.NetworkUnvailable_MainText}"
+                   FontSize="20"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center"
+                   TextColor="{DynamicResource PrimaryTextColor}"
+                   FontAttributes="Bold"/>
+
+            <!-- Дополнительный текст -->
+            <Label Text="{x:Static lang:AppStrings.NetworkUnvailable_AdditionalText}"
+                   FontSize="14"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center"
+                   TextColor="{DynamicResource SecondaryTextColor}" />
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

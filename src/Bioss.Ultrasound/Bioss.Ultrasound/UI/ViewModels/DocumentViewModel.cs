@@ -1,27 +1,39 @@
-﻿using System.IO;
+﻿using Bioss.Ultrasound.Resources.Localization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Windows.Input;
+using Xamarin.Forms;
 
 namespace Bioss.Ultrasound.UI.ViewModels
 {
     public class DocumentViewModel
     {
-        public DocumentViewModel(string documentName)
-        {
-            try
-            {
-                var assembly = Assembly.GetExecutingAssembly();
-                string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(documentName));
+        private readonly INavigation _navigation;
+        private readonly static string TextPrivacyPolicy;
 
-                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-                using (StreamReader reader = new StreamReader(stream))
-                {
-                    Text = reader.ReadToEnd();
-                }
-            }
-            catch { }
+        public string Text => TextPrivacyPolicy;
+
+        public DocumentViewModel(INavigation navigation)
+        {
+            _navigation = navigation;
         }
 
-        public string Text { get; set; }
+        public ICommand Close => new Command(async a =>
+        {
+            await _navigation.PopModalAsync();
+        });
+
+        static DocumentViewModel()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(AppStrings.DocPrivacy));
+
+            using (var stream = assembly.GetManifestResourceStream(resourceName))
+            using (var reader = new StreamReader(stream))
+            {
+                TextPrivacyPolicy = reader.ReadToEnd();
+            }
+        }
     }
 }

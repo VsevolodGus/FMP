@@ -29,7 +29,7 @@
     <MtouchDebug>true</MtouchDebug>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodesignKey>Apple Development: Vitalii Vovchok (H7JF736786)</CodesignKey>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>VS: ru.mks.ultrasound Development</CodesignProvision>
     <RunWithWarnings>true</RunWithWarnings>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
@@ -43,7 +43,7 @@
     <MtouchArch>x86_64</MtouchArch>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodesignKey>Apple Development: Vitalii Vovchok (H7JF736786)</CodesignKey>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>VS: ru.mks.ultrasound Development</CodesignProvision>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
@@ -61,7 +61,7 @@
     <MtouchLink>None</MtouchLink>
     <MtouchInterpreter>-all</MtouchInterpreter>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodesignProvision>VS: WildCard Development</CodesignProvision>
+    <CodesignProvision>VS: ru.mks.ultrasound Development</CodesignProvision>
     <LangVersion>9.0</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|iPhone' ">
@@ -78,6 +78,9 @@
     <CodesignProvision>Ultrasound - App Store</CodesignProvision>
     <MtouchExtraArgs>--linkskip=Xamarin.CommunityToolkit</MtouchExtraArgs>
     <LangVersion>9.0</LangVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
+    <AppExtensionDebugBundleId />
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Extensions\BLEPermission.cs" />
@@ -99,7 +102,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2401" />
-    <PackageReference Include="Xamarin.Essentials" Version="1.7.2" />
+    <PackageReference Include="Xamarin.Essentials" Version="1.8.1" />
     <PackageReference Include="Xamarin.Forms.Visual.Material">
       <Version>5.0.0.2401</Version>
     </PackageReference>
@@ -223,10 +226,8 @@
     <BundleResource Include="Resources\ic_volume%402x.png" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Assets.xcassets\SplashImage.imageset\" />
     <Folder Include="Renderers\" />
-    <Folder Include="Resources\ru.lproj\" />
-    <Folder Include="Assets.xcassets\SplashImage.imageset\" />
-    <Folder Include="Assets.xcassets\SplashImage.imageset\" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\SplashScreen.storyboard" />

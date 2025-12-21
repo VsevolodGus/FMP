@@ -15,6 +15,8 @@ namespace Bioss.Ultrasound.Services
         private const string PATIENT_BIRTHDAY = "patientBirthday";
         private const string PREGNANCY_START = "pregnancyStart";
         private const string PREGNANCY_NUMBER = "pregnancyNumber";
+        private const string PREGNANCY_WEEK = "pregnancyWeek";
+        private const string PREGNANCY_DAY = "pregnancyDay";
         private const string PDF_RECORDING_SPEED = "pdfRecordingSpeed";
 
         public string Organization
@@ -47,10 +49,19 @@ namespace Bioss.Ultrasound.Services
             set => SetNullable(PATIENT_BIRTHDAY, value, NAME);
         }
 
-        public DateTime? PregnancyStart
+        public int PregnancyWeek
         {
-            get => GetNullable(PREGNANCY_START, NAME);
-            set => SetNullable(PREGNANCY_START, value, NAME);
+            get => Preferences.Get(PREGNANCY_WEEK, Constants.DefaultCountWeek, NAME);
+            set
+            {
+                Preferences.Set(PREGNANCY_WEEK, value, NAME);
+            }
+        }
+
+        public int PregnancyDay
+        {
+            get => Preferences.Get(PREGNANCY_DAY, Constants.DefaultCountDay, NAME);
+            set => Preferences.Set(PREGNANCY_DAY, value, NAME);
         }
 
         public int PregnancyNumber

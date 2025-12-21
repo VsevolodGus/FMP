@@ -8,6 +8,9 @@ using Bioss.Ultrasound.DependencyExtensions;
 using Bioss.Ultrasound.Droid.Extensions;
 using System;
 using Android.Widget;
+using AndroidX.AppCompat.App;
+using Bioss.Ultrasound.Services.Sessions;
+using System.Threading.Tasks;
 
 namespace Bioss.Ultrasound.Droid
 {
@@ -23,6 +26,8 @@ namespace Bioss.Ultrasound.Droid
         protected override void OnCreate(Bundle savedInstanceState)
         {
             SetTheme(Resource.Style.MainTheme);
+            // отключена темная тема
+            AppCompatDelegate.DefaultNightMode = AppCompatDelegate.ModeNightNo;
 
             base.OnCreate(savedInstanceState);
             //  libs
@@ -51,7 +56,7 @@ namespace Bioss.Ultrasound.Droid
         }
 
         private DateTime _lastPress;
-        public override void OnBackPressed()
+        public override async void OnBackPressed()
         {
             //  двойной клик для закрытия приложения
             if (AppHelper.IsRootPage)
@@ -68,6 +73,54 @@ namespace Bioss.Ultrasound.Droid
             }
 
             Rg.Plugins.Popup.Popup.SendBackPressed(base.OnBackPressed);
+        }
+
+        protected override void OnDestroy()
+        {
+            CloseSession();
+
+            base.OnDestroy();
+        }
+        public override async void Finish()
+        {
+            await CloseSession();
+            base.Finish();
+        }
+        public override async void FinishAndRemoveTask()
+        {
+            await CloseSession();
+            base.FinishAndRemoveTask();
+        }
+        public override async void FinishAffinity()
+        {
+            await CloseSession();
+            base.FinishAffinity();
+        }
+        public override async void FinishActivity(int requestCode)
+        {
+            await CloseSession();
+
+            base.FinishActivity(requestCode);
+            base.OnStop();
+        }
+        protected override async void OnStop()
+        {
+            await CloseSession();
+
+            base.OnStop();
+        }
+
+        private async Task CloseSession()
+        {
+            try
+            {
+                var sessionManager = DependencyService.Resolve<ISessionManager>();
+                await sessionManager.Exit();
+            }
+            catch
+            {
+                System.Diagnostics.Debug.WriteLine("Ошибка при закрытии сессии");
+            }
         }
     }
 

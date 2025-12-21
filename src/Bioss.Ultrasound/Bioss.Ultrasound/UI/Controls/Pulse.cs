@@ -23,7 +23,7 @@ namespace Bioss.Ultrasound.UI.Controls
             BindableProperty.Create(nameof(AutoStart), typeof(bool), typeof(Pulse), false, propertyChanged: OnPropertyChanged);
 
         public static readonly BindableProperty SourceProperty =
-            BindableProperty.Create(nameof(Source), typeof(string), typeof(Pulse), "", propertyChanged: OnPropertyChanged);
+            BindableProperty.Create(nameof(Source), typeof(string), typeof(Pulse), string.Empty, propertyChanged: OnPropertyChanged);
 
         public static readonly BindableProperty SpeedProperty =
             BindableProperty.Create(nameof(Speed), typeof(int), typeof(Pulse), 10, propertyChanged: OnPropertyChanged);
@@ -142,7 +142,6 @@ namespace Bioss.Ultrasound.UI.Controls
                 SKPoint center = new SKPoint(info.Width / 2, info.Height / 2);
                 float baseRadius = Math.Min(info.Width, info.Height) / 12;
                 float radius = 0;
-                Console.WriteLine(radius);
                 for (int i = 0; i < t.Length; i++)
                 {
                     radius = info.Width / 2 * (t[i]);

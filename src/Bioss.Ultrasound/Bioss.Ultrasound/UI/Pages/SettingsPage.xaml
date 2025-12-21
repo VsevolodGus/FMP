@@ -44,6 +44,12 @@
                         IsVisible="{Binding IsAutoRecordTime}"/>
 
             <sv:SwitchCell
+                        Title="{x:Static lang:AppStrings.Settings_MonitorAutoCompleteRecordByCriteria}"
+                        On="{Binding IsAutoCompleteRecordByCriteria}"
+                        IsVisible="{Binding IsAutoRecordTime}"/>
+
+
+            <sv:SwitchCell
                         Title="{x:Static lang:AppStrings.Settings_MonitorSoundBatteryLow}"
                         On="{Binding IsBatteryLowSound}"/>
 
@@ -105,6 +111,7 @@
                         Title="{x:Static lang:AppStrings.Settings_Doctor}"
                         Placeholder="{x:Static lang:AppStrings.Settings_DoctorPlaceholder}"
                         ValueText="{Binding Doctor}"
+                        CompletedCommand="{Binding PrivacyCommand}"
                         ValueTextFontSize="Body"/>
 
             <sv:SwitchCell
@@ -116,6 +123,7 @@
                         Title="{x:Static lang:AppStrings.Settings_UserName}"
                         Placeholder="{x:Static lang:AppStrings.Settings_UserNamePlaceholder}"
                         ValueText="{Binding Patient}"
+                        CompletedCommand="{Binding PrivacyCommand}"
                         ValueTextFontSize="Body"
                         IsVisible="{Binding IsPersonalDevice}"/>
 
@@ -126,12 +134,22 @@
                         Description="{Binding PatientAge}"
                         IsVisible="{Binding IsPersonalDevice}"/>
 
-            <sv:DatePickerCell
-                        Title="{x:Static lang:AppStrings.Settings_PregnancyStart}"
-                        Date="{Binding PregnancyStart}"
-                        ValueTextFontSize="Body"
-                        Description="{Binding PregnancyTime}"
-                        IsVisible="{Binding IsPersonalDevice}"/>
+            <sv:NumberPickerCell
+                         Title="{x:Static lang:AppStrings.Settings_PregnancyWeek}"
+                         PickerTitle="{x:Static lang:AppStrings.Settings_PregnancyWeek}"
+                         ValueTextFontSize="Body"
+                         Min="24" Max="40"
+                         Number="{Binding PregnancyWeek}"
+                         IsVisible="{Binding IsPersonalDevice}"/>
+            
+            <sv:NumberPickerCell
+                         Title="{x:Static lang:AppStrings.Settings_PregnancyDay}"
+                         PickerTitle="{x:Static lang:AppStrings.Settings_PregnancyDay}"
+                         ValueTextFontSize="Body"
+                         Min="1" Max="6"
+                         Number="{Binding PregnancyDay}"
+                         IsVisible="{Binding IsPersonalDevice}"/>   
+
 
             <sv:NumberPickerCell
                         Title="{x:Static lang:AppStrings.Settings_PregnancyNumber}"

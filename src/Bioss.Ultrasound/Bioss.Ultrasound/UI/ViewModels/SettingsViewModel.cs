@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Windows.Input;
 using Bioss.Ultrasound.DependencyExtensions;
 using Bioss.Ultrasound.Domain.UI;
 using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Services;
 using Bioss.Ultrasound.Tools;
+using Bioss.Ultrasound.UI.Pages;
 using Libs.DI.ViewModels;
+using Xamarin.Forms;
 
 namespace Bioss.Ultrasound.UI.ViewModels
 {
@@ -17,19 +20,28 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly AutoResetTocoService _autoResetTocoService;
         private readonly ISystemVolume _systemVolume;
         private readonly AudioService _audioService;
+        private readonly INavigation _navigation;
+
 
         private PickerItem<int> _autoRecordTime;
         private PickerItem<int> _chartXScale;
         private PickerItem<(int, int)> _chartYScale;
         private PickerItem<int> _recordingSpeed;
 
-        public SettingsViewModel(AppSettingsService appSettings, InfoSettingsService infoSettingsService, AutoResetTocoService autoResetTocoService, ISystemVolume systemVolume, AudioService audioService)
+        public SettingsViewModel(AppSettingsService appSettings,
+            InfoSettingsService infoSettingsService, 
+            AutoResetTocoService autoResetTocoService, 
+            ISystemVolume systemVolume, 
+            AudioService audioService,
+            INavigation navigation
+            )
         {
             _appSettings = appSettings;
             _infoSettingsService = infoSettingsService;
             _autoResetTocoService = autoResetTocoService;
             _systemVolume = systemVolume;
             _audioService = audioService;
+            _navigation = navigation;
 
             AutoRecordTime = AutoRecordTimes.FirstOrDefault(a => a.Value == _appSettings.RecordTimeMinutes);
             ChartXScale = ChartXScales.FirstOrDefault(a => a.Value == _appSettings.ChartXScaleSeconds);
@@ -37,6 +49,11 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             RecordingSpeed = RecordingSpeeds.FirstOrDefault(a => a.Value == _infoSettingsService.PdfRecordingSpeed);
         }
+
+        public ICommand PrivacyCommand => new Command(async _ =>
+        {
+            await _navigation.PushModalAsync(new DocumentPage());
+        });
 
         public bool IsAutoToco
         {
@@ -95,6 +112,13 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 _appSettings.RecordTimeMinutes = value.Value;
             }
         }
+
+        public bool IsAutoCompleteRecordByCriteria
+        {
+            get => _appSettings.IsAutoCompleteRecordByCriteria;
+            set => _appSettings.IsAutoCompleteRecordByCriteria = value;
+        }
+
 
         public ObservableCollection<PickerItem<int>> ChartXScales { get; } = new ObservableCollection<PickerItem<int>>
         {
@@ -179,15 +203,28 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             set
             {
+                if (_infoSettingsService.IsPersonalDevice == value)
+                    return;
+
                 _infoSettingsService.IsPersonalDevice = value;
                 OnPropertyChanged();
 
                 if (!value)
                 {
-                    Patient = string.Empty;
-                    Birthday = null;
-                    PregnancyStart = null;
-                    PregnancyNumber = 1;
+                    // Используйте прямое присваивание без вызова сеттеров
+                    _infoSettingsService.Patient = string.Empty;
+                    _infoSettingsService.Birthday = null;
+                    _infoSettingsService.PregnancyWeek = Constants.DefaultCountWeek;
+                    _infoSettingsService.PregnancyDay = Constants.DefaultCountDay;
+                    _infoSettingsService.PregnancyNumber = 1;
+
+                    // Уведомить об изменениях
+                    OnPropertyChanged(nameof(Patient));
+                    OnPropertyChanged(nameof(Birthday));
+                    OnPropertyChanged(nameof(PatientAge));
+                    OnPropertyChanged(nameof(PregnancyWeek));
+                    OnPropertyChanged(nameof(PregnancyDay));
+                    OnPropertyChanged(nameof(PregnancyNumber));
                 }
             }
         }
@@ -226,26 +263,23 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
         }
 
-        public DateTime? PregnancyStart
+        public int PregnancyWeek
         {
-            get => _infoSettingsService.PregnancyStart;
-
+            get => _infoSettingsService.PregnancyWeek;
             set
             {
-                _infoSettingsService.PregnancyStart = value;
-                OnPropertyChanged(nameof(PregnancyTime));
+                _infoSettingsService.PregnancyWeek = value;
+                OnPropertyChanged();
             }
-        }
-
-        public string PregnancyTime
+        } 
+        
+        public int PregnancyDay
         {
-            get
+            get => _infoSettingsService.PregnancyDay;
+            set
             {
-                if (!PregnancyStart.HasValue)
-                    return AppStrings.Settings_PregnancyStartDescriptionNotSelected;
-
-                var time = DateTools.CalculatePregnantTime(PregnancyStart.Value);
-                return string.Format(AppStrings.Settings_PregnancyStartDescriptionTime, time.weeks, time.days);
+                _infoSettingsService.PregnancyDay = value;
+                OnPropertyChanged();
             }
         }
 
@@ -294,7 +328,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 _appSettings.SoundLevel = settingsValue;
 
                 _systemVolume.Volume = settingsValue;
-                _audioService.Play(AudioService.Sounds.Attention);
+                _audioService.Play(Sounds.Attention);
 
                 OnPropertyChanged();
             }

@@ -7,10 +7,13 @@ namespace Bioss.Ultrasound.UI.Pages
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class MainTabbedPage : TabbedPage
     {
+        private bool _isReplacingPage = false;
+
         public MainTabbedPage()
         {
             InitializeComponent();
 
+            // Создаем только первую вкладку
             Children.Add(new NavigationPage(new MainPage())
             {
                 IconImageSource = "ic_heart_pulse",
@@ -28,6 +31,8 @@ namespace Bioss.Ultrasound.UI.Pages
                 IconImageSource = "ic_menu",
                 Title = AppStrings.Menu_Title
             });
+
+           
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Bioss.Ultrasound.Data.Database
 {
     public class AppDatabase : SQLiteAsyncDatabase
     {
-        private const int DB_VERSION = 3;
+        private const int DB_VERSION = 4;
 
         public AppDatabase(string path) : base(DB_VERSION, path)
         {
@@ -23,14 +23,20 @@ namespace Bioss.Ultrasound.Data.Database
         public AsyncTableQuery<EventEntity> EventTable => Connection.Table<EventEntity>();
         public AsyncTableQuery<AudioEntity> AudioTable => Connection.Table<AudioEntity>();
         public AsyncTableQuery<BiometricEntity> BiometricTable => Connection.Table<BiometricEntity>();
+        public AsyncTableQuery<LogEntity> LogTable => Connection.Table<LogEntity>();
+        public AsyncTableQuery<SessionEntity> SessionTable => Connection.Table<SessionEntity>();
 
         public override async Task CreateAsync()
         {
-            await Connection.CreateTableAsync<RecordEntity>();
-            await Connection.CreateTableAsync<DataEntity>();
-            await Connection.CreateTableAsync<EventEntity>();
-            await Connection.CreateTableAsync<AudioEntity>();
-            await Connection.CreateTableAsync<BiometricEntity>();
+            await Task.WhenAll(
+                Connection.CreateTableAsync<LogEntity>(),
+                Connection.CreateTableAsync<SessionEntity>(),
+                Connection.CreateTableAsync<RecordEntity>(),
+                Connection.CreateTableAsync<DataEntity>(),
+                Connection.CreateTableAsync<EventEntity>(),
+                Connection.CreateTableAsync<AudioEntity>(),
+                Connection.CreateTableAsync<BiometricEntity>()
+                );
         }
 
         public override List<IMigration> Migrations()
@@ -38,7 +44,8 @@ namespace Bioss.Ultrasound.Data.Database
             return new List<IMigration>
             {
                 new Migration1To2(),
-                new Migration2To3()
+                new Migration2To3(),
+                new Migration3To4()
             };
         }
     }

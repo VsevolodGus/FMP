@@ -1,6 +1,9 @@
 ﻿using Bioss.Ultrasound.DependencyExtensions;
 using Bioss.Ultrasound.iOS.Extensions;
+using Bioss.Ultrasound.Services.Sessions;
 using Foundation;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using UIKit;
 using Xamarin.Forms;
 
@@ -29,12 +32,37 @@ namespace Bioss.Ultrasound.iOS
             DependencyService.Register<IPermission, BLEPermission>();
             DependencyService.Register<IPcmPlayer, PcmPlayer>();
             DependencyService.Register<ISystemVolume, SystemVolume>();
+          
+
 
             global::Xamarin.Forms.Forms.Init();
             AiForms.Renderers.iOS.SettingsViewInit.Init(); // need to write there
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);
+        }
+
+        public override async void DidEnterBackground(UIApplication application)
+        { 
+            await CloseSession();
+        }
+
+        public override async void WillTerminate(UIApplication application)
+        {
+            await CloseSession();
+        }
+
+        private async Task CloseSession()
+        {
+            try
+            {
+                var sessionManager = DependencyService.Resolve<ISessionManager>();
+                await sessionManager.Exit();
+            }
+            catch
+            {
+                System.Diagnostics.Debug.WriteLine("Ошибка при закрытии сессии");
+            }
         }
     }
 }

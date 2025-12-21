@@ -4,13 +4,15 @@ using Bioss.Ultrasound.Ble.Devices;
 using Bioss.Ultrasound.Ble.Models;
 using Bioss.Ultrasound.Data.Database.Entities.Enums;
 using Bioss.Ultrasound.DependencyExtensions;
-using Bioss.Ultrasound.Domain.Collections;
 using Bioss.Ultrasound.Domain.Constants;
 using Bioss.Ultrasound.Domain.Models;
 using Bioss.Ultrasound.Domain.Plotting;
 using Bioss.Ultrasound.Repository.Abstracts;
 using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Services;
+using Bioss.Ultrasound.Services.Licenses;
+using Bioss.Ultrasound.Services.Logging;
+using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.UI.Helpers;
 using Bioss.Ultrasound.UI.Popups;
 using Libs.DI.ViewModels;
@@ -31,11 +33,19 @@ namespace Bioss.Ultrasound.UI.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private readonly List<string> DevicePrefixesFilter = new List<string> { "LCeFM", "Doctis CTG", "FMP", "DOCTIS-CTG" };
+        private static readonly IReadOnlyCollection<string> DevicePrefixesFilter = new List<string>
+        {
+            "LCeFM",
+            "Doctis CTG",
+            "FMP",
+            "DOCTIS-CTG"
+        };
 
         private readonly PlottingTimeSpanHelper _plottingTimeSpanHelper = new PlottingTimeSpanHelper();
         private readonly PlottingHelper _plottingHelper = new PlottingHelper();
         private readonly ChartDrawer _chartDrawer;
+        private readonly RecordTimePassedHelper _recordTimePassedHelper = new RecordTimePassedHelper();
+        private readonly LossPercentageHelper _lossHelper = new();
 
         private readonly INavigation _navigation;
         private readonly IUserDialogs _dialogs;
@@ -46,12 +56,15 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly IPcmPlayer _pcmPlayer;
         private readonly AudioService _audioService;
         private readonly ISystemVolume _systemVolume;
+        private readonly InfoSettingsService _infoSettingsService;
+        private readonly ILicenseService _licenseService;
+        private readonly CatAnaService _catAnaService;
+        private readonly ILogger _logger;
 
-        private readonly RecordTimePassedHelper _recordTimePassedHelper = new RecordTimePassedHelper();
+
 
         private IDevice _selectedDevice;
 
-        private LossPercentageHelper _lossHelper = new();
 
         private bool _isConnected;
         private byte _fhr;
@@ -72,8 +85,19 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
         private bool _isBell;
 
-        public MainViewModel(INavigation navigation, IUserDialogs dialogs, DevicesScaner devicesScaner, IRepository repository,
-            AppSettingsService appSettings, IMyDevice device, IPcmPlayer pcmPlayer, AudioService audioService, ISystemVolume systemVolume)
+        public MainViewModel(INavigation navigation,
+            IUserDialogs dialogs,
+            DevicesScaner devicesScaner,
+            IRepository repository,
+            AppSettingsService appSettings,
+            IMyDevice device,
+            IPcmPlayer pcmPlayer,
+            AudioService audioService,
+            ISystemVolume systemVolume,
+            InfoSettingsService infoSettingsService,
+            ILicenseService licenseService,
+            CatAnaService catAnaService,
+            ILogger logger)
         {
             _navigation = navigation;
             _dialogs = dialogs;
@@ -84,6 +108,10 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _pcmPlayer = pcmPlayer;
             _audioService = audioService;
             _systemVolume = systemVolume;
+            _infoSettingsService = infoSettingsService;
+            _catAnaService = catAnaService;
+            _licenseService = licenseService;
+            _logger = logger;
 
             _devicesScaner.Discovered += OnDeviceDiscovered;
             _device.ConnectedChanged += OnConnectedChanged;
@@ -106,8 +134,10 @@ namespace Bioss.Ultrasound.UI.ViewModels
             });
 
             _systemVolume.VolumeChanged += (a, e) => SoundLevel = e;
+            _devicesScaner.Start();
         }
 
+        #region Поля для UI
         public bool IsConnected
         {
             get => _isConnected;
@@ -155,9 +185,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     return;
 
                 if (value && _appSettings.IsBatteryLowSound)
-                    PlayBell(AudioService.Sounds.LowBattery, true);
+                    PlayBell(Sounds.LowBattery, true);
                 else
-                    _audioService.Stop(AudioService.Sounds.LowBattery);
+                    _audioService.Stop(Sounds.LowBattery);
             }
         }
 
@@ -170,9 +200,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     return;
 
                 if (value && IsRecording && _appSettings.IsLossDataSound)
-                    PlayBell(AudioService.Sounds.LossData, true);
+                    PlayBell(Sounds.LossData, true);
                 else
-                    _audioService.Stop(AudioService.Sounds.LossData);
+                    _audioService.Stop(Sounds.LossData);
             }
         }
 
@@ -231,11 +261,20 @@ namespace Bioss.Ultrasound.UI.ViewModels
             get => _isBell;
             set => SetProperty(ref _isBell, value);
         }
+        #endregion
 
+        #region ICommand
         public ICommand AppearingCommand => new Command(a =>
         {
-            _plottingHelper.Scale = _appSettings.ChartXScaleSeconds;
-            _chartDrawer.ResetFhrMinMax(_appSettings.ChartYMinimum, _appSettings.ChartYMaximum);
+            try
+            {
+                _plottingHelper.Scale = _appSettings.ChartXScaleSeconds;
+                _chartDrawer.ResetFhrMinMax(_appSettings.ChartYMinimum, _appSettings.ChartYMaximum);
+            }
+            catch(Exception ex)
+            {
+                _logger.Log($"Error when opening main page. Error: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+            }
         });
 
         public ICommand SelectedDeviceCommand => new AsyncCommand(async () =>
@@ -243,23 +282,46 @@ namespace Bioss.Ultrasound.UI.ViewModels
             if (SelectedDevice is null)
                 return;
 
-            //await _devicesScaner.StopAsync();
+            try
+            {
+                var isLicense = await _licenseService.CheckDeviceLicenseAsync(SelectedDevice.Name);
 
-            await _device.ConnectAsync(SelectedDevice);
+                var selectedDevice = SelectedDevice;
+                SelectedDevice = null;
+                if (isLicense)
+                    await _device.ConnectAsync(selectedDevice);
+                else
+                {
+                    _dialogs.Toast(new ToastConfig(AppStrings.Main_DeviceNotLicense)
+                    {
+                        Position = ToastPosition.Top,
+                        BackgroundColor = Color.DeepSkyBlue,
+                        MessageTextColor = Color.White
+                    });
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.Log($"Error when selectively connecting to the device({_device.Name}). Error: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+            }
 
-            //  TODO
-
-            //await Task.Delay(100);
-            SelectedDevice = null;
         }, allowsMultipleExecutions: false);
 
         public ICommand DisconnectCommand => new AsyncCommand(async () =>
         {
-            if (!await _dialogs.ConfirmAsync(AppStrings.Dialog_DisconnectMessage, "", AppStrings.Yes, AppStrings.Cancel))
+            if (!await _dialogs.ConfirmAsync(AppStrings.Dialog_DisconnectMessage, string.Empty, AppStrings.Yes, AppStrings.Cancel))
                 return;
 
-            await _device.DisconnectAsync();
-
+            try
+            {
+                await _device.DisconnectAsync();
+                _logger.Log($"Disconnected the device {_device.Name}");
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Errors when trying to disconnect the device({_device.Name}). Error: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+            }
+            
             //  На всякий случай останавливаем звуковой сигнал, если он вдруг включен
             BatteryLevel = 100;
             IsBell = false;
@@ -280,6 +342,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             IsRecording = true;
 
+            _logger.Log($"Started recording with {_device.Name}");
             _record = new Record
             {
                 StartTime = DateTime.Now,
@@ -297,7 +360,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         },
         allowsMultipleExecutions: false);
 
-        public ICommand LongPressRecordCommand => new  AsyncCommand(async () =>
+        public ICommand LongPressRecordCommand => new AsyncCommand(async () =>
         {
             await SaveCurrentRecordAsync();
         }, allowsMultipleExecutions: false);
@@ -324,15 +387,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _chartDrawer.AddFMAnnotation(_plottingTimeSpanHelper.CollectTimeSpan(now));
         });
 
-        private void Vibro()
-        {
-            try
-            {
-                HapticFeedback.Perform(HapticFeedbackType.Click);
-            }
-            catch { }
-        }
-
         public ICommand BiometricCommand => new AsyncCommand(async () =>
         {
             var popup = new BiometricPopup(_dialogs, _record.Biometric);
@@ -341,10 +395,34 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
         }, allowsMultipleExecutions: false);
 
+        public ICommand BellOffCommand => new Command(a =>
+        {
+            _audioService.Stop();
+            IsBell = false;
+        });
+
+        private void Vibro()
+        {
+            try
+            {
+                HapticFeedback.Perform(HapticFeedbackType.Click);
+            }
+            catch { }
+        }
+        #endregion
+
+        #region Events with Bluetooth
         private async void OnConnectedChanged(object sender, bool isConnected)
         {
             IsConnected = isConnected;
             Devices.Clear();
+
+            if (isConnected)
+                await _devicesScaner.StopAsync();
+            else
+                _devicesScaner.Start();
+
+
 
             if (IsRecording && !isConnected)
             {
@@ -355,103 +433,88 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
         }
 
-        public ICommand BellOffCommand => new Command(a =>
-        {
-            StopAllBell();
-            IsBell = false;
-        });
-
-        private async Task SaveCurrentRecordAsync()
-        {
-            IsRecording = false;
-            var recordToSave = _record;
-            _record = null;
-
-            recordToSave.StopTime = DateTime.Now;
-            using (var loading = UserDialogs.Instance.Loading(AppStrings.PleaseWait))
-            {
-                await _repository.InsertAsync(recordToSave);
-            }
-        }
-
         private async void OnNewPackage(object sender, Package package)
         {
-            RecordTimePassed = _recordTimePassedHelper.DisplayTimePassed();
-
-            if (_recordTimePassedHelper.IsTimeEnd)
+            try
             {
-                _recordTimePassedHelper.IsAutoRecord = false;
+                RecordTimePassed = _recordTimePassedHelper.DisplayTimePassed();
 
-                if (_appSettings.IsConfirmRecordCompleated)
+                if (await StopRecord(_recordTimePassedHelper.IsTimeEnd, AppStrings.Dialog_RecordCompleted))
+                    _logger.Log("The timer recording was stopped");
+
+                if (package.FHRPackage != null)
                 {
-                    PlayBell(AudioService.Sounds.Attention, true);
+                    var fhrPackage = package.FHRPackage;
 
-                    var result = await _dialogs.ConfirmAsync(AppStrings.Dialog_RecordCompleted, null, AppStrings.Yes, AppStrings.Continue);
+                    FHR = fhrPackage.Fhr1;
+                    Toco = fhrPackage.Toco;
 
-                    _audioService.Stop(AudioService.Sounds.Attention);
+                    switch (fhrPackage.Status2.BatteryLevel)
+                    {
+                        case Ble.Models.Enums.BatteryLevel.Excellent:
+                            BatteryLevel = 100;
+                            break;
+                        case Ble.Models.Enums.BatteryLevel.Good:
+                            BatteryLevel = 75;
+                            break;
+                        case Ble.Models.Enums.BatteryLevel.Normal:
+                            BatteryLevel = 50;
+                            break;
+                        case Ble.Models.Enums.BatteryLevel.Bad:
+                            BatteryLevel = 25;
+                            break;
+                        case Ble.Models.Enums.BatteryLevel.Critical:
+                            BatteryLevel = 0;
+                            break;
+                    }
 
-                    if (!result)
-                        return;
+                    UpdatePlots(FHR, Toco);
+
+                    _lossHelper.Add(FHR);
+
+                    LossPercentageMinute = _lossHelper.IsQueryFull
+                        ? $"{Math.Round(_lossHelper.PercentInMin() * 100, 0)}"
+                        : "-";
+                    LossPercentage = Math.Round(_lossHelper.PercentAll() * 100, 0);
+
+                    IsLossData = _lossHelper.IsError && IsRecording;
                 }
 
-                await SaveCurrentRecordAsync();
-            }
-            //  ------------------------------------
+                var sound = package.SoundPackage;
+                var decoded = sound.Decompress();
 
-            //
-            if (package.FHRPackage != null)
+                //  опускаем сигнал вниз, так как при отсутствии значений, он равен 512
+                for (var i = 0; i < decoded.Length; ++i)
+                    decoded[i] = (short)(decoded[i] - 512);
+
+                _pcmPlayer.AddSound(decoded);
+
+                //
+                WriteRecord(package);
+
+                if (_record is null
+                    || !_recordTimePassedHelper.IsAutoRecord
+                    || !_appSettings.IsAutoCompleteRecordByCriteria
+                    || _record.Events is null
+                    || _record.Fhrs is null
+                    || _recordTimePassedHelper.CurrentRecordTime.TotalMinutes < CardiograhyConstants.MinRecordingDuration)
+                    return;
+
+                var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(_record);
+                if (await StopRecord(cardiografy.IsRoodDawsonCriteriaValid(), AppStrings.Dialog_CriteriaMet))
+                    _logger.Log("The recording was stopped according to the Dawes-Redman criteria");
+            }
+            catch(Exception ex)
             {
-                var fhrPackage = package.FHRPackage;
-
-                FHR = fhrPackage.Fhr1;
-                Toco = fhrPackage.Toco;
-
-                switch (fhrPackage.Status2.BatteryLevel)
-                {
-                    case Ble.Models.Enums.BatteryLevel.Excellent:
-                        BatteryLevel = 100;
-                        break;
-                    case Ble.Models.Enums.BatteryLevel.Good:
-                        BatteryLevel = 75;
-                        break;
-                    case Ble.Models.Enums.BatteryLevel.Normal:
-                        BatteryLevel = 50;
-                        break;
-                    case Ble.Models.Enums.BatteryLevel.Bad:
-                        BatteryLevel = 25;
-                        break;
-                    case Ble.Models.Enums.BatteryLevel.Critical:
-                        BatteryLevel = 0;
-                        break;
-                }
-
-                UpdatePlots(FHR, Toco);
-
-                _lossHelper.Add(FHR);
-
-                LossPercentageMinute = _lossHelper.IsQueryFull
-                    ? $"{Math.Round(_lossHelper.PercentInMin() * 100, 0)}"
-                    : "-";
-                LossPercentage = Math.Round(_lossHelper.PercentAll() * 100, 0);
-
-                IsLossData = _lossHelper.IsError && IsRecording;
+                _logger.Log($"Error when getting new package: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.Warn);
             }
-
-            var sound = package.SoundPackage;
-            var decoded = sound.Decompress();
-
-            //  опускаем сигнал вниз, так как при отсутствии значений, он равен 512
-            for (var i = 0; i < decoded.Length; ++i)
-                decoded[i] = (short)(decoded[i] - 512);
-
-            _pcmPlayer.AddSound(decoded);
-            
-            //
-            WriteRecord(package);
         }
 
         private async void OnDeviceDiscovered(object sender, IDevice device)
         {
+            if (_device is not null && _device.IsConnected)
+                return;
+
             if (device.Name == null || !DevicePrefixesFilter.Any(s => device.Name.StartsWith(s, StringComparison.CurrentCultureIgnoreCase)))
                 return;
 
@@ -462,7 +525,63 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             if (_appSettings.IsAutoConnect && !_device.IsConnected)
             {
-                await _device.ConnectAsync(device);
+                try
+                {
+                    if (await _licenseService.CheckDeviceLicenseAsync(device.Name))
+                        await _device.ConnectAsync(device);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Log($"Error when auto-connecting to the device({_device.Name}). Error: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+                }
+            }       
+        }
+        #endregion
+
+        private async Task<bool> StopRecord(bool conditionStop, string confirmText)
+        {
+            if (!conditionStop)
+                return false;
+            
+
+            _recordTimePassedHelper.IsAutoRecord = false;
+            if (_appSettings.IsConfirmRecordCompleated)
+            {
+                PlayBell(Sounds.Attention, true);
+
+                var result = await _dialogs.ConfirmAsync(confirmText, null, AppStrings.Yes, AppStrings.Continue);
+
+                _audioService.Stop(Sounds.Attention);
+
+                if (!result)
+                    return false;
+            }
+
+            // Реальная остановка находится внутри метода SaveCurrentRecordAsync
+            await SaveCurrentRecordAsync();
+            return true;
+        }
+
+        private async Task SaveCurrentRecordAsync()
+        {
+            try
+            {
+                IsRecording = false;
+                var recordToSave = _record;
+                _record = null;
+
+                recordToSave.StopTime = DateTime.Now;
+                using (var loading = UserDialogs.Instance.Loading(AppStrings.PleaseWait))
+                {
+                    await _repository.InsertAsync(recordToSave);
+                }
+
+                var duretionRecord = recordToSave.StopTime - recordToSave.StartTime;
+                _logger.Log($"Recording ended on the device{_device.Name}, the recording lasted {duretionRecord}");
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error when save record for {_device.Name}: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
             }
         }
 
@@ -511,101 +630,13 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _chartDrawer.AddTocoAnnotation(_plottingTimeSpanHelper.CollectTimeSpan(now));
         }
 
-        private void PlayBell(AudioService.Sounds sound, bool loop = false)
+        private void PlayBell(Sounds sound, bool loop = false)
         {
             if (loop)
                 IsBell = true;
 
             _systemVolume.Volume = _appSettings.SoundLevel;
             _audioService.Play(sound, loop);
-        }
-
-        private void StopAllBell()
-        {
-            _audioService.Stop();
-        }
-    }
-
-    class RecordTimePassedHelper
-    {
-        public bool IsAutoRecord { get; set; }
-        public int TotalAutoRecordSeconds { get; set; }
-        public DateTime StartTime { get; set; }
-
-        public void Init(bool isAutoRecord, int totalAutoRecordSeconds, DateTime startTime)
-        {
-            IsAutoRecord = isAutoRecord;
-            TotalAutoRecordSeconds = totalAutoRecordSeconds;
-            StartTime = startTime;
-        }
-
-        public bool IsTimeEnd
-        {
-            get
-            {
-                if (!IsAutoRecord)
-                    return false;
-
-                return (DateTime.Now - StartTime).TotalSeconds > TotalAutoRecordSeconds;
-            }
-        }
-
-        public string DisplayTimePassed()
-        {
-            var timeLeft = (DateTime.Now - StartTime).TotalSeconds;
-
-            if (IsAutoRecord)
-            {
-                var tt = TotalAutoRecordSeconds - timeLeft;
-                var span = TimeSpan.FromSeconds(tt);
-                return $"{span.Minutes:D2}:{span.Seconds:D2}";
-            }
-            else
-            {
-                var span = TimeSpan.FromSeconds(timeLeft);
-                return $"{span.Minutes:D2}:{span.Seconds:D2}";
-            }
-        }
-    }
-
-    class LossPercentageHelper
-    {
-        private const byte ErrorValue = 0;
-        private readonly TimeQueue<byte> _queue = new(TimeSpan.FromMinutes(1));
-
-        private int _countValues;
-        private int _countZeroValues;
-
-        public bool IsError => IsQueryFull && PercentInMin() > .25;
-
-        public double PercentAll()
-        {
-            if (_countValues == 0)
-                return 0;
-            return (double)_countZeroValues / _countValues;
-        }
-
-        public double PercentInMin()
-        {
-            return _queue.Percent(ErrorValue);
-        }
-
-        public bool IsQueryFull => _queue.IsFull;
-
-        public void Add(byte value)
-        {
-            _queue.Add(value);
-
-            _countValues++;
-            if (value == 0)
-                _countZeroValues++;
-        }
-
-        public void Clear()
-        {
-            _queue.Clear();
-            _countValues = 0;
-            _countZeroValues = 0;
         }
     }
 }

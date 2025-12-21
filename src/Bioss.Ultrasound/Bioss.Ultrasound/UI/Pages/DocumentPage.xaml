@@ -6,8 +6,15 @@
     x:Class="Bioss.Ultrasound.UI.Pages.DocumentPage"
     Title="{x:Static lang:AppStrings.PrivacyPolicy}">
 
-    <ScrollView>
-        <Label Text="{Binding Text}" Margin="16"/>
-    </ScrollView>
+    <StackLayout Margin="20">
+
+        <ScrollView>
+            <Label Text="{Binding Text}" Margin="16"/>
+        </ScrollView>
+
+        <Button Text="{x:Static lang:AppStrings.Button_Ok}"
+         Command="{Binding Close}"/>
+
+    </StackLayout>
 
 </ContentPage>

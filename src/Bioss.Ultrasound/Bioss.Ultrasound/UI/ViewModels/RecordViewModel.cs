@@ -13,7 +13,6 @@ using Libs.DI.ViewModels;
 using OxyPlot;
 using OxyPlot.Axes;
 using Xamarin.CommunityToolkit.ObjectModel;
-using Xamarin.CommunityToolkit.Extensions;
 using Xamarin.Essentials;
 using Xamarin.Forms;
 using System.Diagnostics;
@@ -21,8 +20,10 @@ using System.Linq;
 using Bioss.Ultrasound.Data.Database.Entities.Enums;
 using OxyPlot.Annotations;
 using System;
-using Bioss.Ultrasound.UI.Pages;
 using Rg.Plugins.Popup.Services;
+using Bioss.Ultrasound.Services.Logging.Abstracts;
+using Bioss.Ultrasound.Services.Abstracts;
+using Bioss.Ultrasound.Services.Logging;
 
 namespace Bioss.Ultrasound.UI.ViewModels
 {
@@ -35,6 +36,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly InfoSettingsService _infoService;
         private readonly IRepository _repository;
         private readonly Record _record;
+        private readonly ILogger _logger;
+        private readonly IPdfGenerator _pdfGenerator;
 
         private readonly PlottingHelper _plottingHelper = new PlottingHelper();
 
@@ -44,7 +47,14 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private PointAnnotation _fhrAnnotation;
         private PointAnnotation _tocoAnnotation;
 
-        public RecordViewModel(INavigation navigation, IUserDialogs dialogs, AppSettingsService appSettings, InfoSettingsService infoService, IRepository repository, Record record)
+        public RecordViewModel(INavigation navigation, 
+            IUserDialogs dialogs, 
+            AppSettingsService appSettings, 
+            InfoSettingsService infoService, 
+            IRepository repository, 
+            ILogger logger,
+            Record record,
+            IPdfGenerator pdfGenerator)
         {
             _navigation = navigation;
             _dialogs = dialogs;
@@ -53,7 +63,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _appSettings = appSettings;
             _infoService = infoService;
             _repository = repository;
+            _logger = logger;
             _record = record;
+            _pdfGenerator = pdfGenerator;
 
             _plottingHelper.Scale = _appSettings.ChartXScaleSeconds;
 
@@ -111,44 +123,68 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
         public ICommand DeleteCommand => new AsyncCommand(async () =>
         {
-            if (!await _dialogs.ConfirmAsync(AppStrings.Record_DialogDeleteMessage, AppStrings.Record_DialogDeleteTitle, AppStrings.Yes, AppStrings.Cancel))
-                return;
+            try
+            {
+                if (!await _dialogs.ConfirmAsync(AppStrings.Record_DialogDeleteMessage, AppStrings.Record_DialogDeleteTitle, AppStrings.Yes, AppStrings.Cancel))
+                    return;
 
-            await _repository.DeleteAsync(_record);
+                await _repository.DeleteAsync(_record);
+                _logger.Log("Delete record");
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error when deleted record: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+            }
             await _navigation.PopAsync();
+
         }, allowsMultipleExecutions: false);
 
         public ICommand ExportToPdfCommand => new AsyncCommand(async () =>
         {
             var recoringStartTime = _record.StartTime;
-            var fileName = Path.Combine(Path.GetTempPath(), $"Fetal Monitor Report - {recoringStartTime:yyyy-MM-dd-HH-mm}.pdf");
-
-            var generator = new PdfGeneratorService(_infoService);
-            generator.GenerateToFile(fileName, _record);
-
-            var files = new List<ShareFile>();
-            files.Add(new ShareFile(fileName));
-            await Share.RequestAsync(new ShareMultipleFilesRequest
+            var fileName = Path.Combine(Path.GetTempPath(), $"{_record.DeviceSerialNumber}_{_infoService.PregnancyWeek}({_infoService.PregnancyDay})_{recoringStartTime:yyyy-MM-dd_HH-mm}.pdf");
+            try
             {
-                Title = $"Fetal Monitor Report - {recoringStartTime:g}",
-                Files = files
-            });
+                _pdfGenerator.GenerateToFile(fileName, _record);
 
+                var files = new List<ShareFile>
+                {
+                    new ShareFile(fileName)
+                };
+                await Share.RequestAsync(new ShareMultipleFilesRequest
+                {
+                    Title = $"Fetal Monitor Report - {recoringStartTime:g}",
+                    Files = files
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error when generating the report: {fileName}. Error({ex.Message}. StackTrace({ex.StackTrace})", ServerLogLevel.CriticalFunctionalityError);
+            }
         }, allowsMultipleExecutions: false);
 
         public ICommand BiometricCommand => new AsyncCommand(async () =>
         {
-            var popup = new BiometricPopup(_dialogs, _record.Biometric);
-            await PopupNavigation.Instance.PushAsync(popup);
-            var result = await popup.PopupClosedTask;
-
-            if (result.Ok)
+            try
             {
-                var biom = result.Biometric;
-                await _repository.InsertOrUpdateAsync(biom);
-                _record.Biometric = biom;
-            }
+                var popup = new BiometricPopup(_dialogs, _record.Biometric);
+                await PopupNavigation.Instance.PushAsync(popup);
+                var result = await popup.PopupClosedTask;
 
+                if (result.Ok)
+                {
+
+                    var biom = result.Biometric;
+                    await _repository.InsertOrUpdateAsync(biom);
+                    _record.Biometric = biom;
+                    _logger.Log("Updated the patient's indicators for the saved record");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error when trying to update patient data. Error: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+            }
         }, allowsMultipleExecutions: false);
 
         private void PlotModel_Updated(object sender, System.EventArgs e)

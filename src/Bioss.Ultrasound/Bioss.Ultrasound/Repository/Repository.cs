@@ -22,7 +22,6 @@ namespace Bioss.Ultrasound.Repository
 
         public event EventHandler<long> NewItem;
         public event EventHandler<long> ItemDelated;
-
         public async Task<Record> Get(long id)
         {
             var record = await _database.RecordsTable.FirstOrDefaultAsync(a => a.Id == id);
@@ -33,8 +32,8 @@ namespace Bioss.Ultrasound.Repository
         public async Task<IEnumerable<Record>> RecordsAsync()
         {
             var entities = await _database.Connection.GetAllWithChildrenAsync<RecordEntity>();
-            return entities.Select(a => a.ToRecord())
-                .OrderByDescending(a => a.StartTime);
+            var records = entities.Select(a => a.ToRecord()).OrderByDescending(a => a.StartTime);
+            return records;
         }
 
         public async Task InsertAsync(Record record)
