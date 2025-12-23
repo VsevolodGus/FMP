@@ -1393,6 +1393,13 @@ namespace Bioss.Ultrasound.Resources.Localization {
             get {
                 return ResourceManager.GetString("Settings_PregnancyDay", resourceCulture);
             }
+        } 
+        
+        internal static string About_Instruction
+        {
+            get {
+                return ResourceManager.GetString("About_Instruction", resourceCulture);
+            }
         }
     }
 }

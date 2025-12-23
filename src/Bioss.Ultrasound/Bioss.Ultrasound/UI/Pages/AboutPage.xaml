@@ -18,6 +18,9 @@
         <Button Text="{x:Static lang:AppStrings.PrivacyPolicy}"
                 Command="{Binding PrivacyCommand}"/>
 
+        <Button Text="{x:Static lang:AppStrings.About_Instruction}"
+         Command="{Binding OpenInstruction}"/>
+
     </StackLayout>
     
 </ContentPage>

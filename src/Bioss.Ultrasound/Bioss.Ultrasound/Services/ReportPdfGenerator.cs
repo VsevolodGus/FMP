@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Bioss.Ultrasound.Domain.Constants;
 using Bioss.Ultrasound.Domain.Models;
 using Bioss.Ultrasound.Domain.Plotting;
 using Bioss.Ultrasound.Resources.Localization;
@@ -94,8 +94,8 @@ namespace Bioss.Ultrasound.Services
                 using var graphics = XGraphics.FromPdfPage(page);
                 graphics.MUH = PdfFontEncoding.Unicode;
                 
-                var time = i * minutesCountInPage;
-                var model = oxyHelper.GetPlotModel(record, plottingHelper, time, i);
+                var timeMinutes = i * minutesCountInPage;
+                var model = oxyHelper.GetPlotModel(record, plottingHelper, timeMinutes, i);
                 oxyHelper.DrawChart(graphics, model);
                 oxyHelper.DrawChartTitles(graphics, page, _infoService.PdfRecordingSpeed);
 
@@ -165,7 +165,7 @@ namespace Bioss.Ultrasound.Services
 
             #region Текст под *
             var cell63 = row6[3];
-            if (_infoService.PregnancyWeek >= Constants.BoundaryWeekOfTimeDependentParameters)
+            if (_infoService.PregnancyWeek >= CardiograhyConstants.BoundaryWeekOfTimeDependentParameters)
                 cell63.AddParagraph(AppStrings.PDF_EpisodeCondition28Plus);
             else
                 cell63.AddParagraph(AppStrings.PDF_EpisodeConditionSTV);
@@ -188,7 +188,7 @@ namespace Bioss.Ultrasound.Services
         private Row BuildRow0(Table table, CardiotocographyInfo cardiotocography)
         {
             var row = table.AddRow();
-            row.Height = PdfOrderConstants.SizeRow;
+            row.Height = PdfOrderConstants.SizeTableRow;
 
             row.Cells[0].FillBoolCell(cardiotocography.IsValidRecordingDuration);
             row.Cells[1].FillCell(AppStrings.PDF_RecordingDurationMin10);
@@ -211,7 +211,7 @@ namespace Bioss.Ultrasound.Services
         private Row BuildRow1(Table table, CardiotocographyInfo cardiotocography, Biometric biometric)
         {
             var row = table.AddRow();
-            row.Height = PdfOrderConstants.SizeRow;
+            row.Height = PdfOrderConstants.SizeTableRow;
 
             row.Cells[0].FillBoolCell(cardiotocography.SignalLossValid);
             row.Cells[1].FillCell(AppStrings.PDF_SignalLossMax20);
@@ -233,7 +233,7 @@ namespace Bioss.Ultrasound.Services
         private Row BuildRow2(Table table, CardiotocographyInfo cardiotocography, Biometric biometric)
         {
             var row = table.AddRow();
-            row.Height = PdfOrderConstants.SizeRow;
+            row.Height = PdfOrderConstants.SizeTableRow;
 
             // ------
             row.Cells[0].FillBoolCell(cardiotocography.BasalHeartRateValid);
@@ -254,7 +254,7 @@ namespace Bioss.Ultrasound.Services
         private Row BuildRow3(Table table, CardiotocographyInfo cardiotocography, Biometric biometric)
         {
             var row = table.AddRow();
-            row.Height = PdfOrderConstants.SizeRow;
+            row.Height = PdfOrderConstants.SizeTableRow;
 
             // -----
 
@@ -275,7 +275,7 @@ namespace Bioss.Ultrasound.Services
         private Row BuildRow4(Table table, CardiotocographyInfo cardiotocography, Biometric biometric)
         {
             var row = table.AddRow();
-            row.Height = PdfOrderConstants.SizeRow;
+            row.Height = PdfOrderConstants.SizeTableRow;
 
             row.Cells[1].FillCell(AppStrings.PDF_AccCountMore15);
             row.Cells[2].FillCell(cardiotocography.AccelerationsOver15?.ToString() ?? PdfOrderConstants.DefaultValue);
@@ -295,7 +295,7 @@ namespace Bioss.Ultrasound.Services
         private Row BuildRow5(Table table, CardiotocographyInfo cardiotocography)
         {
             var row = table.AddRow();
-            row.Height = PdfOrderConstants.SizeRow;
+            row.Height = PdfOrderConstants.SizeTableRow;
             // -----
             row.Cells[0].FillBoolCell(cardiotocography.DecelerationsMark);
 
@@ -317,7 +317,7 @@ namespace Bioss.Ultrasound.Services
         private Row BuildRow6(Table table, CardiotocographyInfo cardiotocography)
         {
             var row = table.AddRow();
-            row.Height = PdfOrderConstants.SizeRow;
+            row.Height = PdfOrderConstants.SizeTableRow;
 
             row.Cells[1].FillCell(AppStrings.PDF_HighVariability);
             row.Cells[2].FillCell(cardiotocography.HighVariabilityMinutes?.ToString() ?? PdfOrderConstants.DefaultValue);
@@ -328,7 +328,7 @@ namespace Bioss.Ultrasound.Services
         private Row BuildRow7(Table table, CardiotocographyInfo cardiotocography)
         {
             var row = table.AddRow();
-            row.Height = PdfOrderConstants.SizeRow;
+            row.Height = PdfOrderConstants.SizeTableRow;
 
             row.Cells[1].FillCell(AppStrings.PDF_LowVariability);
             row.Cells[2].FillCell(cardiotocography.LowVariabilityMinutes?.ToString() ?? PdfOrderConstants.DefaultValue);

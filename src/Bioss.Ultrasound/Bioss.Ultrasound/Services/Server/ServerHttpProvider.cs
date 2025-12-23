@@ -5,6 +5,10 @@ using System.Threading.Tasks;
 
 namespace Bioss.Ultrasound.Services.Server
 {
+    /// <summary>
+    /// Базовый класс для работы с сервером
+    /// Здесь определяются только правилоа работы с ним, использование каждого апи оперделяется в других классах, но вызов апи происходит через этот класс
+    /// </summary>
     public sealed class ServerHttpProvider
     {
         private readonly HttpClient _httpClient;
@@ -16,6 +20,13 @@ namespace Bioss.Ultrasound.Services.Server
             _httpClient.DefaultRequestHeaders.Add("Host", "dev.dxnich.ru");
         }
 
+        /// <summary>
+        /// Базовая функция для обращения к серверу
+        /// Сервер всегда отвечает обычной строкой, поэтому конвертация через поток не нужна
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="requestContent"></param>
+        /// <returns>ответ сервера в виде строки</returns>
         public async Task<string> SendAsync<T>(T requestContent) where T : class
         {
             using var request = new HttpRequestMessage(HttpMethod.Post, ServerHttpConstants.Uri);

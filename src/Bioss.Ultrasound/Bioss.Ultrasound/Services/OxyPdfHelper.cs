@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,7 +25,15 @@ namespace Bioss.Ultrasound.Services
         public XUnit ChartLength => _horizontalSize.ChartLength;
         public XUnit ChartHeight => _verticalSize.ChartLength;
 
-        public PlotModel GetPlotModel(Record record, PlottingHelper plottingHelper, double pageTime, int pageNumber)
+        /// <summary>
+        /// Создание графика на одну страницу
+        /// </summary>
+        /// <param name="record">запись по которой будет строиться график</param>
+        /// <param name="plottingHelper"></param>
+        /// <param name="pageTimeMinutes">кол-во минут на странице</param>
+        /// <param name="pageNumber">номер страницы, чтобы пагинировать графики</param>
+        /// <returns>модельь графика на 1 страницу</returns>
+        public PlotModel GetPlotModel(Record record, PlottingHelper plottingHelper, double pageTimeMinutes, int pageNumber)
         {
             var chartDrawer = new ChartDrawer(plottingHelper);
 
@@ -74,7 +81,7 @@ namespace Bioss.Ultrasound.Services
             chartDrawer.ResetFhrMinMax(30, 240);
             //
             chartDrawer.Fill(record);
-            plottingHelper.ResetAxisWithMin(TimeSpan.FromMinutes(pageTime));
+            plottingHelper.ResetAxisWithMin(TimeSpan.FromMinutes(pageTimeMinutes));
             foreach(var annotaion in AddTimeBoxAnnotationsToModel(fhrAxes, xAxes, record.StartTime, pageNumber))
                 chartDrawer.Model.Annotations.Add(annotaion);
 
@@ -136,9 +143,9 @@ namespace Bioss.Ultrasound.Services
         /// <summary>
         /// эта функция рисует заголовки для осей координат, так как OxyPlot не поддерживает Unicode
         /// </summary>
-        /// <param name="graphics"></param>
-        /// <param name="page"></param>
-        /// <param name="recordingSpeed"></param>
+        /// <param name="graphics">данные графики ПДФ файла</param>
+        /// <param name="page">страница пдф</param>
+        /// <param name="recordingSpeed">масштаб графика</param>
         public void DrawChartTitles(XGraphics graphics, PdfPage page, int recordingSpeed)
         {
             var settings = new DrawStringSettings
@@ -166,6 +173,11 @@ namespace Bioss.Ultrasound.Services
             graphics.RotateAtTransform(90, rotatePoint);
         }
 
+        /// <summary>
+        /// Функция отрисовки графика как картинки в ПФД отчете
+        /// </summary>
+        /// <param name="gfx">настройки ПДФ файла</param>
+        /// <param name="model">модель графика</param>
         public void DrawChart(XGraphics gfx, PlotModel model)
         {
             var chartFileName = Path.GetTempFileName();

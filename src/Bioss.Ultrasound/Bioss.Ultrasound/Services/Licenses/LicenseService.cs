@@ -31,6 +31,13 @@ namespace Bioss.Ultrasound.Services.Licenses
             _serverHttpProvider = serverHttpProvider;
         }
 
+        /// <summary>
+        /// Отправка запроса на сервер, чтобы проверить лицензию
+        /// Лицензия проверяется по хешу, если хеш пришедший с сервера и рассчитай в CalculateMd5 совпадает, значит устройство лицензировано.
+        /// Название устройства удаляется все символы кроме Латинских букв и цифр.
+        /// </summary>
+        /// <param name="deviceName">имя девайса для которого будет проводиться проверка</param>
+        /// <returns>лицензировано ли устройство</returns>
         public async Task<bool> CheckDeviceLicenseAsync(string deviceName)
         {
             var sessionInfo = await _sessionManager.GetCurrentSessionAsync();
@@ -59,6 +66,11 @@ namespace Bioss.Ultrasound.Services.Licenses
             }
         }
 
+        /// <summary>
+        /// Расчет хеща для проверки лицензии
+        /// </summary>
+        /// <param name="input">входящая строка для рассчета хеша</param>
+        /// <returns>хеш строки</returns>
         private string CalculateMd5(string input)
         {
             byte[] inputBytes = Encoding.UTF8.GetBytes(input);

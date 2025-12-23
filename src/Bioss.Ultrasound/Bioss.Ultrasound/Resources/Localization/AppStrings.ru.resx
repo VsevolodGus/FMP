@@ -566,10 +566,13 @@
   <data name="Dialog_PregnancyStartNotCorrect" xml:space="preserve">
     <value>Допустимый диапазон срока беременности: 24-40 недель.</value>
   </data>
+  <data name="Settings_PregnancyWeek" xml:space="preserve">
+    <value>Неделя беременности</value>
+  </data>
   <data name="Settings_PregnancyDay" xml:space="preserve">
     <value>День беременности</value>
   </data>
-  <data name="Settings_PregnancyWeek" xml:space="preserve">
-    <value>Неделя беременности</value>
+  <data name="About_Instruction" xml:space="preserve">
+    <value>Инструкция использования</value>
   </data>
 </root>

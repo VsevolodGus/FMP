@@ -66,10 +66,13 @@ namespace Bioss.Ultrasound.UI.ViewModels
             SelectedRecord = null;
         }, allowsMultipleExecutions: false);
 
+        /// <summary>
+        /// AppearingCommand вызывается каждый раз при выборе вкладки.
+        /// Данные загружаются один раз, дальше актуализируются по событиям
+        /// </summary>
         public ICommand AppearingCommand => new Command(async a =>
         {
-            //  AppearingCommand вызывается каждый раз при выборе вкладки.
-            //  Нам достаточно один раз загрузить данные
+            
             if (_isFirstLoading)
                 return;
             _isFirstLoading = true;

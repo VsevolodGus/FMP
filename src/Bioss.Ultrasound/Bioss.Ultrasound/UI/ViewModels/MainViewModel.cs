@@ -277,6 +277,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
         });
 
+        /// <summary>
+        /// Выбор устройства пользователем для подключения
+        /// </summary>
         public ICommand SelectedDeviceCommand => new AsyncCommand(async () =>
         {
             if (SelectedDevice is null)
@@ -307,6 +310,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
         }, allowsMultipleExecutions: false);
 
+        /// <summary>
+        /// Отключение от устройства
+        /// </summary>
         public ICommand DisconnectCommand => new AsyncCommand(async () =>
         {
             if (!await _dialogs.ConfirmAsync(AppStrings.Dialog_DisconnectMessage, string.Empty, AppStrings.Yes, AppStrings.Cancel))
@@ -327,6 +333,10 @@ namespace Bioss.Ultrasound.UI.ViewModels
             IsBell = false;
         });
 
+        /// <summary>
+        /// Команда начала записи.
+        /// Если записиь начата, то эта же кнопка будет останавливать запись, если держать достаочно долго
+        /// </summary>
         public ICommand RecordCommand => new AsyncCommand(async () =>
         {
             if (IsRecording)
@@ -360,11 +370,17 @@ namespace Bioss.Ultrasound.UI.ViewModels
         },
         allowsMultipleExecutions: false);
 
+        /// <summary>
+        /// Команда остановки записи
+        /// </summary>
         public ICommand LongPressRecordCommand => new AsyncCommand(async () =>
         {
             await SaveCurrentRecordAsync();
         }, allowsMultipleExecutions: false);
 
+        /// <summary>
+        /// Сброс показателей TOCO
+        /// </summary>
         public ICommand ResetTocoCommand => new Command(async a =>
         {
             Vibro();
@@ -373,6 +389,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
             AddTocoReset();
         });
 
+        /// <summary>
+        /// Зафискировано движение плода
+        /// </summary>
         public ICommand ResetFMCommand => new Command(a =>
         {
             if (_record == null)
@@ -387,6 +406,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _chartDrawer.AddFMAnnotation(_plottingTimeSpanHelper.CollectTimeSpan(now));
         });
 
+        /// <summary>
+        /// Команда для ввода данных о пациенте
+        /// </summary>
         public ICommand BiometricCommand => new AsyncCommand(async () =>
         {
             var popup = new BiometricPopup(_dialogs, _record.Biometric);
@@ -395,6 +417,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
         }, allowsMultipleExecutions: false);
 
+        /// <summary>
+        /// Остановка всех звонков
+        /// </summary>
         public ICommand BellOffCommand => new Command(a =>
         {
             _audioService.Stop();
@@ -412,6 +437,11 @@ namespace Bioss.Ultrasound.UI.ViewModels
         #endregion
 
         #region Events with Bluetooth
+        /// <summary>
+        /// Изменение состояния подключения
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="isConnected">сосотяние подключения</param>
         private async void OnConnectedChanged(object sender, bool isConnected)
         {
             IsConnected = isConnected;
@@ -433,6 +463,11 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
         }
 
+        /// <summary>
+        /// Обработка полученного пакета, перевод сигналов датчика в запись
+        /// </summary>
+        /// <param name="sender">устройство</param>
+        /// <param name="package">пакет с данными датчиками</param>
         private async void OnNewPackage(object sender, Package package)
         {
             try
@@ -510,6 +545,11 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
         }
 
+        /// <summary>
+        /// Действия при обнаружении устройств поблизоватси
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="device">найденное устройство</param>
         private async void OnDeviceDiscovered(object sender, IDevice device)
         {
             if (_device is not null && _device.IsConnected)
@@ -538,6 +578,12 @@ namespace Bioss.Ultrasound.UI.ViewModels
         }
         #endregion
 
+        /// <summary>
+        /// Действия по остановке записи
+        /// </summary>
+        /// <param name="conditionStop">условие остановки</param>
+        /// <param name="confirmText">текст для подтверждения остановки</param>
+        /// <returns>остановлена ли запись</returns>
         private async Task<bool> StopRecord(bool conditionStop, string confirmText)
         {
             if (!conditionStop)
@@ -562,6 +608,10 @@ namespace Bioss.Ultrasound.UI.ViewModels
             return true;
         }
 
+        /// <summary>
+        /// Сохранение записи и реальная остановка записи находится здесь
+        /// </summary>
+        /// <returns></returns>
         private async Task SaveCurrentRecordAsync()
         {
             try
@@ -585,6 +635,10 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
         }
 
+        /// <summary>
+        /// Записывае данные пакета в запись, так же начинаем озвучивать звуки измерений
+        /// </summary>
+        /// <param name="package"></param>
         private void WriteRecord(Package package)
         {
             if (_record is null)
@@ -601,6 +655,11 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _record.Fhrs.Add(new FhrData() { Time = DateTime.Now, Fhr = fhr.Fhr1, Toco = fhr.Toco });
         }
 
+        /// <summary>
+        /// Обновляем график записи
+        /// </summary>
+        /// <param name="heartRate">значение ЧСС</param>
+        /// <param name="toco">значение TOCO - маточных сокращений</param>
         private void UpdatePlots(byte heartRate, byte toco)
         {
             var time = _plottingTimeSpanHelper.CollectTimeSpan(DateTime.Now);
@@ -610,6 +669,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _chartDrawer.InvalidatePlot(true);
         }
 
+        /// <summary>
+        /// Очистка графика от записи
+        /// </summary>
         private void ClearChart()
         {
             _chartDrawer.Clear();
@@ -620,6 +682,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
             FetalMovements = 0;
         }
 
+        /// <summary>
+        /// Добавляем событие маточного сокращения
+        /// </summary>
         private void AddTocoReset()
         {
             if (_record == null)
@@ -630,6 +695,11 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _chartDrawer.AddTocoAnnotation(_plottingTimeSpanHelper.CollectTimeSpan(now));
         }
 
+        /// <summary>
+        /// Включаем звук оповещения
+        /// </summary>
+        /// <param name="sound">тип звука</param>
+        /// <param name="loop">единично или звенеть пока не отключат</param>
         private void PlayBell(Sounds sound, bool loop = false)
         {
             if (loop)

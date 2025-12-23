@@ -54,6 +54,10 @@ namespace Bioss.Ultrasound.Services.Logging
             }
         }
 
+        /// <summary>
+        /// Отправление всех логов, что до этого не могли отправить
+        /// </summary>
+        /// <returns></returns>
         public async Task SendAllUnsentAsync()
         {
             var logToSend = await _database.LogTable.ToArrayAsync();

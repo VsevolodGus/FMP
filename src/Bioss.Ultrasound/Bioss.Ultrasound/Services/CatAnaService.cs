@@ -1,7 +1,6 @@
 ﻿using Bioss.Ultrasound.Data.Database.Entities.Enums;
 using Bioss.Ultrasound.Domain.Constants;
 using Bioss.Ultrasound.Domain.Models;
-using Bioss.Ultrasound.Tools;
 using System;
 using System.Collections.Generic;
 using static CatAna;
@@ -40,6 +39,11 @@ namespace Bioss.Ultrasound.Services
             _infoSettingsService = infoSettingsService;
         }  
 
+        /// <summary>
+        /// Рассчет КТГ плода на текущий момент
+        /// </summary>
+        /// <param name="record">данные записи</param>
+        /// <returns></returns>
         public CardiotocographyInfo CargiographAnalayzeWithUserSettings(Record record)
         {
             var heartRateResult = ConvertToArray<FhrData, float>(record.RecordingTimeSpan,
@@ -107,6 +111,13 @@ namespace Bioss.Ultrasound.Services
             return result;
         }
 
+        /// <summary>
+        /// Функция адаптер для CatAna
+        /// </summary>
+        /// <param name="pergnancyWeek">кол-во неделей беременности</param>
+        /// <param name="heartRate">пульс, 1 сек = 16 записей</param>
+        /// <param name="movement">движение плода, 1 сек = 16 записей</param>
+        /// <returns>рассчеты по КТГ плода</returns>
         private CardiotocographyInfo CargiographAnalayzeWithUserSettings(int pergnancyWeek, float[] heartRate, bool[] movement)
         {
             var resultCtgUser = _catAna.analyseCtgUser(pergnancyWeek, heartRate, movement, marksUser);

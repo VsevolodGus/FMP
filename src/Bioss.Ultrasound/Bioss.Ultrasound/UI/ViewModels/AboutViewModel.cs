@@ -1,6 +1,7 @@
 ﻿using System.Windows.Input;
 using Bioss.Ultrasound.UI.Pages;
 using Libs.DI.ViewModels;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace Bioss.Ultrasound.UI.ViewModels
@@ -19,6 +20,11 @@ namespace Bioss.Ultrasound.UI.ViewModels
         public ICommand PrivacyCommand => new Command(async a =>
         {
             await _navigation.PushModalAsync(new DocumentPage());
+        });
+
+        public ICommand OpenInstruction => new Command(async a =>
+        {
+            await Browser.OpenAsync("https://bipuls.ru/");
         });
     }
 }

@@ -1,5 +1,4 @@
-﻿using Bioss.Ultrasound.Domain.Models;
-using Bioss.Ultrasound.Resources.Localization;
+﻿using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Tools;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
@@ -9,6 +8,17 @@ namespace Bioss.Ultrasound.Services.Extensions
 {
     public static class XGraphicsExtensions
     {
+        /// <summary>
+        /// Отрисовка заголовков отчета
+        /// </summary>
+        /// <param name="graphics">графика отчета</param>
+        /// <param name="page">страница отчета</param>
+        /// <param name="hospital">имя организации где происходит замер</param>
+        /// <param name="dateOfResearch">дата исследования</param>
+        /// <param name="patient">имя пациента</param>
+        /// <param name="doctor">имя докотора</param>
+        /// <param name="pregnancyWeek">неделя беременности</param>
+        /// <param name="pregnancyDay">день беременности = N дней беременности % 7</param>
         public static void DrawHeader(this XGraphics graphics,
             PdfPage page,
             string hospital,
@@ -56,6 +66,13 @@ namespace Bioss.Ultrasound.Services.Extensions
             settings.DrawString(PdfOrderConstants.HeaderFontSize, 3, XStringAlignment.Far, doctor);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="gfx"></param>
+        /// <param name="page"></param>
+        /// <param name="pageNumber"></param>
+        /// <param name="pageCount"></param>
         public static void DrawPageNumbers(this XGraphics gfx,
             PdfPage page,
             int pageNumber,
@@ -67,6 +84,12 @@ namespace Bioss.Ultrasound.Services.Extensions
             gfx.DrawString(string.Format(AppStrings.PDF_FooterPageNumbers, pageNumber, pageCount), page, padding, paddingLeft, 10, lineHeight, 0, XStringAlignment.Far);
         }
 
+        /// <summary>
+        /// Настройка отрисовки данных по датчику в ПДФ отчете
+        /// </summary>
+        /// <param name="gfx">графика для ПДФ отчета</param>
+        /// <param name="page">Страница ПДФ отчета</param>
+        /// <param name="serialNumber">серийный номер датчика</param>
         public static void DrawDeviceSerialNumber(this XGraphics gfx, PdfPage page, string serialNumber)
         {
             var lineHeight = XUnit.FromMillimeter(2.5);

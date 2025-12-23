@@ -2,8 +2,10 @@
 {
     public enum ServerLogLevel : byte
     {
+        /// <summary>
+        /// Информационный лог
+        /// </summary>
         Info = 0,
-
         /// <summary>
         /// Глобальные критические ошибки, которые создают нагрузку
         /// </summary>
