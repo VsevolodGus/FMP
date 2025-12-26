@@ -16,5 +16,8 @@ namespace Bioss.Ultrasound.Services.Sessions
 
         [JsonProperty("dev")]
         public string DeviceModel { get; set; }
+
+        [JsonProperty("po")]
+        public string Version { get; set; }
     }
 }

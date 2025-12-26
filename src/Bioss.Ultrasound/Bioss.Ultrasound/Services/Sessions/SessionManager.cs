@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Bioss.Ultrasound.Data.Database;
 using Bioss.Ultrasound.Mapping;
+using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Services.Server;
 
 namespace Bioss.Ultrasound.Services.Sessions
@@ -38,6 +39,7 @@ namespace Bioss.Ultrasound.Services.Sessions
                     TemporaryToken = tempraryToken,
                     DeviceOs = DeviceInformation.DeviceOs,
                     DeviceModel = DeviceInformation.DeviceModel,
+                    Version = AppStrings.Version
                 });
 
                 _currentSession = new SessionInfo
