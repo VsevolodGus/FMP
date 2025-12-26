@@ -38,7 +38,7 @@
     <BundleAssemblies>false</BundleAssemblies>
     <EmbedAssembliesIntoApk>false</EmbedAssembliesIntoApk>
     <LangVersion>9.0</LangVersion>
-    <AndroidCreatePackagePerAbi>true</AndroidCreatePackagePerAbi>
+    <AndroidCreatePackagePerAbi>false</AndroidCreatePackagePerAbi>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>
