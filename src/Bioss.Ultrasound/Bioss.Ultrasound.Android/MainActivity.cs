@@ -101,7 +101,6 @@ namespace Bioss.Ultrasound.Droid
             await CloseSession();
 
             base.FinishActivity(requestCode);
-            base.OnStop();
         }
         protected override async void OnStop()
         {
