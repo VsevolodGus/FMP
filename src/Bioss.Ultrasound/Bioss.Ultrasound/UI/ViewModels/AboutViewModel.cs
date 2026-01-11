@@ -15,7 +15,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _navigation = navigation;
         }
 
-        public string Version => "1.3.5";
+        public string Version => Constants.AppVersion;
 
         public ICommand PrivacyCommand => new Command(async a =>
         {

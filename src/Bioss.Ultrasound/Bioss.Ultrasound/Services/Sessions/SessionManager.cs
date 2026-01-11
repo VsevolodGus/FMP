@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Bioss.Ultrasound.Data.Database;
+using Bioss.Ultrasound.Data.Database.Entities;
 using Bioss.Ultrasound.Mapping;
-using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Services.Server;
 
 namespace Bioss.Ultrasound.Services.Sessions
@@ -39,7 +39,7 @@ namespace Bioss.Ultrasound.Services.Sessions
                     TemporaryToken = tempraryToken,
                     DeviceOs = DeviceInformation.DeviceOs,
                     DeviceModel = DeviceInformation.DeviceModel,
-                    Version = AppStrings.Version
+                    Version = Constants.AppVersion
                 });
 
                 _currentSession = new SessionInfo
@@ -56,13 +56,33 @@ namespace Bioss.Ultrasound.Services.Sessions
             }
         }
 
-        public async ValueTask Exit(string token = null)
+
+        public async ValueTask Exit(SessionEntity session)
         {
             try
             {
-                var closeToken = token ?? _currentSession?.Token;
+
+                await _serverHttpProvider.SendAsync(new SessionExitRequest
+                {
+                    SessionToken = session.Token,
+                    SessionId = DateTimeOffset.Now.ToUnixTimeMilliseconds()
+                });
+
+                await _database.Connection.DeleteAsync(session);
+            }
+            catch
+            {
+                throw;
+            }
+        }
+        public async ValueTask Exit()
+        {
+            try
+            {
+                var closeToken = _currentSession?.Token;
                 if (string.IsNullOrEmpty(closeToken))
                     return;
+
                 await _serverHttpProvider.SendAsync(new SessionExitRequest
                 {
                     SessionToken = closeToken,
@@ -70,6 +90,7 @@ namespace Bioss.Ultrasound.Services.Sessions
                 });
 
                 await _database.Connection.DeleteAsync(_currentSession.ToEntity());
+
                 _currentSession = null;
             }
             catch

@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using Bioss.Ultrasound.Data.Database.Entities;
+using System;
+using System.Threading.Tasks;
 
 namespace Bioss.Ultrasound.Services.Sessions
 {
@@ -16,11 +18,9 @@ namespace Bioss.Ultrasound.Services.Sessions
         /// <returns></returns>
         Task StartSessionAsync();
         
-        /// <summary>
-        /// Закрывает сессию, или же закрывает текущую, если token = null
-        /// </summary>
-        /// <param name="token">токен закрытой сессии</param>
-        /// <returns></returns>
-        ValueTask Exit(string token = null);
+
+        ValueTask Exit(SessionEntity session);
+        ValueTask Exit();
+
     }
 }

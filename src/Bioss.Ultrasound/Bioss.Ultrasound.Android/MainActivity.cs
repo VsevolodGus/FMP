@@ -72,45 +72,25 @@ namespace Bioss.Ultrasound.Droid
                 }
             }
 
+            await CloseSession();
             Rg.Plugins.Popup.Popup.SendBackPressed(base.OnBackPressed);
         }
-
-        protected override void OnDestroy()
+     
+        protected override async void OnDestroy()
         {
-            CloseSession();
-
+            await CloseSession();
             base.OnDestroy();
         }
-        public override async void Finish()
-        {
-            await CloseSession();
-            base.Finish();
-        }
-        public override async void FinishAndRemoveTask()
-        {
-            await CloseSession();
-            base.FinishAndRemoveTask();
-        }
-        public override async void FinishAffinity()
-        {
-            await CloseSession();
-            base.FinishAffinity();
-        }
-        public override async void FinishActivity(int requestCode)
-        {
-            await CloseSession();
-
-            base.FinishActivity(requestCode);
-            base.OnStop();
-        }
+       
         protected override async void OnStop()
         {
-            await CloseSession();
+            if (IsFinishing)
+                await CloseSession();
 
             base.OnStop();
         }
 
-        private async Task CloseSession()
+        private async ValueTask CloseSession()
         {
             try
             {
