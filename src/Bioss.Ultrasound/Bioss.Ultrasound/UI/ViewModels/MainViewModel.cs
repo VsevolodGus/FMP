@@ -532,7 +532,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     || !_appSettings.IsAutoCompleteRecordByCriteria
                     || _record.Events is null
                     || _record.Fhrs is null
-                    || _recordTimePassedHelper.CurrentRecordTime.TotalMinutes < CardiograhyConstants.MinRecordingDuration)
+                    || _record.RecordingTimeSpan.TotalMinutes < CardiograhyConstants.MinRecordingDuration)
                     return;
 
                 var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(_record);

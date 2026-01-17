@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.32106.194
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bioss.Ultrasound", "Bioss.Ultrasound\Bioss.Ultrasound\Bioss.Ultrasound.csproj", "{582AB3D1-251B-4B7C-8B00-9941C446481E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bioss.Ultrasound", "Bioss.Ultrasound\Bioss.Ultrasound\Bioss.Ultrasound.csproj", "{582AB3D1-251B-4B7C-8B00-9941C446481E}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bioss.Ultrasound.Android", "Bioss.Ultrasound\Bioss.Ultrasound.Android\Bioss.Ultrasound.Android.csproj", "{8AF73781-8419-4E93-966C-B6AD164C82EC}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bioss.Ultrasound.iOS", "Bioss.Ultrasound\Bioss.Ultrasound.iOS\Bioss.Ultrasound.iOS.csproj", "{A9DD4AF5-BBB5-4CA5-9C64-2DE1ADE1AB87}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bioss.Ultrasound.Test", "Bioss.Ultrasound.Test\Bioss.Ultrasound.Test.csproj", "{2E536419-3654-4F36-A57A-01361E8406AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -73,6 +75,18 @@ Global
 		{A9DD4AF5-BBB5-4CA5-9C64-2DE1ADE1AB87}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
 		{A9DD4AF5-BBB5-4CA5-9C64-2DE1ADE1AB87}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
 		{A9DD4AF5-BBB5-4CA5-9C64-2DE1ADE1AB87}.Release|iPhoneSimulator.Deploy.0 = Release|iPhoneSimulator
+		{2E536419-3654-4F36-A57A-01361E8406AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E536419-3654-4F36-A57A-01361E8406AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E536419-3654-4F36-A57A-01361E8406AD}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{2E536419-3654-4F36-A57A-01361E8406AD}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{2E536419-3654-4F36-A57A-01361E8406AD}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{2E536419-3654-4F36-A57A-01361E8406AD}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{2E536419-3654-4F36-A57A-01361E8406AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E536419-3654-4F36-A57A-01361E8406AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E536419-3654-4F36-A57A-01361E8406AD}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{2E536419-3654-4F36-A57A-01361E8406AD}.Release|iPhone.Build.0 = Release|Any CPU
+		{2E536419-3654-4F36-A57A-01361E8406AD}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{2E536419-3654-4F36-A57A-01361E8406AD}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
