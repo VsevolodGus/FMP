@@ -26,7 +26,6 @@ namespace Bioss.Ultrasound.DI.Modules
                     DependencyService.RegisterSingleton<ISessionManager>(c.Instance);
                 });
             builder.RegisterType<LicenseService>().As<ILicenseService>().SingleInstance();
-            builder.RegisterType<SessionCleanupService>().SingleInstance();
             builder.RegisterType<CatAnaService>().SingleInstance();
             builder.RegisterType<ServerHttpProvider>().SingleInstance();
             builder.RegisterType<ServerHttpProvider>().SingleInstance();

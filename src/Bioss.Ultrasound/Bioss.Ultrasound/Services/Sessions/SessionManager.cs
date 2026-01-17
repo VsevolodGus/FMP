@@ -59,44 +59,45 @@ namespace Bioss.Ultrasound.Services.Sessions
 
         public async ValueTask Exit(SessionEntity session)
         {
-            try
-            {
+            //try
+            //{
 
-                await _serverHttpProvider.SendAsync(new SessionExitRequest
-                {
-                    SessionToken = session.Token,
-                    SessionId = DateTimeOffset.Now.ToUnixTimeMilliseconds()
-                });
+            //    await _serverHttpProvider.SendAsync(new SessionExitRequest
+            //    {
+            //        SessionToken = session.Token,
+            //        SessionId = DateTimeOffset.Now.ToUnixTimeMilliseconds()
+            //    });
 
-                await _database.Connection.DeleteAsync(session);
-            }
-            catch
-            {
-                throw;
-            }
+            //    await _database.Connection.DeleteAsync(session);
+            //}
+            //catch
+            //{
+            //    throw;
+            //}
         }
-        public async ValueTask Exit()
-        {
-            try
-            {
-                var closeToken = _currentSession?.Token;
-                if (string.IsNullOrEmpty(closeToken))
-                    return;
+        public  async ValueTask Exit()
+        {   
+            //try
+            //{
+            //    var closeToken = _currentSession?.Token;
+            //    if (string.IsNullOrEmpty(closeToken))
+            //        return;
 
-                await _serverHttpProvider.SendAsync(new SessionExitRequest
-                {
-                    SessionToken = closeToken,
-                    SessionId = DateTimeOffset.Now.ToUnixTimeMilliseconds()
-                });
+            //    await _serverHttpProvider.SendAsync(new SessionExitRequest
+            //    {
+            //        SessionToken = closeToken,
+            //        SessionId = DateTimeOffset.Now.ToUnixTimeMilliseconds()
+            //    });
 
-                await _database.Connection.DeleteAsync(_currentSession.ToEntity());
+            //    await _database.Connection.DeleteAsync(_currentSession.ToEntity());
 
-                _currentSession = null;
-            }
-            catch
-            {
-                throw;
-            }
+            //    _currentSession = null;
+            //}
+            //catch
+            //{
+            //    throw;
+            //}
+
         }
     }
 }

@@ -22,14 +22,10 @@ namespace Bioss.Ultrasound
         private readonly ILogger _serverLogger;
         private readonly ISessionManager _sessionService;
         private readonly IUnsentLogDispatcher _unsentLogDispatcher;
-        private readonly SessionCleanupService _sessionCleanup;
-        public static Injector Injector { get; private set; }
+        private readonly Task ConnectDb;
 
-        /// <summary>
-        /// TODO отсюда выпилить, костыль 
-        /// </summary>
-        private bool IsLastAndroidVersion => DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 12;
-        private Task ConnectDb; 
+        public static Injector Injector { get; private set; }
+      
         public App()
         {
             InitializeComponent();
@@ -46,7 +42,6 @@ namespace Bioss.Ultrasound
             _serverLogger = Injector.Container.Resolve<ILogger>();
             _sessionService = Injector.Container.Resolve<ISessionManager>();
             _unsentLogDispatcher = Injector.Container.Resolve<IUnsentLogDispatcher>();
-            _sessionCleanup = Injector.Container.Resolve<SessionCleanupService>();
             ConnectDb = _database.ConnectAsync();
 
             if (NetworkState.HasNetwork)
@@ -70,7 +65,6 @@ namespace Bioss.Ultrasound
 
             await ConnectDb;
             await _sessionService.StartSessionAsync();
-            await _sessionCleanup.RemoveOldSessionsAsync();
             await _unsentLogDispatcher.SendAllUnsentAsync();
             
 
@@ -95,6 +89,10 @@ namespace Bioss.Ultrasound
                 await _unsentLogDispatcher.SendAllUnsentAsync();
         }
 
+        /// <summary>
+        /// TODO отсюда выпилить, костыль 
+        /// </summary>
+        private bool IsLastAndroidVersion => DeviceInfo.Platform == DevicePlatform.Android && DeviceInfo.Version.Major >= 12;
         /// <summary>
         /// TODO тоже костыль, здесь не должно быть
         /// </summary>
