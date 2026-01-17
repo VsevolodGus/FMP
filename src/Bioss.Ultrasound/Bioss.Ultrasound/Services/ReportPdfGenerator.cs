@@ -215,7 +215,7 @@ namespace Bioss.Ultrasound.Services
 
             row.Cells[0].FillBoolCell(cardiotocography.SignalLossValid);
             row.Cells[1].FillCell(AppStrings.PDF_SignalLossMax20);
-            row.Cells[2].FillCell(cardiotocography.SignalLossPercentage?.ToString(FloatFormat) ?? PdfOrderConstants.DefaultValue);
+            row.Cells[2].FillCell(cardiotocography?.SignalLossPercentage?.ToString(FloatFormat) ?? PdfOrderConstants.DefaultValue);
 
             row.Cells[3].FillCell();
             row.Cells[4].FillCell(AppStrings.PDF_LTV);
@@ -225,7 +225,7 @@ namespace Bioss.Ultrasound.Services
             row.Cells[5].FillCell(textCell5);
 
             row.Cells[6].FillCell(AppStrings.PDF_TemperatureC);
-            row.Cells[7].FillCell(biometric.Temperature.ToStringOrEmptyString(PdfOrderConstants.DefaultValue, FloatFormat));
+            row.Cells[7].FillCell(biometric?.Temperature.ToString(FloatFormat) ?? PdfOrderConstants.DefaultValue);
 
             return row;
         }
@@ -238,14 +238,14 @@ namespace Bioss.Ultrasound.Services
             // ------
             row.Cells[0].FillBoolCell(cardiotocography.BasalHeartRateValid);
             row.Cells[1].FillCell(AppStrings.PDF_BasalFHRRange110_160);
-            row.Cells[2].FillCell(cardiotocography.BasalHeartRate?.ToString(FloatFormat) ?? PdfOrderConstants.DefaultValue);
+            row.Cells[2].FillCell(cardiotocography?.BasalHeartRate?.ToString(FloatFormat) ?? PdfOrderConstants.DefaultValue);
 
             row.Cells[3].FillBoolCell(cardiotocography.STVValid);
             row.Cells[4].FillCell(AppStrings.PDF_STVMin4);
-            row.Cells[5].FillCell(cardiotocography.STV?.ToString(FloatFormat) ?? PdfOrderConstants.DefaultValue);
+            row.Cells[5].FillCell(cardiotocography?.STV?.ToString(FloatFormat) ?? PdfOrderConstants.DefaultValue);
 
             row.Cells[6].FillCell(AppStrings.PDF_PulseBpm);
-            row.Cells[7].FillCell(biometric.Pulse.ToStringOrEmptyString(PdfOrderConstants.DefaultValue));
+            row.Cells[7].FillCell(biometric?.Pulse.ToString() ?? PdfOrderConstants.DefaultValue);
             // -----
 
             return row;
@@ -259,14 +259,14 @@ namespace Bioss.Ultrasound.Services
             // -----
 
             row.Cells[1].FillCell(AppStrings.PDF_AccCountMore10);
-            row.Cells[2].FillCell(cardiotocography.AccelerationsOver10?.ToString() ?? PdfOrderConstants.DefaultValue);
+            row.Cells[2].FillCell(cardiotocography?.AccelerationsOver10?.ToString() ?? PdfOrderConstants.DefaultValue);
             row.Cells[3].FillCell();
 
             row.Cells[4].FillCell(AppStrings.PDF_OscillationFrequency);
-            row.Cells[5].FillCell(cardiotocography.OscillationFrequency?.ToString(FloatFormat) ?? PdfOrderConstants.DefaultValue);
+            row.Cells[5].FillCell(cardiotocography?.OscillationFrequency?.ToString(FloatFormat) ?? PdfOrderConstants.DefaultValue);
 
             row.Cells[6].FillCell(AppStrings.PDF_SugarMmolL);
-            row.Cells[7].FillCell(biometric.Sugar.ToStringOrEmptyString(PdfOrderConstants.DefaultValue));
+            row.Cells[7].FillCell(biometric?.Sugar.ToString() ?? PdfOrderConstants.DefaultValue);
             // ------
 
             return row;
@@ -278,15 +278,15 @@ namespace Bioss.Ultrasound.Services
             row.Height = PdfOrderConstants.SizeTableRow;
 
             row.Cells[1].FillCell(AppStrings.PDF_AccCountMore15);
-            row.Cells[2].FillCell(cardiotocography.AccelerationsOver15?.ToString() ?? PdfOrderConstants.DefaultValue);
+            row.Cells[2].FillCell(cardiotocography?.AccelerationsOver15?.ToString() ?? PdfOrderConstants.DefaultValue);
 
             row.Cells[3].FillBoolCell(cardiotocography.MovementFrequencyValid);
 
             row.Cells[4].FillCell(AppStrings.PDF_UCFrequencyMin3);
             row.Cells[5].FillCell(cardiotocography.MovementFrequency?.ToString(FloatFormat) ?? PdfOrderConstants.DefaultValue);
             row.Cells[6].FillCell(AppStrings.PDF_HeartRate);
-            var systolic = biometric?.Systolic.ToStringOrEmptyString(PdfOrderConstants.DefaultValue);
-            var diastolic = biometric?.Diastolic.ToStringOrEmptyString(PdfOrderConstants.DefaultValue);
+            var systolic = biometric?.Systolic.ToString() ?? PdfOrderConstants.DefaultValue;
+            var diastolic = biometric?.Diastolic.ToString() ?? PdfOrderConstants.DefaultValue;
             row.Cells[7].FillCell($"{systolic}/{diastolic}");
 
             return row;
@@ -300,7 +300,7 @@ namespace Bioss.Ultrasound.Services
             row.Cells[0].FillBoolCell(cardiotocography.DecelerationsMark);
 
             row.Cells[1].FillCell(AppStrings.PDF_DecCountMore20);//Кол-во Дец. > 20 уд./мин
-            row.Cells[2].FillCell(cardiotocography.Decelerations?.ToString() ?? PdfOrderConstants.DefaultValue);
+            row.Cells[2].FillCell(cardiotocography?.Decelerations?.ToString() ?? PdfOrderConstants.DefaultValue);
 
             row.Cells[3].FillBoolCell(cardiotocography.IsTimeDependentParameters);
 

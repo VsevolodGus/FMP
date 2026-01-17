@@ -143,14 +143,15 @@ namespace Bioss.Ultrasound.UI.ViewModels
         public ICommand ExportToPdfCommand => new AsyncCommand(async () =>
         {
             var recoringStartTime = _record.StartTime;
-            var fileName = Path.Combine(Path.GetTempPath(), $"{_record.DeviceSerialNumber}_{_infoService.PregnancyWeek}({_infoService.PregnancyDay})_{recoringStartTime:yyyy-MM-dd_HH-mm}.pdf");
+            var fileName = $"{_record.DeviceSerialNumber}_{_infoService.PregnancyWeek}({_infoService.PregnancyDay})_{recoringStartTime:yyyy-MM-dd_HH-mm}.pdf";
+            var filePath = Path.Combine(Path.GetTempPath(), fileName);
             try
             {
-                _pdfGenerator.GenerateToFile(fileName, _record);
+                _pdfGenerator.GenerateToFile(filePath, _record);
 
                 var files = new List<ShareFile>
                 {
-                    new ShareFile(fileName)
+                    new ShareFile(filePath)
                 };
                 await Share.RequestAsync(new ShareMultipleFilesRequest
                 {
@@ -160,7 +161,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
             catch (Exception ex)
             {
-                _logger.Log($"Error when generating the report: {fileName}. Error({ex.Message}. StackTrace({ex.StackTrace})", ServerLogLevel.CriticalFunctionalityError);
+                _logger.Log($"Error when generating the report: {fileName}. Error:{ex.Message}. StackTrace({ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
             }
         }, allowsMultipleExecutions: false);
 
