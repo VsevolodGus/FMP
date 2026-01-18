@@ -44,13 +44,12 @@ namespace Bioss.Ultrasound.Services
         /// <returns></returns>
         public CardiotocographyInfo CargiographAnalayzeWithUserSettings(Record record)
         {
-            var heartRateResult = SignalSampler.Sampling<FhrData, float>(record.RecordingTimeSpan,
+            var heartRateResult = SignalSampler.FullSampling<FhrData, float>(record.RecordingTimeSpan,
                 record.StartTime,
                 record.Fhrs,
                 obj => obj.Time,
                 obj => obj.Fhr,
-                TargetFrequency,
-                true);
+                TargetFrequency);
 
             var movementsResult = SignalSampler.Sampling(record.RecordingTimeSpan,
                 record.StartTime,
@@ -69,7 +68,7 @@ namespace Bioss.Ultrasound.Services
         /// <param name="heartRate">пульс, 1 сек = 16 записей</param>
         /// <param name="movement">движение плода, 1 сек = 16 записей</param>
         /// <returns>рассчеты по КТГ плода</returns>
-        private CardiotocographyInfo CargiographAnalayzeWithUserSettings(int pergnancyWeek, float[] heartRate, bool[] movement)
+        private CardiotocographyInfo CargiographAnalayzeWithUserSettings(in int pergnancyWeek, float[] heartRate, bool[] movement)
         {
             var resultCtgUser = _catAna.analyseCtgUser(pergnancyWeek, heartRate, movement, marksUser);
             var analysisParams = resultCtgUser.analysisParams;

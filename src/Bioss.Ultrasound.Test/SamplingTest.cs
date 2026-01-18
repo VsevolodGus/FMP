@@ -13,7 +13,7 @@ public class SamplingTest
 
     #region ТЕСТЫ ВАЛИДАЦИИ
     [Fact]
-    public void ConvertToArray_NullItems_ThrowsArgumentNullException()
+    public void Sampling_NullItems_ThrowsArgumentNullException()
     {
         // Arrange
         var duration = TimeSpan.FromSeconds(1);
@@ -28,7 +28,7 @@ public class SamplingTest
     }
 
     [Fact]
-    public void ConvertToArray_NullGetTime_ThrowsArgumentNullException()
+    public void Sampling_NullGetTime_ThrowsArgumentNullException()
     {
         // Arrange
         var duration = TimeSpan.FromSeconds(1);
@@ -45,7 +45,7 @@ public class SamplingTest
     }
 
     [Fact]
-    public void ConvertToArray_NullGetValue_ThrowsArgumentNullException()
+    public void Sampling_NullGetValue_ThrowsArgumentNullException()
     {
         // Arrange
         var duration = TimeSpan.FromSeconds(1);
@@ -62,7 +62,7 @@ public class SamplingTest
     }
 
     [Fact]
-    public void ConvertToArray_NegativeDuration_ThrowsArgumentException()
+    public void Sampling_NegativeDuration_ThrowsArgumentException()
     {
         // Arrange
         var duration = TimeSpan.FromSeconds(-1);
@@ -83,7 +83,7 @@ public class SamplingTest
     [InlineData(0)]
     [InlineData(-1)]
     [InlineData(-100)]
-    public void ConvertToArray_InvalidTargetFrequency_ThrowsArgumentException(int invalidFrequency)
+    public void Sampling_InvalidTargetFrequency_ThrowsArgumentException(int invalidFrequency)
     {
         // Arrange
         var duration = TimeSpan.FromSeconds(1);
@@ -101,7 +101,7 @@ public class SamplingTest
     }
 
     [Fact]
-    public void ConvertToArray_ItemsOutOfTimeRange_AreIgnored()
+    public void Sampling_ItemsOutOfTimeRange_AreIgnored()
     {
         // Arrange
         var startDate = new DateTime(2024, 1, 1, 10, 0, 0);
@@ -129,12 +129,13 @@ public class SamplingTest
     }
     #endregion
 
+
     #region ТЕСТЫ ОСНОВНОЙ ЛОГИКИ 
     [Theory]
     [InlineData(4, 20)] // 5 сек × 4 Гц = 20
     [InlineData(16, 80)] //5 сек × 16 Гц = 80
     [InlineData(100, 500)] // 5 сек × 100 Гц = 500
-    public void ConvertToArray_EmptyItems_ReturnsArrayOfCorrectLength(int targetFrequency, int exceptedResult)
+    public void Sampling_EmptyItems_ReturnsArrayOfCorrectLength(int targetFrequency, int exceptedResult)
     {
         // Arrange
         var duration = TimeSpan.FromSeconds(5);
@@ -159,7 +160,7 @@ public class SamplingTest
     [InlineData(20, 4, 80)]
     [InlineData(10, 1, 10)]
     [InlineData(100, 32, 3200)]
-    public void ConvertToArray_DifferentFrequencies_CorrectArrayLength(int countSeconds, int targetFrequency, int expectedLength)
+    public void Sampling_DifferentFrequencies_CorrectArrayLength(int countSeconds, int targetFrequency, int expectedLength)
     {
         // Arrange
         var duration = TimeSpan.FromSeconds(countSeconds);
@@ -184,7 +185,7 @@ public class SamplingTest
     [InlineData(500, 8, 16)]  // 500 мс → индекс 8
     [InlineData(100, 1, 10)]  // 100 мс при 10 Гц → индекс 1 (100/100 = 1)
     [InlineData(150, 0, 4)]   // 150 мс при 4 Гц → индекс 0 (150/250 = 0.6 → 0)
-    public void ConvertToArray_TimeToIndexMapping_Correct(int milliseconds, int expectedIndex, int targetFrequency)
+    public void Sampling_TimeToIndexMapping_Correct(int milliseconds, int expectedIndex, int targetFrequency)
     {
         // Arrange
         var startDate = new DateTime(2024, 1, 1, 10, 0, 0);
@@ -203,7 +204,7 @@ public class SamplingTest
     }
 
     [Fact]
-    public void ConvertToArray_MultipleItems_4HzTo16HzMapping()
+    public void Sampling_MultipleItems_4HzTo16HzMapping()
     {
         // Arrange: 4 измерения в секунду (4 Гц) → 16 позиций в секунду
         var startDate = new DateTime(2024, 1, 1, 10, 0, 0);
@@ -242,10 +243,8 @@ public class SamplingTest
         }
     }
 
-
-
     [Fact]
-    public void ConvertToArray_ItemsAtBoundary_CorrectlyHandled()
+    public void Sampling_ItemsAtBoundary_CorrectlyHandled()
     {
         // Arrange: измерение точно на границе последнего интервала
         var startDate = new DateTime(2024, 1, 1, 10, 0, 0);
@@ -274,7 +273,7 @@ public class SamplingTest
     /// [ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ]
     /// </summary>
     [Fact]
-    public void ConvertToArray_WithSamplerTrue_FillsIntermediateValues()
+    public void Sampling_WithSamplerTrue_FillsIntermediateValues()
     {
         const int value1 = 10;
         const int value2 = 20;
@@ -293,11 +292,11 @@ public class SamplingTest
         var duration = TimeSpan.FromSeconds(1);
 
         // Act
-        var result = SignalSampler.Sampling(
+        var result = SignalSampler.FullSampling(
             duration, startDate, items,
             x => x.Timestamp, x => x.Value,
-            targetFrequency: 16,
-            fullSampling: true);
+            targetFrequency: 16
+            );
 
         // Assert
         Assert.Equal(16, result.Length);
@@ -320,40 +319,7 @@ public class SamplingTest
     }
 
     [Fact]
-    public void ConvertToArray_WithSamplerFalse_DoesNotFillIntermediate()
-    {
-        // Arrange
-        var startDate = new DateTime(2024, 1, 1, 10, 0, 0);
-        var items = new[]
-        {
-            new TestDataItem { Timestamp = startDate.AddMilliseconds(0), Value = 10 },
-            new TestDataItem { Timestamp = startDate.AddMilliseconds(500), Value = 20 }
-        };
-        var duration = TimeSpan.FromSeconds(1);
-
-        // Act
-        var result = SignalSampler.Sampling(
-            duration, startDate, items,
-            x => x.Timestamp, x => x.Value,
-            targetFrequency: 16,
-            fullSampling: false);
-
-        // Assert
-        Assert.Equal(16, result.Length);
-        Assert.Equal(10, result[0]);  // Только в индексе 0
-        Assert.Equal(20, result[8]);  // Только в индексе 8
-
-        // Между ними должны быть 0
-        for (int i = 1; i < 8; i++)
-            Assert.Equal(0, result[i]);
-
-        // После тоже
-        for (int i = 9; i < 16; i++)
-            Assert.Equal(0, result[i]);
-    }
-
-    [Fact]
-    public void ConvertToArray_WithSamplerAndSingleItem_FillsAll()
+    public void Sampling_WithSamplerAndSingleItem_FillsAll()
     {
         // Arrange
         var startDate = new DateTime(2024, 1, 1, 10, 0, 0);
@@ -361,11 +327,10 @@ public class SamplingTest
         var duration = TimeSpan.FromSeconds(0.5); // 8 элементов при 16 Гц
 
         // Act
-        var result = SignalSampler.Sampling(
+        var result = SignalSampler.FullSampling(
             duration, startDate, items,
             x => x.Timestamp, x => x.Value,
-            targetFrequency: 16,
-            fullSampling: true);
+            targetFrequency: 16);
 
         // Assert
         Assert.Equal(8, result.Length); // 0.5 сек × 16 Гц = 8
@@ -376,7 +341,7 @@ public class SamplingTest
 
     #region  ТЕСТЫ КОЛЛИЗИЙ И ПЕРЕЗАПИСИ
     [Fact]
-    public void ConvertToArray_OverlappingTimes_LastValueWins()
+    public void Sampling_OverlappingTimes_LastValueWins()
     {
         // Arrange: два измерения попадают в один и тот же интервал
         var startDate = new DateTime(2024, 1, 1, 10, 0, 0);
@@ -402,10 +367,9 @@ public class SamplingTest
     #endregion
 
 
-
     #region ТЕСТЫ С РАЗНЫМИ ТИПАМИ ДАННЫХ 
     [Fact]
-    public void ConvertToArray_WithStringValues_WorksCorrectly()
+    public void Sampling_WithStringValues_WorksCorrectly()
     {
         // Arrange
         var startDate = new DateTime(2024, 1, 1, 10, 0, 0);
@@ -430,7 +394,7 @@ public class SamplingTest
     }
 
     [Fact]
-    public void ConvertToArray_WithNullableInt_WorksCorrectly()
+    public void Sampling_WithNullableInt_WorksCorrectly()
     {
         // Arrange
         var startDate = new DateTime(2024, 1, 1, 10, 0, 0);
@@ -458,7 +422,7 @@ public class SamplingTest
 
     #region ТЕСТЫ РЕАЛЬНЫХ СЦЕНАРИЕВ
     [Fact]
-    public void ConvertToArray_RealWorldScenario_30MinuteRecording()
+    public void Sampling_RealWorldScenario_30MinuteRecording()
     {
         // Arrange: реалистичный сценарий - 30 минут записи при 16 Гц
         var startDate = new DateTime(2024, 1, 1, 10, 0, 0);
@@ -482,11 +446,11 @@ public class SamplingTest
         }
 
         // Act
-        var result = SignalSampler.Sampling(
+        var result = SignalSampler.FullSampling(
             duration, startDate, items,
             x => x.Timestamp, x => x.Value,
-            targetFrequency: targetFrequency,
-            fullSampling: true);
+            targetFrequency: targetFrequency
+            );
 
         // Assert
         long expectedLength = (long)Math.Ceiling(duration.TotalSeconds * targetFrequency);
@@ -504,7 +468,7 @@ public class SamplingTest
     }
 
     [Fact]
-    public void ConvertToArray_WithVeryHighFrequency_DoesNotOverflow()
+    public void Sampling_WithVeryHighFrequency_DoesNotOverflow()
     {
         // Arrange: высокая частота, но короткое время
         var startDate = new DateTime(2024, 1, 1, 10, 0, 0);
@@ -525,13 +489,14 @@ public class SamplingTest
     }
     #endregion
 
+
     #region ТЕСТЫ НА ОКРУГЛЕНИЕ И ТОЧНОСТЬ 
     [Theory]
     [InlineData(31, 16)]  // 31 мс → 31/62.5=0.496 → 0
     [InlineData(32, 16)]  // 32 мс → 32/62.5=0.512 → 0? (целочисленное деление)
     [InlineData(47, 16)]  // 47 мс → 47/62.5=0.752 → 0
     [InlineData(48, 16)]  // 48 мс → 48/62.5=0.768 → 0
-    public void ConvertToArray_IntegerDivision_Correct(int milliseconds, int targetFrequency)
+    public void Sampling_IntegerDivision_Correct(int milliseconds, int targetFrequency)
     {
         // Arrange
         var startDate = new DateTime(2024, 1, 1, 10, 0, 0);
