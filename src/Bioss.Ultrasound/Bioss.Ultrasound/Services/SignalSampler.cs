@@ -132,7 +132,7 @@ namespace Bioss.Ultrasound.Services
                 throw new ArgumentException($"{nameof(targetFrequency)} должен быть больше 0");
 
             var totalSeconds = duration.TotalSeconds;
-            var arrayLength = (long)Math.Ceiling(totalSeconds * targetFrequency);
+            var arrayLength = (long)Math.Floor(totalSeconds * targetFrequency);
             return new T[arrayLength];
 
         }

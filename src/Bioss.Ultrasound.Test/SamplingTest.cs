@@ -272,12 +272,49 @@ public class SamplingTest
     }
 
     [Fact]
+    public void Sampling_MultipleItems_ByPartItems()
+    {
+        // Arrange: 4 измерения в секунду (4 Гц) → 16 позиций в секунду
+        var startDate = new DateTime(2024, 1, 1, 10, 0, 0);
+        var items = new[]
+        {
+            new TestDataItem { Timestamp = startDate.AddMilliseconds(0), Value = 1 },
+            new TestDataItem { Timestamp = startDate.AddMilliseconds(250), Value = 2 },
+            new TestDataItem { Timestamp = startDate.AddMilliseconds(510), Value = 3 } // добавили параллельно семплированию
+        };
+        var duration = TimeSpan.FromMilliseconds(500);
+
+        // Act
+        var result = SignalSampler.Sampling(
+            duration,
+            startDate,
+            items,
+            2,
+            x => x.Timestamp,
+            x => x.Value,
+            targetFrequency: 16);
+
+        // Assert
+        Assert.Equal(8, result.Length);
+        Assert.Equal(1, result[0]);   // 0 мс → индекс 0
+        Assert.Equal(2, result[4]);   // 250 мс → индекс 4 (250/62.5 = 4)
+
+        // Между значениями должны быть 0
+        for (int i = 0; i < 8; i++)
+        {
+            if (i != 0 && i != 4)
+            {
+                Assert.Equal(0, result[i]);
+            }
+        }
+    }
+
+    [Fact]
     public void Sampling_ItemsAtBoundary_CorrectlyHandled()
     {
         // Arrange: измерение точно на границе последнего интервала
         var startDate = new DateTime(2024, 1, 1, 10, 0, 0);
         var duration = TimeSpan.FromSeconds(1);
-        var targetFrequency = 16;
 
         // 1000 мс при 16 Гц: интервал = 62.5 мс, 1000/62.5 = 16
         var boundaryTime = startDate.AddMilliseconds(1000);
@@ -291,7 +328,7 @@ public class SamplingTest
             items.Length,
             x => x.Timestamp, 
             x => x.Value,
-            targetFrequency: targetFrequency);
+            targetFrequency: 16);
 
         // Assert: index == arrayLength (16) → index = arrayLength - 1 (15)
         Assert.Equal(99, result[15]); // Последний элемент массива
