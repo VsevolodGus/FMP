@@ -47,7 +47,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly RecordTimePassedHelper _recordTimePassedHelper = new RecordTimePassedHelper();
         private readonly LossPercentageHelper _lossHelper = new();
 
-        private readonly INavigation _navigation;
         private readonly IUserDialogs _dialogs;
         private readonly DevicesScaner _devicesScaner;
         private readonly IRepository _repository;
@@ -85,7 +84,24 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
         private bool _isBell;
 
-        public MainViewModel(INavigation navigation,
+        #region Оптимизация рассчетов критериев
+        /// <summary>
+        /// Запущен рассчет или нет
+        /// Если идет рассчет записи критериев, то другие рассчеты не начинаются, пока параметр не изменит значение
+        /// </summary>
+        private bool _isCalculationRunning = false;
+        /// <summary>
+        /// Минимальное время прошедшее между рассчетами
+        /// 1 сек нужен чтобы успели набраться новые данные и выполниться другие фоноые процессы
+        /// </summary>
+        private readonly long _intervalCalculatingTicks = TimeSpan.FromSeconds(2).Ticks;
+        /// <summary>
+        /// Время последнего запуска рассчета
+        /// </summary>
+        private DateTime _lastCalculationDateUtc = DateTime.MinValue;
+        #endregion
+
+        public MainViewModel(
             IUserDialogs dialogs,
             DevicesScaner devicesScaner,
             IRepository repository,
@@ -99,7 +115,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
             CatAnaService catAnaService,
             ILogger logger)
         {
-            _navigation = navigation;
             _dialogs = dialogs;
             _devicesScaner = devicesScaner;
             _repository = repository;
@@ -351,6 +366,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
 
             IsRecording = true;
+            _isCalculationRunning = false;
+            _lastCalculationDateUtc = DateTime.Now;
+            //UpdateTimerAsync();
 
             _logger.Log($"Started recording with {_device.Name}");
             _record = new Record
@@ -463,6 +481,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
         }
 
+        
         /// <summary>
         /// Обработка полученного пакета, перевод сигналов датчика в запись
         /// </summary>
@@ -524,23 +543,44 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
                 _pcmPlayer.AddSound(decoded);
 
-                //
                 WriteRecord(package);
 
-                if (_record is null
-                    || !_recordTimePassedHelper.IsAutoRecord
-                    || !_appSettings.IsAutoCompleteRecordByCriteria
-                    || _record.Events is null
-                    || _record.Fhrs is null
-                    || _record.RecordingTimeSpan.TotalMinutes < CardiograhyConstants.MinRecordingDuration)
-                    return;
-
-                var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(_record);
-                if (await StopRecord(cardiografy.IsRoodDawsonCriteriaValid(), AppStrings.Dialog_CriteriaMet))
-                    _logger.Log("The recording was stopped according to the Dawes-Redman criteria");
+                await CalculateCriteriaAsync();
             }
             catch(Exception ex)
             {
+                _logger.Log($"Error when getting new package: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.Warn);
+            }
+        }
+
+        private async ValueTask CalculateCriteriaAsync()
+        {
+            try
+            {
+                // Обязательные условия для начала рассчетов
+                if (!_recordTimePassedHelper.IsAutoRecord
+                        || !_appSettings.IsAutoCompleteRecordByCriteria
+                        || _record is null
+                        || _record.Events is null
+                        || _record.Fhrs is null
+                        || _record.RecordingTimeSpan.TotalMinutes < CardiograhyConstants.MinRecordingDuration)
+                    return;
+
+                // условия для запуска следующего рассчета
+                if (_isCalculationRunning 
+                    && DateTime.UtcNow.Ticks - _lastCalculationDateUtc.Ticks < _intervalCalculatingTicks)
+                    return;
+
+                _lastCalculationDateUtc = DateTime.UtcNow;
+                _isCalculationRunning = true;
+                var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(_record);
+                if (await StopRecord(cardiografy.IsRoodDawsonCriteriaValid(), AppStrings.Dialog_CriteriaMet))
+                    _logger.Log("The recording was stopped according to the Dawes-Redman criteria");
+                _isCalculationRunning = false;
+            }
+            catch(Exception ex)
+            {
+                _isCalculationRunning = false;
                 _logger.Log($"Error when getting new package: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.Warn);
             }
         }
@@ -586,7 +626,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         /// <returns>остановлена ли запись</returns>
         private async Task<bool> StopRecord(bool conditionStop, string confirmText)
         {
-            if (!conditionStop)
+            if (!IsRecording || !conditionStop)
                 return false;
             
 
