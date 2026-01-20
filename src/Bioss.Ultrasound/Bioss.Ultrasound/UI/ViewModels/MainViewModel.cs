@@ -33,7 +33,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private static readonly IReadOnlyCollection<string> DevicePrefixesFilter = new List<string>
+        private static readonly IReadOnlyCollection<string> DevicePrefixesFilter = new string[]
         {
             "LCeFM",
             "Doctis CTG",
@@ -55,7 +55,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly IPcmPlayer _pcmPlayer;
         private readonly AudioService _audioService;
         private readonly ISystemVolume _systemVolume;
-        private readonly InfoSettingsService _infoSettingsService;
         private readonly ILicenseService _licenseService;
         private readonly CatAnaService _catAnaService;
         private readonly ILogger _logger;
@@ -92,9 +91,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private bool _isCalculationRunning = false;
         /// <summary>
         /// Минимальное время прошедшее между рассчетами
-        /// 1 сек нужен чтобы успели набраться новые данные и выполниться другие фоноые процессы
+        /// Перерыв нужен, чтобы успели набраться новые данные и выполниться другие фоноые процессы
         /// </summary>
-        private readonly long _intervalCalculatingTicks = TimeSpan.FromSeconds(2).Ticks;
+        private readonly long _intervalCalculatingTicks = TimeSpan.FromSeconds(10).Ticks;
         /// <summary>
         /// Время последнего запуска рассчета
         /// </summary>
@@ -110,7 +109,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
             IPcmPlayer pcmPlayer,
             AudioService audioService,
             ISystemVolume systemVolume,
-            InfoSettingsService infoSettingsService,
             ILicenseService licenseService,
             CatAnaService catAnaService,
             ILogger logger)
@@ -123,7 +121,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _pcmPlayer = pcmPlayer;
             _audioService = audioService;
             _systemVolume = systemVolume;
-            _infoSettingsService = infoSettingsService;
             _catAnaService = catAnaService;
             _licenseService = licenseService;
             _logger = logger;
@@ -671,7 +668,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
             catch (Exception ex)
             {
-                _logger.Log($"Error when save record for {_device.Name}: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+                _logger.Log($"Error when save record for {_device.Name}: {ex}", ServerLogLevel.CriticalFunctionalityError);
             }
         }
 

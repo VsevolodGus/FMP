@@ -1,5 +1,4 @@
 ﻿using Bioss.Ultrasound.Data.Database.Entities;
-using System;
 using System.Threading.Tasks;
 
 namespace Bioss.Ultrasound.Services.Sessions

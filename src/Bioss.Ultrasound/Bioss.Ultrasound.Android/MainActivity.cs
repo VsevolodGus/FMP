@@ -9,8 +9,6 @@ using Bioss.Ultrasound.Droid.Extensions;
 using System;
 using Android.Widget;
 using AndroidX.AppCompat.App;
-using Bioss.Ultrasound.Services.Sessions;
-using System.Threading.Tasks;
 
 namespace Bioss.Ultrasound.Droid
 {
@@ -72,35 +70,7 @@ namespace Bioss.Ultrasound.Droid
                 }
             }
 
-            await CloseSession();
             Rg.Plugins.Popup.Popup.SendBackPressed(base.OnBackPressed);
-        }
-     
-        protected override async void OnDestroy()
-        {
-            await CloseSession();
-            base.OnDestroy();
-        }
-       
-        protected override async void OnStop()
-        {
-            if (IsFinishing)
-                await CloseSession();
-
-            base.OnStop();
-        }
-
-        private async ValueTask CloseSession()
-        {
-            try
-            {
-                var sessionManager = DependencyService.Resolve<ISessionManager>();
-                await sessionManager.Exit();
-            }
-            catch
-            {
-                System.Diagnostics.Debug.WriteLine("Ошибка при закрытии сессии");
-            }
         }
     }
 

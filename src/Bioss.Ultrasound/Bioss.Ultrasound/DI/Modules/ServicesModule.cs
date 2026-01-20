@@ -20,14 +20,9 @@ namespace Bioss.Ultrasound.DI.Modules
             builder.RegisterType<AudioService>().SingleInstance();
             builder.RegisterType<ReportPdfGenerator>().As<IPdfGenerator>().SingleInstance();
 
-            builder.RegisterType<SessionManager>().As<ISessionManager>().SingleInstance()
-                .OnActivated(c =>
-                {
-                    DependencyService.RegisterSingleton<ISessionManager>(c.Instance);
-                });
+            builder.RegisterType<SessionManager>().As<ISessionManager>().SingleInstance();
             builder.RegisterType<LicenseService>().As<ILicenseService>().SingleInstance();
             builder.RegisterType<CatAnaService>().SingleInstance();
-            builder.RegisterType<ServerHttpProvider>().SingleInstance();
             builder.RegisterType<ServerHttpProvider>().SingleInstance();
             builder.RegisterType<ServerLogger>()
                 .As<ILogger>()
