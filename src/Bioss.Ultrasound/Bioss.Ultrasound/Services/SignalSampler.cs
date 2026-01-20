@@ -24,6 +24,7 @@ namespace Bioss.Ultrasound.Services
         public static TResultItem[] Sampling<TObject, TResultItem>(in TimeSpan duration,
             in DateTime startDate,
             IReadOnlyList<TObject> items,
+            in int itemsCount,
             Func<TObject, DateTime> getTime,
             Func<TObject, TResultItem> getValue,
             in int targetFrequency)
@@ -33,8 +34,9 @@ namespace Bioss.Ultrasound.Services
             var result = CreateEmptySamplingArray<TResultItem>(duration, targetFrequency);
             var ticksPerSample = TimeSpan.TicksPerSecond / targetFrequency;
 
-            foreach (var item in items)
+            for (var i = 0; i < itemsCount; i++)
             {
+                var item = items[i];
                 var currentDate = getTime(item);
                 var index = CalculateIndex(startDate, currentDate, ticksPerSample);
 
@@ -69,6 +71,7 @@ namespace Bioss.Ultrasound.Services
         public static TResultItem[] FullSampling<TObject, TResultItem>(in TimeSpan duration,
             in DateTime startDate,
             IReadOnlyList<TObject> items,
+            in int itemsCount,
             Func<TObject, DateTime> getTime,
             Func<TObject, TResultItem> getValue,
             in int targetFrequency)
@@ -79,8 +82,9 @@ namespace Bioss.Ultrasound.Services
 
             var lastIndex = 0L;
             var ticksPerSample = TimeSpan.TicksPerSecond / targetFrequency;
-            foreach (var item in items)
+            for(var i = 0; i < itemsCount; i++)
             {
+                var item = items[i];
                 var currentDate = getTime(item);
                 var index = CalculateIndex(startDate, currentDate, ticksPerSample);
 

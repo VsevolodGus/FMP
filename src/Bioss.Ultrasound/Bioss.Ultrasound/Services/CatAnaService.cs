@@ -46,14 +46,16 @@ namespace Bioss.Ultrasound.Services
         {
             var heartRateResult = SignalSampler.FullSampling<FhrData, float>(record.RecordingTimeSpan,
                 record.StartTime,
-                record.Fhrs.ToArray(),
+                record.Fhrs,
+                record.Fhrs.Count,
                 obj => obj.Time,
                 obj => obj.Fhr,
                 TargetFrequency);
 
             var movementsResult = SignalSampler.Sampling(record.RecordingTimeSpan,
                 record.StartTime,
-                record.Events.ToArray(),
+                record.Events,
+                record.Events.Count,
                 obj => obj.Time,
                 obj => obj.Event == Events.FetalMovement,
                 TargetFrequency);

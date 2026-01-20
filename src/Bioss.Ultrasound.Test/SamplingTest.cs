@@ -22,8 +22,12 @@ public class SamplingTest
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() =>
             SignalSampler.Sampling<TestDataItem, int>(
-                duration, startDate, null,
-                x => x.Timestamp, x => x.Value,
+                duration, 
+                startDate, 
+                null,
+                100,
+                x => x.Timestamp, 
+                x => x.Value,
                 targetFrequency: 16));
     }
 
@@ -38,7 +42,10 @@ public class SamplingTest
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() =>
             SignalSampler.Sampling(
-                duration, startDate, items,
+                duration, 
+                startDate, 
+                items,
+                items.Length,
                 null, // getTime is null
                 x => x.Value,
                 targetFrequency: 16));
@@ -55,7 +62,10 @@ public class SamplingTest
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() =>
             SignalSampler.Sampling<TestDataItem, int>(
-                duration, startDate, items,
+                duration, 
+                startDate, 
+                items,
+                items.Length,
                 x => x.Timestamp,
                 null, // getValue is null
                 targetFrequency: 16));
@@ -72,8 +82,12 @@ public class SamplingTest
         // Act & Assert
         var ex = Assert.Throws<ArgumentException>(() =>
             SignalSampler.Sampling(
-                duration, startDate, items,
-                x => x.Timestamp, x => x.Value,
+                duration,
+                startDate, 
+                items,
+                items.Length,
+                x => x.Timestamp, 
+                x => x.Value,
                 targetFrequency: 16));
 
         Assert.Contains("positive", ex.Message);
@@ -93,8 +107,12 @@ public class SamplingTest
         // Act & Assert
         var ex = Assert.Throws<ArgumentException>(() =>
             SignalSampler.Sampling(
-                duration, startDate, items,
-                x => x.Timestamp, x => x.Value,
+                duration, 
+                startDate, 
+                items,
+                items.Length,
+                x => x.Timestamp,
+                x => x.Value,
                 targetFrequency: invalidFrequency));
 
         Assert.Contains("must be greater than 0", ex.Message);
@@ -122,6 +140,7 @@ public class SamplingTest
                 duration,
                 startDate,
                 items,
+                items.Length,
                 x => x.Timestamp,
                 x => x.Value,
                 targetFrequency: 16)
@@ -144,7 +163,10 @@ public class SamplingTest
 
         // Act
         var result = SignalSampler.Sampling(
-            duration, startDate, items,
+            duration,
+            startDate,
+            items,
+            items.Count,
             x => x.Timestamp, x => x.Value,
             targetFrequency);
 
@@ -170,6 +192,7 @@ public class SamplingTest
         // Act
         var result = SignalSampler.Sampling(
             duration, startDate, items,
+            items.Count,
             x => x.Timestamp, x => x.Value,
             targetFrequency: targetFrequency);
 
@@ -195,8 +218,12 @@ public class SamplingTest
 
         // Act
         var result = SignalSampler.Sampling(
-            duration, startDate, items,
-            x => x.Timestamp, x => x.Value,
+            duration, 
+            startDate,
+            items,
+            items.Length,
+            x => x.Timestamp, 
+            x => x.Value,
             targetFrequency: targetFrequency);
 
         // Assert
@@ -222,6 +249,7 @@ public class SamplingTest
             duration,
             startDate,
             items,
+            items.Length,
             x => x.Timestamp,
             x => x.Value,
             targetFrequency: 16);
@@ -257,8 +285,12 @@ public class SamplingTest
 
         // Act
         var result = SignalSampler.Sampling(
-            duration, startDate, items,
-            x => x.Timestamp, x => x.Value,
+            duration, 
+            startDate, 
+            items,
+            items.Length,
+            x => x.Timestamp, 
+            x => x.Value,
             targetFrequency: targetFrequency);
 
         // Assert: index == arrayLength (16) → index = arrayLength - 1 (15)
@@ -293,10 +325,13 @@ public class SamplingTest
 
         // Act
         var result = SignalSampler.FullSampling(
-            duration, startDate, items,
-            x => x.Timestamp, x => x.Value,
-            targetFrequency: 16
-            );
+            duration, 
+            startDate, 
+            items,
+            items.Length,
+            x => x.Timestamp,
+            x => x.Value,
+            targetFrequency: 16);
 
         // Assert
         Assert.Equal(16, result.Length);
@@ -328,8 +363,12 @@ public class SamplingTest
 
         // Act
         var result = SignalSampler.FullSampling(
-            duration, startDate, items,
-            x => x.Timestamp, x => x.Value,
+            duration,
+            startDate, 
+            items,
+            items.Length,
+            x => x.Timestamp, 
+            x => x.Value,
             targetFrequency: 16);
 
         // Assert
@@ -355,8 +394,12 @@ public class SamplingTest
 
         // Act
         var result = SignalSampler.Sampling(
-            duration, startDate, items,
-            x => x.Timestamp, x => x.Value,
+            duration, 
+            startDate, 
+            items,
+            items.Length,
+            x => x.Timestamp, 
+            x => x.Value,
             targetFrequency: 16);
 
         // Assert: все попадают в индекс 1 (100/62.5=1.6→1, 110/62.5=1.76→1, 120/62.5=1.92→1)
@@ -382,8 +425,12 @@ public class SamplingTest
 
         // Act
         var result = SignalSampler.Sampling(
-            duration, startDate, items,
-            x => x.Time, x => x.Text,
+            duration, 
+            startDate, 
+            items, 
+            items.Length,
+            x => x.Time,
+            x => x.Text,
             targetFrequency: 8);
 
         // Assert
@@ -407,8 +454,12 @@ public class SamplingTest
 
         // Act
         var result = SignalSampler.Sampling(
-            duration, startDate, items,
-            x => x.Time, x => x.Number,
+            duration, 
+            startDate, 
+            items,
+            items.Length,
+            x => x.Time, 
+            x => x.Number,
             targetFrequency: 4);
 
         // Assert
@@ -447,8 +498,12 @@ public class SamplingTest
 
         // Act
         var result = SignalSampler.FullSampling(
-            duration, startDate, items,
-            x => x.Timestamp, x => x.Value,
+            duration, 
+            startDate, 
+            items, 
+            items.Count,
+            x => x.Timestamp, 
+            x => x.Value,
             targetFrequency: targetFrequency
             );
 
@@ -478,8 +533,12 @@ public class SamplingTest
 
         // Act
         var result = SignalSampler.Sampling(
-            duration, startDate, items,
-            x => x.Timestamp, x => x.Value,
+            duration,
+            startDate, 
+            items, 
+            items.Length,
+            x => x.Timestamp,
+            x => x.Value,
             targetFrequency: highFrequency);
 
         // Assert
@@ -506,8 +565,12 @@ public class SamplingTest
 
         // Act
         var result = SignalSampler.Sampling(
-            duration, startDate, items,
-            x => x.Timestamp, x => x.Value,
+            duration, 
+            startDate, 
+            items,
+            items.Length,
+            x => x.Timestamp, 
+            x => x.Value,
             targetFrequency: targetFrequency);
 
         // Assert: целочисленное деление отбрасывает дробную часть
