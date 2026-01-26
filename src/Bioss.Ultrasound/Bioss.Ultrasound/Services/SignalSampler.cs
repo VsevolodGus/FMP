@@ -147,7 +147,7 @@ namespace Bioss.Ultrasound.Services
 
             return offset.Ticks / ticksPerSample;
         }
-        public static void FillSampler<T>(in T[] arr, in long startIndex, in long endIndex, in T value)
+        public static void FillSampler<T>(in T[] arr, in long startIndex, long endIndex, in T value)
         {
             if (arr is null)
                 throw new ArgumentNullException(nameof(arr));
@@ -156,7 +156,10 @@ namespace Bioss.Ultrasound.Services
                 throw new IndexOutOfRangeException($"{nameof(startIndex)} must positive");
 
             if (endIndex < 0)
-                throw new IndexOutOfRangeException($"{nameof(startIndex)} must positive");
+                throw new IndexOutOfRangeException($"{nameof(endIndex)} must positive");
+
+            if (endIndex >= arr.Length)
+                endIndex = arr.LongLength;
 
             for (var i = startIndex; i < endIndex; i++)
                 arr[i] = value;

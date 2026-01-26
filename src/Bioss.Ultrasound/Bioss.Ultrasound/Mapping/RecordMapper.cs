@@ -17,7 +17,8 @@ namespace Bioss.Ultrasound.Mapping
                 Fhrs = entity.Datas.Select(a => a.ToFhr()).ToList(),
                 Audio = entity.Audio?.ToAudio(),
                 Biometric = entity.Biometric?.ToBiometric(),
-                Events = entity.Events.Select(a => a.ToFhrEvent()).ToList()
+                Events = entity.Events.Select(a => a.ToFhrEvent()).ToList(),
+                CardiotocographyInfo = null,
             };
         }
 

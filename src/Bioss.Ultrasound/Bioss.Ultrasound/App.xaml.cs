@@ -78,7 +78,7 @@ namespace Bioss.Ultrasound
         private async void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var ex = e.ExceptionObject as Exception;
-            await _serverLogger.LogAsync(ex.Message, ServerLogLevel.FatalTerminationError);
+            await _serverLogger.LogAsync($"Fatal error: {ex}", ServerLogLevel.FatalTerminationError);
         }
 
         private async void Connectivity_ConnectivityChanged(object sender, ConnectivityChangedEventArgs e)

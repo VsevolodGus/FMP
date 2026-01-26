@@ -88,7 +88,11 @@ namespace Bioss.Ultrasound.Services.Logging
             });
 
             await Task.WhenAll(sendLogTasks);
-            await _sessionManager.Exit(sessionInfo.Token);
+            if (!sendLogCurrentSession)
+            {
+                await LogAsync("Завершили отправку логов", sessionInfo.Token);
+                await _sessionManager.Exit(sessionInfo.Token);
+            }               
         }
     }
 }

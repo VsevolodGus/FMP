@@ -60,7 +60,8 @@ namespace Bioss.Ultrasound.Services
                 obj => obj.Event == Events.FetalMovement,
                 TargetFrequency);
 
-            return CargiographAnalayzeWithUserSettings(_infoSettingsService.PregnancyWeek, heartRateResult, movementsResult);
+            record.CardiotocographyInfo = CargiographAnalayzeWithUserSettings(_infoSettingsService.PregnancyWeek, heartRateResult, movementsResult);
+            return record.CardiotocographyInfo;
         }
 
         /// <summary>

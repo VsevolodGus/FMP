@@ -489,6 +489,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
             try
             {
                 RecordTimePassed = _recordTimePassedHelper.DisplayTimePassed();
+                if(!IsRecording)
+                    return;
 
                 if (await StopRecord(_recordTimePassedHelper.IsTimeEnd, AppStrings.Dialog_RecordCompleted))
                     _logger.Log("The timer recording was stopped");
@@ -574,13 +576,12 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
                 _isCalculationRunning = true;
 
-                _lastCalculationDateUtc = DateTime.UtcNow;
-
                 var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(_record);
                 if (await StopRecord(cardiografy.IsRoodDawsonCriteriaValid(), AppStrings.Dialog_CriteriaMet))
                     _logger.Log("The recording was stopped according to the Dawes-Redman criteria");
                 
                 _isCalculationRunning = false;
+                _lastCalculationDateUtc = DateTime.UtcNow;
             }
             catch(Exception ex)
             {

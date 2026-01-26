@@ -14,6 +14,7 @@ namespace Bioss.Ultrasound.Domain.Models
         public List<FhrData> Fhrs { get; set; } = new List<FhrData>();
         public Audio Audio { get; set; } = new Audio();
         public Biometric Biometric { get; set; }
+        public CardiotocographyInfo CardiotocographyInfo { get; set; }
 
         public string RecordingTime
         {

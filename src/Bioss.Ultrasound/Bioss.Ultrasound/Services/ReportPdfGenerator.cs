@@ -73,11 +73,10 @@ namespace Bioss.Ultrasound.Services
             var minutesCountInPage = ReportExtensions.CalculateMinuteInPage(oxyHelper.ChartLength.Centimeter, _infoService.PdfRecordingSpeed);
             var pages = ReportExtensions.CalculateCountPages((int)record.RecordingTimeSpan.TotalMinutes, (int)minutesCountInPage);
 
-
             var plottingHelper = new PlottingHelper();
             plottingHelper.Scale = minutesCountInPage * Constants.CountMinuteInHours;
 
-            var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(record);
+            var cardiografy = record.CardiotocographyInfo ?? _catAnaService.CargiographAnalayzeWithUserSettings(record);
             var comment = cardiografy.IsRoodDawsonCriteriaValid()
               ? AppStrings.PDF_DawsonRedmanCriteriaMet
               : string.Format(AppStrings.PDF_DawsonRedmanCriteriaNoMet, cardiografy.CountRoodDawsonCriteriaValid());
