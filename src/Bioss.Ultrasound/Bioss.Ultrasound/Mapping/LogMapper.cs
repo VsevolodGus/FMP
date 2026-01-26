@@ -12,15 +12,14 @@ namespace Bioss.Ultrasound.Mapping
                 Level = logRequest.Level,
                 Message = logRequest.Message,
                 UnixDateTimeMs = logRequest.SessionId,
-                SessionToken = logRequest.SessionToken,
             };
 
-        internal static LogRequest ToLogRequest(this LogEntity entity)
+        internal static LogRequest ToLogRequest(this LogEntity entity, string token)
           => new LogRequest
           {
               Level = entity.Level,
               Message = entity.Message,
-              SessionToken = entity.SessionToken,
+              SessionToken = token,
               SessionId = entity.UnixDateTimeMs,
 
               DeviceModel = DeviceInformation.DeviceModel,

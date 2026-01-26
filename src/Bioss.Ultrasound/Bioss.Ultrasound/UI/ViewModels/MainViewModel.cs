@@ -197,6 +197,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     return;
 
                 if (value && _appSettings.IsBatteryLowSound)
+                if (value && _appSettings.IsBatteryLowSound)
                     PlayBell(Sounds.LowBattery, true);
                 else
                     _audioService.Stop(Sounds.LowBattery);
@@ -365,7 +366,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
             IsRecording = true;
             _isCalculationRunning = false;
             _lastCalculationDateUtc = DateTime.Now;
-            //UpdateTimerAsync();
 
             _logger.Log($"Started recording with {_device.Name}");
             _record = new Record
@@ -550,6 +550,10 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
         }
 
+        /// <summary>
+        /// Вычисления связанные с Кртиериями Доуса Редмана
+        /// </summary>
+        /// <returns></returns>
         private async ValueTask CalculateCriteriaAsync()
         {
             try
@@ -568,11 +572,14 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     && DateTime.UtcNow.Ticks - _lastCalculationDateUtc.Ticks < _intervalCalculatingTicks)
                     return;
 
-                _lastCalculationDateUtc = DateTime.UtcNow;
                 _isCalculationRunning = true;
+
+                _lastCalculationDateUtc = DateTime.UtcNow;
+
                 var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(_record);
                 if (await StopRecord(cardiografy.IsRoodDawsonCriteriaValid(), AppStrings.Dialog_CriteriaMet))
                     _logger.Log("The recording was stopped according to the Dawes-Redman criteria");
+                
                 _isCalculationRunning = false;
             }
             catch(Exception ex)

@@ -64,8 +64,8 @@ namespace Bioss.Ultrasound
                 return;
 
             await ConnectDb;
-            await _sessionService.StartSessionAsync();
-            await _unsentLogDispatcher.SendAllUnsentAsync();
+            await _sessionService.GetCurrentSessionAsync();
+            await _unsentLogDispatcher.SendAllUnsentAsync(false);
             
 
             // initialize hidden services
@@ -79,7 +79,6 @@ namespace Bioss.Ultrasound
         {
             var ex = e.ExceptionObject as Exception;
             await _serverLogger.LogAsync(ex.Message, ServerLogLevel.FatalTerminationError);
-            await _sessionService.Exit();
         }
 
         private async void Connectivity_ConnectivityChanged(object sender, ConnectivityChangedEventArgs e)

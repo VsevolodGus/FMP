@@ -24,13 +24,11 @@ namespace Bioss.Ultrasound.Data.Database
         public AsyncTableQuery<AudioEntity> AudioTable => Connection.Table<AudioEntity>();
         public AsyncTableQuery<BiometricEntity> BiometricTable => Connection.Table<BiometricEntity>();
         public AsyncTableQuery<LogEntity> LogTable => Connection.Table<LogEntity>();
-        public AsyncTableQuery<SessionEntity> SessionTable => Connection.Table<SessionEntity>();
 
         public override async Task CreateAsync()
         {
             await Task.WhenAll(
                 Connection.CreateTableAsync<LogEntity>(),
-                Connection.CreateTableAsync<SessionEntity>(),
                 Connection.CreateTableAsync<RecordEntity>(),
                 Connection.CreateTableAsync<DataEntity>(),
                 Connection.CreateTableAsync<EventEntity>(),

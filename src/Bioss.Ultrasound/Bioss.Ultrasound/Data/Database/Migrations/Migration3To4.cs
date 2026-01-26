@@ -13,7 +13,6 @@ namespace Bioss.Ultrasound.Data.Database.Migrations
         public void Migrate(SQLiteConnection connection)
         {
             connection.CreateTable<LogEntity>();
-            connection.CreateTable<SessionEntity>();
         }
     }
 }

@@ -4,6 +4,11 @@ namespace Bioss.Ultrasound.Services.Logging.Abstracts
 {
     public interface IUnsentLogDispatcher
     {
-        Task SendAllUnsentAsync();
+        /// <summary>
+        /// Отправляем логи
+        /// </summary>
+        /// <param name="sendLogCurrentSession">логи отпрвляются из текущей сессии</param>
+        /// <returns></returns>
+        Task SendAllUnsentAsync(bool sendLogCurrentSession = true);
     }
 }

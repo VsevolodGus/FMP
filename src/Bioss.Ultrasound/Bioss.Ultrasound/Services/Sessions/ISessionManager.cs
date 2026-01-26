@@ -15,11 +15,12 @@ namespace Bioss.Ultrasound.Services.Sessions
         /// Создает новую сессию
         /// </summary>
         /// <returns></returns>
-        Task StartSessionAsync();
+        Task<SessionInfo> StartSessionAsync();
         
-
-        ValueTask Exit(SessionEntity session);
-        ValueTask Exit();
-
+        /// <summary>
+        /// Закрытие сессии
+        /// </summary>
+        /// <returns></returns>
+        Task Exit(string token);
     }
 }

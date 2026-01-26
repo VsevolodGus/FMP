@@ -34,9 +34,14 @@ namespace Bioss.Ultrasound.Services.Logging
         public async Task LogAsync(string message, ServerLogLevel logLevel = ServerLogLevel.Info)
         {
             var sessionInfo = await _sessionManager.GetCurrentSessionAsync();
+            await LogAsync(message, sessionInfo.Token , logLevel);
+        }
+
+        private async Task LogAsync(string message, string token, ServerLogLevel logLevel = ServerLogLevel.Info)
+        {
             var logData = new LogRequest
             {
-                SessionToken = sessionInfo.Token,
+                SessionToken = token,
                 DeviceModel = DeviceInformation.DeviceModel,
                 DeviceOs = DeviceInformation.DeviceOs,
                 SessionId = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
@@ -58,15 +63,22 @@ namespace Bioss.Ultrasound.Services.Logging
         /// Отправление всех логов, что до этого не могли отправить
         /// </summary>
         /// <returns></returns>
-        public async Task SendAllUnsentAsync()
+        public async Task SendAllUnsentAsync(bool sendLogCurrentSession = true)
         {
             var logToSend = await _database.LogTable.ToArrayAsync();
             
+            var sessionInfo = sendLogCurrentSession 
+                ? await _sessionManager.GetCurrentSessionAsync() 
+                : await _sessionManager.StartSessionAsync();
+
+            if (!sendLogCurrentSession)
+                await LogAsync("Отправляем логи с прошлых сессий", sessionInfo.Token);
+
             var sendLogTasks = logToSend.Select(async logData =>
             {
                 try
                 {
-                    await _serverHttpProvider.SendAsync(logData.ToLogRequest());
+                    await _serverHttpProvider.SendAsync(logData.ToLogRequest(sessionInfo.Token));
                     await _database.Connection.DeleteAsync(logData);
                 }
                 catch
@@ -76,6 +88,7 @@ namespace Bioss.Ultrasound.Services.Logging
             });
 
             await Task.WhenAll(sendLogTasks);
+            await _sessionManager.Exit(sessionInfo.Token);
         }
     }
 }
