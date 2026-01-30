@@ -85,7 +85,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
             catch(Exception ex)
             {
-                _logger.Log($"Error when uploading records: {ex.Message}", ServerLogLevel.CriticalFunctionalityError);
+                _logger.Log($"Error when uploading records: {ex}", ServerLogLevel.CriticalFunctionalityError);
             }
         });
     }

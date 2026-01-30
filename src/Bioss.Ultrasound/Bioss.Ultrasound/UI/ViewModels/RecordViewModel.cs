@@ -134,7 +134,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
             catch (Exception ex)
             {
-                _logger.Log($"Error when deleted record: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+                _logger.Log($"Error when deleted record: {ex}", ServerLogLevel.CriticalFunctionalityError);
             }
             await _navigation.PopAsync();
 
@@ -161,7 +161,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
             catch (Exception ex)
             {
-                _logger.Log($"Error when generating the report: {fileName}. Error:{ex.Message}. StackTrace({ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+                _logger.Log($"Error when generating the report: {fileName}. Error: {ex}", ServerLogLevel.CriticalFunctionalityError);
             }
         }, allowsMultipleExecutions: false);
 
@@ -184,11 +184,11 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
             catch (Exception ex)
             {
-                _logger.Log($"Error when trying to update patient data. Error: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+                _logger.Log($"Error when trying to update patient data. Error: {ex}", ServerLogLevel.CriticalFunctionalityError);
             }
         }, allowsMultipleExecutions: false);
 
-        private void PlotModel_Updated(object sender, System.EventArgs e)
+        private void PlotModel_Updated(object sender, EventArgs e)
         {
             //  Не позволяет проматывать график дальше минимума
             if (PlotModel.DefaultXAxis.ActualMinimum < PlotModel.DefaultXAxis.Minimum)

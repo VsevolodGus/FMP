@@ -158,8 +158,6 @@ namespace Bioss.Ultrasound.Services
             if (endIndex < 0)
                 throw new IndexOutOfRangeException($"{nameof(endIndex)} must positive");
 
-            if (endIndex >= arr.Length)
-                endIndex = arr.LongLength;
 
             for (var i = startIndex; i < endIndex; i++)
                 arr[i] = value;

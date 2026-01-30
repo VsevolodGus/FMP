@@ -286,7 +286,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
             catch(Exception ex)
             {
-                _logger.Log($"Error when opening main page. Error: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+                _logger.Log($"Error when opening main page. Error: {ex}", ServerLogLevel.CriticalFunctionalityError);
             }
         });
 
@@ -318,7 +318,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
             catch(Exception ex)
             {
-                _logger.Log($"Error when selectively connecting to the device({_device.Name}). Error: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+                _logger.Log($"Error when selectively connecting to the device({_device.Name}). Error: {ex}", ServerLogLevel.CriticalFunctionalityError);
             }
 
         }, allowsMultipleExecutions: false);
@@ -338,7 +338,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
             catch (Exception ex)
             {
-                _logger.Log($"Errors when trying to disconnect the device({_device.Name}). Error: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+                _logger.Log($"Errors when trying to disconnect the device({_device.Name}). Error: {ex}", ServerLogLevel.CriticalFunctionalityError);
             }
             
             //  На всякий случай останавливаем звуковой сигнал, если он вдруг включен
@@ -489,11 +489,12 @@ namespace Bioss.Ultrasound.UI.ViewModels
             try
             {
                 RecordTimePassed = _recordTimePassedHelper.DisplayTimePassed();
-                if(!IsRecording)
-                    return;
 
                 if (await StopRecord(_recordTimePassedHelper.IsTimeEnd, AppStrings.Dialog_RecordCompleted))
+                {
                     _logger.Log("The timer recording was stopped");
+                    return;
+                }
 
                 if (package.FHRPackage != null)
                 {
@@ -548,7 +549,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
             catch(Exception ex)
             {
-                _logger.Log($"Error when getting new package: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.Warn);
+                _logger.Log($"Error when getting new package: {ex}", ServerLogLevel.Warn);
             }
         }
 
@@ -561,7 +562,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
             try
             {
                 // Обязательные условия для начала рассчетов
-                if (!_recordTimePassedHelper.IsAutoRecord
+                if (!IsRecording
+                        || !_recordTimePassedHelper.IsAutoRecord
                         || !_appSettings.IsAutoCompleteRecordByCriteria
                         || _record is null
                         || _record.Events is null
@@ -586,7 +588,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             catch(Exception ex)
             {
                 _isCalculationRunning = false;
-                _logger.Log($"Error when getting new package: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.Warn);
+                _logger.Log($"Error when getting new package: {ex}", ServerLogLevel.Warn);
             }
         }
 
@@ -617,7 +619,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 }
                 catch (Exception ex)
                 {
-                    _logger.Log($"Error when auto-connecting to the device({_device.Name}). Error: {ex.Message}. StackTrace: {ex.StackTrace}", ServerLogLevel.CriticalFunctionalityError);
+                    _logger.Log($"Error when auto-connecting to the device({_device.Name}). Error: {ex}", ServerLogLevel.CriticalFunctionalityError);
                 }
             }       
         }

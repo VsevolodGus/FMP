@@ -1,6 +1,7 @@
 ﻿using Bioss.Ultrasound.Ble.Commands;
 using Bioss.Ultrasound.Ble.Models;
 using Bioss.Ultrasound.Ble.ProtocolGenerations;
+using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.EventArgs;
@@ -8,20 +9,22 @@ using Plugin.BLE.Abstractions.Exceptions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Bioss.Ultrasound.Ble.Devices
 {
     public class MyDeviceIos : IMyDevice
     {
-        private IAdapter _adapter;
+        private readonly ILogger _logger;
+        private readonly IAdapter _adapter;
         private IDevice _device;
-        private List<ICharacteristic> _subscribedToValueUpdated = new();
+        private readonly List<ICharacteristic> _subscribedToValueUpdated = new();
         private IGeneration _guids;
 
-        public MyDeviceIos()
+        public MyDeviceIos(ILogger logger)
         {
+            _logger = logger;
+
             _adapter = CrossBluetoothLE.Current.Adapter;
             _adapter.DeviceConnected += OnConnected;
             _adapter.DeviceDisconnected += OnDisconnected;
@@ -44,6 +47,7 @@ namespace Bioss.Ultrasound.Ble.Devices
             catch (DeviceConnectionException e)
             {
                 _device = null;
+                _logger.Log($"BLU ERROR {e}");
             }
         }
 
@@ -117,7 +121,7 @@ namespace Bioss.Ultrasound.Ble.Devices
             }
         }
 
-        public async Task<bool> ResetTocoAsync()
+        public async Task ResetTocoAsync()
         {
             try
             {
@@ -125,10 +129,8 @@ namespace Bioss.Ultrasound.Ble.Devices
                 var writeCh = await customService.GetCharacteristicAsync(_guids.ChCustomWrite);
 
                 var command = new SetupCommand(7, 1, true, 0, false);
-                return await writeCh.WriteAsync(command.WriteData());
+                await writeCh.WriteAsync(command.WriteData());
             } catch { }
-
-            return false;
         }
 
         private void DisconnectWork(IDevice device)
