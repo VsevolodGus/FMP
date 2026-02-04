@@ -1,5 +1,4 @@
-﻿using Bioss.Ultrasound.Data.Database.Entities;
-using SQLite;
+﻿using SQLite;
 using SQLiteMigrations;
 
 namespace Bioss.Ultrasound.Data.Database.Migrations

@@ -1,7 +1,6 @@
 ﻿using Bioss.Ultrasound.Data.Database;
 using Bioss.Ultrasound.Mapping;
 using Bioss.Ultrasound.Network;
-using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Services.Server;
 using Bioss.Ultrasound.Services.Sessions;
 using System;
@@ -14,18 +13,15 @@ namespace Bioss.Ultrasound.Services.Licenses
 {
     public sealed class LicenseService : ILicenseService
     {
-        private readonly ILogger _logger;
         private readonly ISessionManager _sessionManager;
         private readonly AppDatabase _database;
         private readonly ServerHttpProvider _serverHttpProvider;
 
         public LicenseService(
-            ILogger logger,
             ISessionManager sessionManager,
             AppDatabase database,
             ServerHttpProvider serverHttpProvider)
         {
-            _logger = logger;
             _sessionManager = sessionManager;
             _database = database;
             _serverHttpProvider = serverHttpProvider;
