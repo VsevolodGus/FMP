@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Bioss.Ultrasound.Data.Database.Entities;
 using Bioss.Ultrasound.Domain.Models;
 
@@ -11,7 +13,9 @@ namespace Bioss.Ultrasound.Mapping
             return new Audio
             {
                 Id = entity.Id,
-                Sound = AudioEntity.ToShorts(entity.Raw).ToList(),
+                Sound = entity.Raw is not null 
+                    ? AudioEntity.ToShorts(entity.Raw)?.ToList() 
+                    : new List<short>(),
                 RecordId = entity.RecordId,
             };
         }
@@ -21,7 +25,9 @@ namespace Bioss.Ultrasound.Mapping
             return new AudioEntity()
             {
                 Id = model.Id,
-                Raw = AudioEntity.ToBytes(model.Sound.ToArray()),
+                Raw = model.Sound is not null 
+                    ? AudioEntity.ToBytes(model.Sound.ToArray()) 
+                    : Array.Empty<byte>(),
                 RecordId = model.RecordId,
             };
         }

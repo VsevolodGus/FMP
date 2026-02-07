@@ -2,6 +2,7 @@
 using Bioss.Ultrasound.Ble.Models;
 using Bioss.Ultrasound.Ble.ProtocolGenerations;
 using Bioss.Ultrasound.Collections;
+using Bioss.Ultrasound.Services.Logging;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Plugin.BLE;
 using Plugin.BLE.Abstractions;
@@ -19,10 +20,10 @@ namespace Bioss.Ultrasound.Ble.Devices
         private readonly ILogger _logger;
         private readonly IAdapter _adapter;
         private IDevice _device;
-        private readonly List<ICharacteristic> _subscribedToValueUpdated = new();
+        private readonly HashSet<ICharacteristic> _subscribedToValueUpdated = new();
         private IGeneration _guids;
 
-        private readonly RingBuffer<byte> _buffer = new RingBuffer<byte>(1024);
+        private RingBuffer<byte> _buffer = new RingBuffer<byte>(1024);
 
         public MyDeviceAndroid(ILogger logger)
         {
@@ -47,64 +48,110 @@ namespace Bioss.Ultrasound.Ble.Devices
                 _device = device;
                 ConnectParameters para = new ConnectParameters(true, true);
                 await _adapter.ConnectToDeviceAsync(device, para);
+
             }
             catch (DeviceConnectionException e)
             {
                 _device = null;
-                _logger.Log($"BLU ERROR {e}");
+                _logger.Log($"Connect error: {e}");
             }
         }
 
         public async Task DisconnectAsync()
         {
-            await _adapter.DisconnectDeviceAsync(_device);
+            if (!IsConnected ||  _device is null)
+                return;
+
+            var device = _device;
+            try
+            {
+                
+                await _adapter.DisconnectDeviceAsync(device);
+            }
+            finally
+            {
+                await DisconnectWorkAsync(device);
+                _device = null;
+            }
         }
 
         private async void OnConnected(object sender, DeviceEventArgs e)
         {
-            if (e.Device != _device)
-                return;
-
-            DebugWriteLine($"Connected {e.Device.Name}");
-
-            IsConnected = true;
-            ConnectedChanged?.Invoke(this, IsConnected);
-
-            _guids = await GuidsManager.GetGeneration(_device);
-
-            var services = await _device.GetServicesAsync();
-            //  подписываемся на все характеристики
-            foreach (var s in services)
+            try
             {
-                DebugWriteLine($"service: {s.Id}");
+                if (e.Device != _device)
+                    return;
 
-                var characteristics = await s.GetCharacteristicsAsync();
-                foreach (var c in characteristics)
+                DebugWriteLine($"Connected {e.Device.Name}");
+                IsConnected = true;
+                ConnectedChanged?.Invoke(this, IsConnected);
+
+                _guids = await GuidsManager.GetGeneration(_device);
+
+                var services = await _device.GetServicesAsync();
+                //  подписываемся на все характеристики
+                foreach (var s in services)
                 {
-                    DebugWriteLine($"   characteristic: {c.Id}, CanUpdate: {c.CanUpdate}");
+                    DebugWriteLine($"service: {s.Id}");
 
-                    if (c.CanUpdate)
+                    var characteristics = await s.GetCharacteristicsAsync();
+                    foreach (var c in characteristics)
                     {
-                        c.ValueUpdated += Ch_ValueUpdated;
-                        await c.StartUpdatesAsync();
-                        _subscribedToValueUpdated.Add(c);
+                        DebugWriteLine($"   characteristic: {c.Id}, CanUpdate: {c.CanUpdate}");
+
+                        if (c.CanUpdate && _subscribedToValueUpdated.Add(c))
+                        {
+                            c.ValueUpdated += Ch_ValueUpdated;
+
+                            try
+                            {
+                                await c.StartUpdatesAsync();
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.Log($"Exception BLU OnConnected {nameof(characteristics)}Item.{nameof(c.StartUpdatesAsync)}: {ex}");
+                            }
+                        }
                     }
                 }
             }
+            catch(Exception ex)
+            {
+                _logger.Log($"Error log in {nameof(OnConnected)}: {ex}", ServerLogLevel.BluetoothError);
+            }
         }
 
-        private void OnDisconnected(object sender, DeviceEventArgs e)
+        private async void OnDisconnected(object sender, DeviceEventArgs e)
         {
-            DisconnectWork(e.Device);
+            try
+            {
+                await DisconnectWorkAsync(e.Device);
+            }
+            catch(Exception ex)
+            {
+                _logger.Log($"Error log in {nameof(OnDisconnected)}: {ex}", ServerLogLevel.BluetoothError);
+            }
+              
+           
         }
 
-        private void OnConnectionLost(object sender, DeviceErrorEventArgs e)
+        private async void OnConnectionLost(object sender, DeviceErrorEventArgs e)
         {
-            DisconnectWork(e.Device);
+            try
+            {
+                await DisconnectWorkAsync(e.Device);
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Error log in {nameof(OnConnectionLost)}: {ex}", ServerLogLevel.BluetoothError);
+            }
         }
 
         private void Ch_ValueUpdated(object sender, CharacteristicUpdatedEventArgs e)
         {
+            if (!IsConnected)
+                return;
+
             var characteristic = e.Characteristic;
 
             //DebugWriteLine($"ValueUpdated: {characteristic.Uuid} {characteristic.Value} {characteristic.Value.Length}");
@@ -141,6 +188,9 @@ namespace Bioss.Ultrasound.Ble.Devices
 
         public async Task ResetTocoAsync()
         {
+            if (!IsConnected || _device == null) 
+                return;
+
             try
             {
                 var customService = await _device.GetServiceAsync(_guids.SrCustom);
@@ -151,9 +201,9 @@ namespace Bioss.Ultrasound.Ble.Devices
             } catch { }
         }
 
-        private void DisconnectWork(IDevice device)
+        private async Task DisconnectWorkAsync(IDevice device)
         {
-            if (device != _device)
+            if (_device is null || device != _device || !IsConnected)
                 return;
 
             IsConnected = false;
@@ -161,8 +211,14 @@ namespace Bioss.Ultrasound.Ble.Devices
 
             //  Отпишемся от старых характеристик
             foreach (var c in _subscribedToValueUpdated)
+            {
                 c.ValueUpdated -= Ch_ValueUpdated;
+                await c.StopUpdatesAsync();
+            }
             _subscribedToValueUpdated.Clear();
+            _buffer = new RingBuffer<byte>(1024);
+
+            _logger.Log($"Связь с датчиком {device.Name} разорвона");
         }
 
         private void DebugWriteLine(string message)

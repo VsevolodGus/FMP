@@ -43,11 +43,12 @@ namespace Bioss.Ultrasound.Ble.Devices
             {
                 _device = device;
                 await _adapter.ConnectToDeviceAsync(device);
+                await Task.Delay(600); // время чтобы подключение полнотсью синхронизировалось были ошибки
             }
             catch (DeviceConnectionException e)
             {
                 _device = null;
-                _logger.Log($"BLU ERROR {e}");
+                _logger.Log($"Connect error: {e}");
             }
         }
 
@@ -67,7 +68,6 @@ namespace Bioss.Ultrasound.Ble.Devices
             ConnectedChanged?.Invoke(this, IsConnected);
 
             _guids = await GuidsManager.GetGeneration(_device);
-
             var services = await _device.GetServicesAsync();
             //  подписываемся на все характеристики
             foreach (var s in services)
@@ -82,7 +82,14 @@ namespace Bioss.Ultrasound.Ble.Devices
                     if (c.CanUpdate)
                     {
                         c.ValueUpdated += Ch_ValueUpdated;
-                        await c.StartUpdatesAsync();
+                        try
+                        {
+                            await c.StartUpdatesAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.Log($"Exception BLU OnConnected: {ex}");
+                        }
                         _subscribedToValueUpdated.Add(c);
                     }
                 }
@@ -140,6 +147,8 @@ namespace Bioss.Ultrasound.Ble.Devices
 
             IsConnected = false;
             ConnectedChanged?.Invoke(this, IsConnected);
+
+            _logger.Log($"Связь с датчиком {device.Name} разорвона");
 
             //  Отпишемся от старых характеристик
             foreach (var c in _subscribedToValueUpdated)

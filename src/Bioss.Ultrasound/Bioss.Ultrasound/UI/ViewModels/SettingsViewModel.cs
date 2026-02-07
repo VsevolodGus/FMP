@@ -96,6 +96,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
             new PickerItem<int> { Name = string.Format(AppStrings.Settings_MonitorFinishMinuteFormat, 20), Value = 20 },
             new PickerItem<int> { Name = string.Format(AppStrings.Settings_MonitorFinishMinuteFormat, 30), Value = 30 },
             new PickerItem<int> { Name = string.Format(AppStrings.Settings_MonitorFinishMinuteFormat, 40), Value = 40 },
+            new PickerItem<int> { Name = string.Format(AppStrings.Settings_MonitorFinishMinuteFormat, 50), Value = 50 },
+            new PickerItem<int> { Name = string.Format(AppStrings.Settings_MonitorFinishMinuteFormat, 60), Value = 60 },
         };
 
         public PickerItem<int> AutoRecordTime

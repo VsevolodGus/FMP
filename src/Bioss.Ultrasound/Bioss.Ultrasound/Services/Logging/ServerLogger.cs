@@ -66,7 +66,10 @@ namespace Bioss.Ultrasound.Services.Logging
         public async Task SendAllUnsentAsync(bool sendLogCurrentSession = true)
         {
             var logToSend = await _database.LogTable.ToArrayAsync();
-            
+
+            if (logToSend is null || logToSend.Length == 0)
+                return;
+
             var sessionInfo = sendLogCurrentSession 
                 ? await _sessionManager.GetCurrentSessionAsync() 
                 : await _sessionManager.StartSessionAsync();

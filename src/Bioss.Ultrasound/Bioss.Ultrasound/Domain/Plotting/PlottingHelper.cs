@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Bioss.Ultrasound.UI.Helpers;
-using OxyPlot;
 using OxyPlot.Axes;
-using OxyPlot.Series;
 
 namespace Bioss.Ultrasound.Domain.Plotting
 {

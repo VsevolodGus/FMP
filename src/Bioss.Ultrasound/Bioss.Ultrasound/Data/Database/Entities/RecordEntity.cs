@@ -23,10 +23,10 @@ namespace Bioss.Ultrasound.Data.Database.Entities
 
         //  relations
         [OneToMany(CascadeOperations = CascadeOperation.All)]
-        public List<DataEntity> Datas { get; set; }
+        public DataEntity[] Datas { get; set; }
 
         [OneToMany(CascadeOperations = CascadeOperation.All)]
-        public List<EventEntity> Events { get; set; }
+        public EventEntity[] Events { get; set; }
 
         [OneToOne(CascadeOperations = CascadeOperation.All)]
         public AudioEntity Audio { get; set; }

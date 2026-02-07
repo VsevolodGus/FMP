@@ -30,9 +30,9 @@ namespace Bioss.Ultrasound.Mapping
                 StartTime = record.StartTime,
                 EndTime = record.StopTime,
                 DeviceSerialNumber = record.DeviceSerialNumber,
-                Audio = record.Audio.ToEntity(),
-                Datas = record.Fhrs.Select(a => a.ToEntity()).ToList(),
-                Events = record.Events.Select(a => a.ToEntity()).ToList(),
+                Audio = record.Audio?.ToEntity(),
+                Datas = record.Fhrs.Select(a => a.ToEntity()).ToArray(),
+                Events = record.Events.Select(a => a.ToEntity()).ToArray(),
                 Biometric = record.Biometric?.ToEntity()
             };
         }
