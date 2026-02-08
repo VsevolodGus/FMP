@@ -23,7 +23,7 @@
 	<key>MinimumOSVersion</key>
 	<string>9.0</string>
 	<key>CFBundleIdentifier</key>
-	<string>ru.mks.ultrasound</string>
+	<string>ru.bipuls.fmp</string>
 	<key>UILaunchStoryboardName</key>
 	<string>SplashScreen</string>
 	<key>CFBundleName</key>

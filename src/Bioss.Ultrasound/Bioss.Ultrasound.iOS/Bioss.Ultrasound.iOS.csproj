@@ -28,7 +28,6 @@
     <MtouchLink>None</MtouchLink>
     <MtouchDebug>true</MtouchDebug>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodesignKey>Apple Development: Vitalii Vovchok (H7JF736786)</CodesignKey>
     <CodesignProvision>VS: ru.mks.ultrasound Development</CodesignProvision>
     <RunWithWarnings>true</RunWithWarnings>
     <LangVersion>9.0</LangVersion>
@@ -42,9 +41,9 @@
     <MtouchLink>None</MtouchLink>
     <MtouchArch>x86_64</MtouchArch>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodesignKey>Apple Development: Vitalii Vovchok (H7JF736786)</CodesignKey>
-    <CodesignProvision>VS: ru.mks.ultrasound Development</CodesignProvision>
+    <CodesignProvision></CodesignProvision>
     <LangVersion>9.0</LangVersion>
+    <CodesignKey>Apple Distribution: BIPULS LLC (K645SCU543)</CodesignKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhone' ">
     <DebugSymbols>true</DebugSymbols>
@@ -55,7 +54,6 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <MtouchArch>ARM64</MtouchArch>
-    <CodesignKey>Apple Development: Vitalii Vovchok (H7JF736786)</CodesignKey>
     <MtouchDebug>true</MtouchDebug>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchLink>None</MtouchLink>
@@ -71,13 +69,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <MtouchArch>ARM64</MtouchArch>
-    <CodesignKey>iPhone Distribution: Medical Computer System, OOO (TJQD2KPV8F)</CodesignKey>
     <CodesignEntitlements>Entitlements.plist</CodesignEntitlements>
     <MtouchLink>SdkOnly</MtouchLink>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <CodesignProvision>Ultrasound - App Store</CodesignProvision>
+    <CodesignProvision></CodesignProvision>
     <MtouchExtraArgs>--linkskip=Xamarin.CommunityToolkit</MtouchExtraArgs>
     <LangVersion>9.0</LangVersion>
+    <SignAssembly>true</SignAssembly>
+    <BuildIpa>true</BuildIpa>
+    <CodesignKey>Apple Distribution: BIPULS LLC (K645SCU543)</CodesignKey>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
     <AppExtensionDebugBundleId />
