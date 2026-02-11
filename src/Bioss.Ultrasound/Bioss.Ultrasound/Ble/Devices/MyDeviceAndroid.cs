@@ -11,17 +11,21 @@ using Plugin.BLE.Abstractions.EventArgs;
 using Plugin.BLE.Abstractions.Exceptions;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Bioss.Ultrasound.Ble.Devices
 {
     public class MyDeviceAndroid : IMyDevice
     {
+        private static readonly ConnectParameters connectParameters = new ConnectParameters(true, true);
+
         private readonly ILogger _logger;
         private readonly IAdapter _adapter;
         private IDevice _device;
         private readonly HashSet<ICharacteristic> _subscribedToValueUpdated = new();
         private IGeneration _guids;
+        private bool _disconnecting;
 
         private RingBuffer<byte> _buffer = new RingBuffer<byte>(1024);
 
@@ -43,12 +47,10 @@ namespace Bioss.Ultrasound.Ble.Devices
 
         public async Task ConnectAsync(IDevice device)
         {
+            _device = device;
             try
             {
-                _device = device;
-                ConnectParameters para = new ConnectParameters(true, true);
-                await _adapter.ConnectToDeviceAsync(device, para);
-
+                await _adapter.ConnectToDeviceAsync(device, connectParameters);
             }
             catch (DeviceConnectionException e)
             {
@@ -65,13 +67,11 @@ namespace Bioss.Ultrasound.Ble.Devices
             var device = _device;
             try
             {
-                
                 await _adapter.DisconnectDeviceAsync(device);
             }
             finally
             {
                 await DisconnectWorkAsync(device);
-                _device = null;
             }
         }
 
@@ -79,7 +79,7 @@ namespace Bioss.Ultrasound.Ble.Devices
         {
             try
             {
-                if (e.Device != _device)
+                if (_disconnecting || e.Device != _device)
                     return;
 
                 DebugWriteLine($"Connected {e.Device.Name}");
@@ -99,7 +99,7 @@ namespace Bioss.Ultrasound.Ble.Devices
                     {
                         DebugWriteLine($"   characteristic: {c.Id}, CanUpdate: {c.CanUpdate}");
 
-                        if (c.CanUpdate && _subscribedToValueUpdated.Add(c))
+                        if (c.CanUpdate && c.Id == _guids.ChCustomRead && _subscribedToValueUpdated.Add(c))
                         {
                             c.ValueUpdated += Ch_ValueUpdated;
 
@@ -131,8 +131,6 @@ namespace Bioss.Ultrasound.Ble.Devices
             {
                 _logger.Log($"Error log in {nameof(OnDisconnected)}: {ex}", ServerLogLevel.BluetoothError);
             }
-              
-           
         }
 
         private async void OnConnectionLost(object sender, DeviceErrorEventArgs e)
@@ -149,6 +147,9 @@ namespace Bioss.Ultrasound.Ble.Devices
 
         private void Ch_ValueUpdated(object sender, CharacteristicUpdatedEventArgs e)
         {
+            if (_guids == null)
+                return;
+
             if (!IsConnected)
                 return;
 
@@ -182,7 +183,14 @@ namespace Bioss.Ultrasound.Ble.Devices
                     return;
                 }
 
-                NewPackage?.Invoke(this, package);
+                try
+                {
+                    NewPackage?.Invoke(this, package);
+                }
+                catch (Exception ex)
+                {
+                    _logger.Log($"Proccess NewPackage with error: {ex}", ServerLogLevel.Warn);
+                }
             }
         }
 
@@ -203,22 +211,47 @@ namespace Bioss.Ultrasound.Ble.Devices
 
         private async Task DisconnectWorkAsync(IDevice device)
         {
-            if (_device is null || device != _device || !IsConnected)
+
+            if (_disconnecting)
                 return;
 
-            IsConnected = false;
-            ConnectedChanged?.Invoke(this, IsConnected);
-
-            //  Отпишемся от старых характеристик
-            foreach (var c in _subscribedToValueUpdated)
+            _disconnecting = true;
+            try
             {
-                c.ValueUpdated -= Ch_ValueUpdated;
-                await c.StopUpdatesAsync();
-            }
-            _subscribedToValueUpdated.Clear();
-            _buffer = new RingBuffer<byte>(1024);
+                if (_device is null || device != _device)
+                    return;
+                
+                if (IsConnected)
+                {
+                    IsConnected = false;
+                    ConnectedChanged?.Invoke(this, false);
+                }
 
-            _logger.Log($"Связь с датчиком {device.Name} разорвона");
+                var oldSubs = _subscribedToValueUpdated.ToList();
+                _subscribedToValueUpdated.Clear();
+                _buffer = new RingBuffer<byte>(1024);
+
+                foreach (var c in oldSubs)
+                {
+                    try
+                    {
+                        c.ValueUpdated -= Ch_ValueUpdated;
+                        if (device.State == DeviceState.Connected)
+                            await c.StopUpdatesAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.Log($"BLE StopUpdates ignored: {ex.Message}", ServerLogLevel.Debug);
+                    }
+                }
+            }
+            finally
+            {
+                if (device == _device)
+                    _device = null;
+
+                _disconnecting = false;
+            }
         }
 
         private void DebugWriteLine(string message)
