@@ -22,12 +22,12 @@ namespace Bioss.Ultrasound.Services
             { Sounds.LossData, new SoundPlayer(audioResourceName) }
         };
 
-        public void Play(Sounds sound, bool loop = false)
+        public void Play(in Sounds sound, in bool loop = false)
         {
             _players[sound].Play(loop);
         }
 
-        public void Stop(Sounds sound)
+        public void Stop(in Sounds sound)
         {
             _players[sound].Stop();
         }
@@ -52,7 +52,7 @@ namespace Bioss.Ultrasound.Services
             //  используем собственное свойство Loop, так как одноименное свойстово в ISimpleAudioPlayer не работало
             public bool Loop { get; set; }
 
-            public void Play(bool loop)
+            public void Play(in bool loop)
             {
                 Loop = loop;
                 _player.Play();
@@ -70,7 +70,7 @@ namespace Bioss.Ultrasound.Services
                     _player.Play();
             }
 
-            private Stream GetResourceStream(string resource)
+            private static Stream GetResourceStream(string resource)
             {
                 var assembly = typeof(App).GetTypeInfo().Assembly;
                 return assembly.GetManifestResourceStream(resource);

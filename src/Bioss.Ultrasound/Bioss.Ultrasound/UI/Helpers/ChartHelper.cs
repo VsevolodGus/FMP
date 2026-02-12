@@ -8,7 +8,7 @@ namespace Bioss.Ultrasound.UI.Helpers
 {
     public class ChartHelper
     {
-        public static LinearAxis CreateYAxis(string title, double minimum, double maximum, string key = null)
+        public static LinearAxis CreateYAxis(in string title, in double minimum, in double maximum, in string key = null)
         {
             return new LinearAxis
             {
@@ -26,7 +26,7 @@ namespace Bioss.Ultrasound.UI.Helpers
             };
         }
 
-        public static TimeSpanAxis CreateXTimeSpanAxis(bool panEnable)
+        public static TimeSpanAxis CreateXTimeSpanAxis(in bool panEnable)
         {
             return new TimeSpanAxis
             {
@@ -35,13 +35,13 @@ namespace Bioss.Ultrasound.UI.Helpers
                 IsZoomEnabled = false,
                 MajorGridlineStyle = LineStyle.Solid,
                 MinorGridlineStyle = LineStyle.Solid,
-                MajorStep = (double)60, //  1 минута
-                MinorStep = (double)10, //  10 сек
+                MajorStep = 60, //  1 минута
+                MinorStep = 10, //  10 сек
                 StringFormat = "h:mm"
             };
         }
 
-        public static LineSeries CreateSeries(OxyColor color, string yAxisKey = null)
+        public static LineSeries CreateSeries(in OxyColor color, string yAxisKey = null)
         {
             return new LineSeries
             {
@@ -52,21 +52,21 @@ namespace Bioss.Ultrasound.UI.Helpers
             };
         }
 
-        public static void ResetAxisRange(Axis axis, int from, int to)
+        public static void ResetAxisRange(Axis axis, in int from, in int to)
         {
             axis.Reset();
             axis.Minimum = from;
             axis.Maximum = to;
         }
 
-        public static void ResetDateTimeAxisRange(Axis axis, TimeSpan from, TimeSpan to)
+        public static void ResetDateTimeAxisRange(Axis axis, in TimeSpan from, in TimeSpan to)
         {
             axis.Reset();
             axis.Minimum = TimeSpanAxis.ToDouble(from);
             axis.Maximum = TimeSpanAxis.ToDouble(to);
         }
 
-        public static void DeleteNotViewData(LineSeries series, double scale)
+        public static void DeleteNotViewData(LineSeries series, in double scale)
         {
             //  scale - количество секунд на графике.
             //  данные приходят 4 раза в секунду
@@ -76,7 +76,7 @@ namespace Bioss.Ultrasound.UI.Helpers
                 series.Points.RemoveAt(0);
         }
 
-        public static void AddRectangleAnnotation(PlotModel model, double minY, double maxY, OxyColor color, string key)
+        public static void AddRectangleAnnotation(PlotModel model, in double minY, in double maxY, OxyColor color, string key)
         {
             var spaceRectangle = new RectangleAnnotation()
             {

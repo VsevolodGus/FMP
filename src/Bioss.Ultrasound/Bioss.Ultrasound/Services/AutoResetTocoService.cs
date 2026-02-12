@@ -1,7 +1,6 @@
 ﻿using Bioss.Ultrasound.Ble.Devices;
 using Bioss.Ultrasound.Ble.Models;
 using Bioss.Ultrasound.Domain.Constants;
-using System;
 using System.Diagnostics;
 using Xamarin.Forms;
 

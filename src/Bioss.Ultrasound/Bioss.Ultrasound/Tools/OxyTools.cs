@@ -8,7 +8,7 @@ namespace Bioss.Ultrasound.Tools
 {
     public class OxyTools
     {
-        public static ImageAnnotation MakeImageAnnotation(double x, double y, string imageName, string key = null, int width = 20)
+        public static ImageAnnotation MakeImageAnnotation(in double x, in double y, in string imageName, in string key = null, in int width = 20)
         {
             return new ImageAnnotation
             {
@@ -20,6 +20,7 @@ namespace Bioss.Ultrasound.Tools
             };
         }
 
+        // TODO кешировать бы тут все изображения, а не каждый раз читать с диска
         private static byte[] LoadImage(string imageName)
         {
             var assembly = Assembly.GetExecutingAssembly();

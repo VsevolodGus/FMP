@@ -705,7 +705,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         /// </summary>
         /// <param name="heartRate">значение ЧСС</param>
         /// <param name="toco">значение TOCO - маточных сокращений</param>
-        private void UpdateDataPlots(byte heartRate, byte toco)
+        private void UpdateDataPlots(in byte heartRate, in byte toco)
         {
             var time = _plottingTimeSpanHelper.CollectTimeSpan(DateTime.Now);
             _chartDrawer.Update(time, heartRate, toco);
@@ -743,7 +743,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         /// </summary>
         /// <param name="sound">тип звука</param>
         /// <param name="loop">единично или звенеть пока не отключат</param>
-        private void PlayBell(Sounds sound, bool loop = false)
+        private void PlayBell(Sounds sound, in bool loop = false)
         {
             if (loop)
                 IsBell = true;

@@ -6,12 +6,12 @@ namespace Bioss.Ultrasound.Domain.Plotting
     {
         private DateTime _startTime = DateTime.Now;
 
-        public TimeSpan CollectTimeSpan(DateTime dateTime)
+        public TimeSpan CollectTimeSpan(in DateTime dateTime)
         {
             return dateTime - _startTime;
         }
 
-        public void Reset(DateTime dateTime)
+        public void Reset(in DateTime dateTime)
         {
             _startTime = dateTime;
         }

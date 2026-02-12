@@ -21,19 +21,19 @@ namespace Bioss.Ultrasound.Domain.Plotting
             _xAxes.Add(xAxis);
         }
 
-        public void ResetAxisWithMax(TimeSpan time)
+        public void ResetAxisWithMax(in TimeSpan time)
         {
             var startTime = time.Add(TimeSpan.FromSeconds(-Scale));
             ResetDateTimeAxisRange(startTime, time);
         }
 
-        public void ResetAxisWithMin(TimeSpan time)
+        public void ResetAxisWithMin(in TimeSpan time)
         {
             var endTime = time.Add(TimeSpan.FromSeconds(Scale));
             ResetDateTimeAxisRange(time, endTime);
         }
 
-        private void ResetDateTimeAxisRange(TimeSpan from, TimeSpan to)
+        private void ResetDateTimeAxisRange(in TimeSpan from, in TimeSpan to)
         {
             foreach(var axis in _xAxes)
                 ChartHelper.ResetDateTimeAxisRange(axis, from, to);
