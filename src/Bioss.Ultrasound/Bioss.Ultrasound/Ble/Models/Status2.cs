@@ -20,6 +20,7 @@ namespace Bioss.Ultrasound.Ble.Models
         {
             get
             {
+                // TODO подумать чтобы избавить от этого двойного выделения массивов
                 //  bits 2-0: Device power status
                 //      000 - critical
                 //      001 - bad
