@@ -31,6 +31,10 @@ using Xamarin.Forms;
 
 namespace Bioss.Ultrasound.UI.ViewModels
 {
+    /// <summary>
+    /// 1) OnNewPackage - изолировать от UI потока
+    /// 2) оптимизировать через in все синхронные методы
+    /// </summary>
     public class MainViewModel : ViewModelBase
     {
         private static readonly IReadOnlyCollection<string> DevicePrefixesFilter = new string[]
@@ -82,6 +86,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private bool _isLossData;
 
         private bool _isBell;
+        private bool _renderLoopRunning;
 
         #region Оптимизация рассчетов критериев
         /// <summary>
@@ -377,7 +382,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             ClearChart();
             _lossHelper.Clear();
-
+            StartRenderLoop();
             _recordTimePassedHelper.Init(
                 _appSettings.IsAutoRecordTime,
                 (int)TimeSpan.FromMinutes(_appSettings.RecordTimeMinutes).TotalSeconds,
@@ -417,7 +422,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             var now = DateTime.Now;
             _record.Events.Add(new FhrEvent { Time = now, Event = Events.FetalMovement });
 
-            FetalMovements++;
+            _fetalMovements++;
             _chartDrawer.AddFMAnnotation(_plottingTimeSpanHelper.CollectTimeSpan(now));
         });
 
@@ -488,8 +493,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
         {
             try
             {
-                RecordTimePassed = _recordTimePassedHelper.DisplayTimePassed();
-
                 if (await StopRecord(_recordTimePassedHelper.IsTimeEnd, AppStrings.Dialog_RecordCompleted))
                 {
                     _logger.Log("The timer recording was stopped");
@@ -500,38 +503,30 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 {
                     var fhrPackage = package.FHRPackage;
 
-                    FHR = fhrPackage.Fhr1;
-                    Toco = fhrPackage.Toco;
+                    _fhr = fhrPackage.Fhr1;
+                    _toco = fhrPackage.Toco;
 
                     switch (fhrPackage.Status2.BatteryLevel)
                     {
                         case Ble.Models.Enums.BatteryLevel.Excellent:
-                            BatteryLevel = 100;
+                            _batteryLevel = 100;
                             break;
                         case Ble.Models.Enums.BatteryLevel.Good:
-                            BatteryLevel = 75;
+                            _batteryLevel = 75;
                             break;
                         case Ble.Models.Enums.BatteryLevel.Normal:
-                            BatteryLevel = 50;
+                            _batteryLevel = 50;
                             break;
                         case Ble.Models.Enums.BatteryLevel.Bad:
-                            BatteryLevel = 25;
+                            _batteryLevel = 25;
                             break;
                         case Ble.Models.Enums.BatteryLevel.Critical:
-                            BatteryLevel = 0;
+                            _batteryLevel = 0;
                             break;
                     }
 
-                    UpdatePlots(FHR, Toco);
-
-                    _lossHelper.Add(FHR);
-
-                    LossPercentageMinute = _lossHelper.IsQueryFull
-                        ? $"{Math.Round(_lossHelper.PercentInMin() * 100, 0)}"
-                        : "-";
-                    LossPercentage = Math.Round(_lossHelper.PercentAll() * 100, 0);
-
-                    IsLossData = _lossHelper.IsError && IsRecording;
+                    UpdateDataPlots(_fhr, _toco);
+                    _lossHelper.Add(_fhr);
                 }
 
                 var decoded = package.SoundPackage.Decompress();
@@ -661,6 +656,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         {
             try
             {
+                _renderLoopRunning = false;
                 IsRecording = false;
                 var recordToSave = _record;
                 _record = null;
@@ -704,29 +700,16 @@ namespace Bioss.Ultrasound.UI.ViewModels
             });
         }
 
-
-        private DateTime _lastAxisUpdate = DateTime.MinValue;
-        private readonly TimeSpan _axisInterval = TimeSpan.FromSeconds(1);
-
         /// <summary>
         /// Обновляем график записи
         /// </summary>
         /// <param name="heartRate">значение ЧСС</param>
         /// <param name="toco">значение TOCO - маточных сокращений</param>
-        private void UpdatePlots(byte heartRate, byte toco)
+        private void UpdateDataPlots(byte heartRate, byte toco)
         {
-            // TODO как-то надо отсюда это вынести, чтобы обновление происходило чтобы пополнение данных и графики, происходили параллельно, независимо друг от друга
             var time = _plottingTimeSpanHelper.CollectTimeSpan(DateTime.Now);
-
             _chartDrawer.Update(time, heartRate, toco);
-            if (DateTime.UtcNow - _lastAxisUpdate > _axisInterval)
-            {
-                _plottingHelper.ResetAxisWithMax(time);
-                _lastAxisUpdate = DateTime.UtcNow;
-            }
-
-            _chartDrawer.InvalidateGraficPlot();
-
+            _hasNewChartData = true;
         }
 
         /// <summary>
@@ -767,6 +750,54 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             _systemVolume.Volume = _appSettings.SoundLevel;
             _audioService.Play(sound, loop);
+        }
+
+        private const int RenderFps = 4;
+        private volatile bool _hasNewChartData;
+        private void StartRenderLoop()
+        {
+            if (_renderLoopRunning)
+                return;
+
+            _renderLoopRunning = true;
+
+            Device.StartTimer(TimeSpan.FromMilliseconds(1000 / RenderFps), () =>
+            {
+                if (!_isRecording)
+                {
+                    _renderLoopRunning = false;
+                    return false;
+                }
+
+                // обновление свойств
+                RecordTimePassed = _recordTimePassedHelper.DisplayTimePassed();
+                FHR = _fhr;
+                Toco = _toco;
+                FetalMovements = _fetalMovements;
+
+                BatteryLevel = _batteryLevel;
+                
+                LossPercentage = Math.Round(_lossHelper.PercentAll() * 100, 0);
+                IsLossData = _lossHelper.IsError && IsRecording; // TODO добавить условие, чтобы не сразу отрабатывало
+
+                var newMinute = _lossHelper.IsQueryFull
+                    ? $"{Math.Round(_lossHelper.PercentInMin() * 100, 0)}"
+                    : "-";
+
+                if (LossPercentageMinute != newMinute)
+                    LossPercentageMinute = newMinute;
+
+                // обновление графика
+                var time = _plottingTimeSpanHelper.CollectTimeSpan(DateTime.Now);
+                _plottingHelper.ResetAxisWithMax(time);
+                if (_hasNewChartData)
+                {
+                    _hasNewChartData = false;
+                    _chartDrawer.InvalidateGraficPlot();
+                }
+
+                return true;
+            });
         }
     }
 }

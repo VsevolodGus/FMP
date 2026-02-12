@@ -175,9 +175,6 @@ namespace Bioss.Ultrasound.UI.Helpers
 
         public void InvalidateGraficPlot()
         {
-            if (!_invalidateHelper.NeedInvalidate())
-                return;
-
             try
             {
                 _model.InvalidatePlot(false);
