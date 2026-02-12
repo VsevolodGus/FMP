@@ -541,8 +541,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     decoded[i] = (short)(decoded[i] - 512);
 
                 _pcmPlayer.AddSound(decoded);
-
-                WriteRecord(package);
+                WriteRecord(package, decoded);
 
                 await CalculateCriteriaAsync();
             }
@@ -685,12 +684,11 @@ namespace Bioss.Ultrasound.UI.ViewModels
         /// Записывае данные пакета в запись, так же начинаем озвучивать звуки измерений
         /// </summary>
         /// <param name="package"></param>
-        private void WriteRecord(Package package)
+        private void WriteRecord(Package package, short[] soundRaw)
         {
             if (_record is null)
                 return;
 
-            var soundRaw = package.SoundPackage.Decompress();
             foreach (var d in soundRaw)
                 _record.Audio.Sound.Add(d);
 
@@ -698,7 +696,12 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 return;
 
             var fhr = package.FHRPackage;
-            _record.Fhrs.Add(new FhrData() { Time = DateTime.Now, Fhr = fhr.Fhr1, Toco = fhr.Toco });
+            _record.Fhrs.Add(new FhrData() 
+            { 
+                Time = DateTime.Now, 
+                Fhr = fhr.Fhr1, 
+                Toco = fhr.Toco 
+            });
         }
 
 
@@ -712,6 +715,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         /// <param name="toco">значение TOCO - маточных сокращений</param>
         private void UpdatePlots(byte heartRate, byte toco)
         {
+            // TODO как-то надо отсюда это вынести, чтобы обновление происходило чтобы пополнение данных и графики, происходили параллельно, независимо друг от друга
             var time = _plottingTimeSpanHelper.CollectTimeSpan(DateTime.Now);
 
             _chartDrawer.Update(time, heartRate, toco);
@@ -721,7 +725,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 _lastAxisUpdate = DateTime.UtcNow;
             }
 
-            _chartDrawer.InvalidateGraficPlot(true);
+            _chartDrawer.InvalidateGraficPlot();
 
         }
 

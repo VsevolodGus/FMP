@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using OxyPlot;
 using OxyPlot.Annotations;
 using OxyPlot.Axes;

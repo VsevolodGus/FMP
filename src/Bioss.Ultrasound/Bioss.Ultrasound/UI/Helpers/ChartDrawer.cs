@@ -16,6 +16,8 @@ namespace Bioss.Ultrasound.UI.Helpers
 {
     public class ChartDrawer
     {
+        private const int maxCountPointsInLine = 7500;
+
         public const string KEY_FHR = "FHR";
         public const string KEY_TOCO = "TOCO";
         public const string KEY_SPACE_FHR = "SPACE_FHR";
@@ -25,7 +27,7 @@ namespace Bioss.Ultrasound.UI.Helpers
 
         private readonly PlottingHelper _plottingHelper;
         private readonly InvalidateHelper _invalidateHelper = new InvalidateHelper();
-        // TODO подчищать бы их
+       
         private readonly LineSeries _fhrSeries;
         private readonly LineSeries _tocoSeries;
         private readonly Axis _xAxis;
@@ -78,14 +80,23 @@ namespace Bioss.Ultrasound.UI.Helpers
             InvalidatePlot();
         }
 
-        public void Update(TimeSpan time, byte fhr, byte toco)
+        public void Update(in TimeSpan time, in byte fhr, in byte toco, in bool isRecording = true)
         {
             lock (_model.SyncRoot)
             {
                 var dataPointTime = TimeSpanAxis.ToDouble(time);
 
                 _fhrSeries.Points.Add(new DataPoint(dataPointTime, _gapValueHelper.GetValueOrGap(fhr)));
-                _tocoSeries.Points.Add(new DataPoint(dataPointTime, toco));      
+                _tocoSeries.Points.Add(new DataPoint(dataPointTime, toco));
+
+                if (!isRecording)
+                    return;
+
+                if (_fhrSeries.Points.Count > maxCountPointsInLine)
+                    _fhrSeries.Points.RemoveRange(0, 100);
+
+                if (_tocoSeries.Points.Count > maxCountPointsInLine)
+                    _tocoSeries.Points.RemoveRange(0, 100);
             }
         }
 
@@ -101,7 +112,7 @@ namespace Bioss.Ultrasound.UI.Helpers
             }
         }
 
-        public (byte Fhr, byte Toco) GetValue(double xPosition)
+        public (byte Fhr, byte Toco) GetValue(in double xPosition)
         {
             var fhrSeries = (LineSeries) _model.Series.First(a => a is LineSeries series && series.YAxisKey == KEY_FHR);
             var tocoSeries = (LineSeries)_model.Series.First(a => a is LineSeries series && series.YAxisKey == KEY_TOCO);
@@ -112,7 +123,7 @@ namespace Bioss.Ultrasound.UI.Helpers
             return (fhr, toco);
         }
 
-        public void ResetFhrMinMax(int min, int max)
+        public void ResetFhrMinMax(in int min, in int max)
         {
             var spaceFhr = _model.Axes.First(a => a.Key == KEY_SPACE_FHR);
             var fhr = _model.Axes.First(a => a.Key == KEY_FHR);
@@ -124,7 +135,14 @@ namespace Bioss.Ultrasound.UI.Helpers
             AlignAxes(spaceFhr, fhr, spaceToco, toco);
         }
 
-        public void AddTocoAnnotation(TimeSpan timeSpan, bool isPdf = false)
+        public void AddTocoAnnotation(in TimeSpan timeSpan, in bool isPdf = false)
+            => AddAnnotation(timeSpan, KEY_SPACE_TOCO, isPdf);
+
+        public void AddFMAnnotation(in TimeSpan timeSpan, in bool isPdf = false)
+            => AddAnnotation(timeSpan, KEY_SPACE_FHR, isPdf);
+        
+
+        private void AddAnnotation(in TimeSpan timeSpan, in string keySpace, in bool isPdf = false)
         {
             //  [FIX] в генерации PDF есть ошибка, которая рисует иконки вверх ногами
             //  по этому для PDF рисуем иконку вверх ногами
@@ -136,25 +154,10 @@ namespace Bioss.Ultrasound.UI.Helpers
                 ? 10
                 : 20;
 
-            _model.Annotations.Add(OxyTools.MakeImageAnnotation(TimeSpanAxis.ToDouble(timeSpan), 5, imageName, KEY_SPACE_TOCO, width));
+            _model.Annotations.Add(OxyTools.MakeImageAnnotation(TimeSpanAxis.ToDouble(timeSpan), 5, imageName, keySpace, width));
         }
 
-        public void AddFMAnnotation(TimeSpan timeSpan, bool isPdf = false)
-        {
-            //  [FIX] в генерации PDF есть ошибка, которая рисует иконки вверх ногами
-            //  по этому для PDF рисуем иконку вверх ногами
-            var imageName = isPdf
-                ? "pin_top"
-                : "pin";
-
-            var width = isPdf
-                ? 10
-                : 20;
-
-            _model.Annotations.Add(OxyTools.MakeImageAnnotation(TimeSpanAxis.ToDouble(timeSpan), 5, imageName, KEY_SPACE_FHR, width));
-        }
-
-        public void InvalidatePlot(bool optimization = false)
+        public void InvalidatePlot(in bool optimization = false)
         {
             if (optimization)
                 return;
@@ -170,9 +173,9 @@ namespace Bioss.Ultrasound.UI.Helpers
             }
         }
 
-        public void InvalidateGraficPlot(bool throttle = false)
+        public void InvalidateGraficPlot()
         {
-            if (throttle && !_invalidateHelper.NeedInvalidate())
+            if (!_invalidateHelper.NeedInvalidate())
                 return;
 
             try
@@ -258,7 +261,7 @@ namespace Bioss.Ultrasound.UI.Helpers
             ChartHelper.AddRectangleAnnotation(model, 110, 160, OxyColor.Parse("#66C1F7BE"), KEY_FHR);
         }
 
-        private double GetYbyX(double xPosition, List<DataPoint> points)
+        private double GetYbyX(in double xPosition, List<DataPoint> points)
         {
             if (points == null || points.Count == 0)
                 return 0;
@@ -307,7 +310,7 @@ namespace Bioss.Ultrasound.UI.Helpers
         //  TODO: Не придумал нормальное название.
         //  Функция возвращает NAN для всех случаев, когда нужно сделать разрыв графика
         //  например, когда значение Y == 0
-        public double GetValueOrGap(double value)
+        public double GetValueOrGap(in double value)
         {
             var returnValue = value;
 
