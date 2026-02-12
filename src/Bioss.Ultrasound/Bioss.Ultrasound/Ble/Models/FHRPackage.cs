@@ -98,7 +98,7 @@ namespace Bioss.Ultrasound.Ble.Models
             return package;
         }
 
-        public static FHRPackage Init(ReadOnlySpan<byte> data)
+        public static FHRPackage Init(in ReadOnlySpan<byte> data)
         {
             if (data.Length != DataLength)
                 return null;

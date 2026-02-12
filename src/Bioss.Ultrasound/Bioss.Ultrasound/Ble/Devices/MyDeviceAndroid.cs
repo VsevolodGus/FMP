@@ -176,7 +176,7 @@ namespace Bioss.Ultrasound.Ble.Devices
                 if (packageData is null)
                     return;
                 
-                var package = Package.Init(packageData);
+                var package = Package.Init(packageData.AsSpan());
                 if (!(package?.IsValid ?? false))
                 {
                     DebugWriteLine($"ValueUpdated: Invalid package recieved");

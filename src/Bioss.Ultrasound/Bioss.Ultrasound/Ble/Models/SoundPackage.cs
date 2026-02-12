@@ -102,7 +102,7 @@ namespace Bioss.Ultrasound.Ble.Models
             return package;
         }
 
-        public static SoundPackage Init(ReadOnlySpan<byte> data)
+        public static SoundPackage Init(in ReadOnlySpan<byte> data)
         {
             if (data.Length != DataLength)
                 return null;

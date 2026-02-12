@@ -56,7 +56,7 @@ namespace Bioss.Ultrasound.Ble.Models
             return null;
         }
 
-        public static Package Init(ReadOnlySpan<byte> data)
+        public static Package Init(in ReadOnlySpan<byte> data)
         {
             var size = data.Length;
 
