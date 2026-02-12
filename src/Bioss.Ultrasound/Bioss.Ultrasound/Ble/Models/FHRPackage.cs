@@ -1,4 +1,6 @@
-﻿namespace Bioss.Ultrasound.Ble.Models
+﻿using System;
+
+namespace Bioss.Ultrasound.Ble.Models
 {
     /// <summary>
     ///|  Name      |  Package Length  |  Note                   |
@@ -92,6 +94,28 @@
             package.Status1 = new Status1(data[7]);
             package.Status2 = new Status2(data[8]);
             package.Parity = data[9];
+
+            return package;
+        }
+
+        public static FHRPackage Init(ReadOnlySpan<byte> data)
+        {
+            if (data.Length != DataLength)
+                return null;
+
+            var package = new FHRPackage
+            {
+                Head1 = data[0],
+                Head2 = data[1],
+                Control = data[2],
+                Fhr1 = data[3],
+                Fhr2 = data[4],
+                Toco = data[5],
+                Afm = data[6],
+                Status1 = new Status1(data[7]),
+                Status2 = new Status2(data[8]),
+                Parity = data[9]
+            };
 
             return package;
         }

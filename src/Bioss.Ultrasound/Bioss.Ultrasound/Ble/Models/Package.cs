@@ -56,5 +56,32 @@ namespace Bioss.Ultrasound.Ble.Models
 
             return null;
         }
+
+        public static Package Init(ReadOnlySpan<byte> data)
+        {
+            var size = data.Length;
+
+            var package = new Package();
+
+            if (size == SoundPackage.DataLength + FHRPackage.DataLength)
+            {
+                // Используем Slice вместо Array.Copy
+                var soundsSpan = data.Slice(0, SoundPackage.DataLength);
+                var fhrSpan = data.Slice(SoundPackage.DataLength, FHRPackage.DataLength);
+
+                package.SoundPackage = SoundPackage.Init(soundsSpan);
+                package.FHRPackage = FHRPackage.Init(fhrSpan);
+
+                return package;
+            }
+            else if (size == SoundPackage.DataLength)
+            {
+                var soundsSpan = data.Slice(0, SoundPackage.DataLength);
+                package.SoundPackage = SoundPackage.Init(soundsSpan);
+                return package;
+            }
+
+            return null;
+        }
     }
 }

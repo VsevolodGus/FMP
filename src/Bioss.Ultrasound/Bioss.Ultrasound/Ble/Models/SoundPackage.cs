@@ -101,5 +101,30 @@ namespace Bioss.Ultrasound.Ble.Models
 
             return package;
         }
+
+        public static SoundPackage Init(ReadOnlySpan<byte> data)
+        {
+            if (data.Length != DataLength)
+                return null;
+
+            var package = new SoundPackage
+            {
+                Head1 = data[0],
+                Head2 = data[1],
+                Control = data[2],
+                Parity = data[103],
+                AdpcmIndex = data[104],
+                AdpcmValueLow = data[105],
+                AdpcmValueHigh = data[106]
+            };
+
+            // Копируем данные звука
+            var soundArray = new byte[SoundSize];
+            data.Slice(3, SoundSize).CopyTo(soundArray);
+            package.Data = soundArray;
+
+            return package;
+        }
+
     }
 }

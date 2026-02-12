@@ -115,9 +115,10 @@ namespace Bioss.Ultrasound.Ble.Devices
 
             if (_guids.ChCustomRead == characteristic.Id)
             {
-                var package = Package.Init(characteristic.Value);
+                var package = Package.Init(characteristic.Value.AsSpan());
                 if (package is null)
                     return;
+
                 if (!package.IsValid)
                 {
                     DebugWriteLine($"ValueUpdated: Invalid package recieved");
