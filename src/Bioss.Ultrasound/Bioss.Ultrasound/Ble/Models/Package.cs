@@ -27,7 +27,6 @@ namespace Bioss.Ultrasound.Ble.Models
             }
         }
 
-        // TODO надо оптимизировать, без копирования массивов
         public static Package Init(byte[] data)
         {
             var size = data.Length;
