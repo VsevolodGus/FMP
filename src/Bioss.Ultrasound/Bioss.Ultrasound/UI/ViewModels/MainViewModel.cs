@@ -778,7 +778,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 BatteryLevel = _batteryLevel;
                 
                 LossPercentage = Math.Round(_lossHelper.PercentAll() * 100, 0);
-                IsLossData = _lossHelper.IsError && IsRecording; // TODO добавить условие, чтобы не сразу отрабатывало
+                IsLossData = _lossHelper.IsError && IsRecording && _recordTimePassedHelper.CurrentRecordTime.TotalSeconds > 5; // Чтобы не пересчитывать пока датчик  
 
                 var newMinute = _lossHelper.IsQueryFull
                     ? $"{Math.Round(_lossHelper.PercentInMin() * 100, 0)}"
