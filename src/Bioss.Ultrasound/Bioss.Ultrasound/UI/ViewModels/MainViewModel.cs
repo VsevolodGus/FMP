@@ -534,8 +534,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     IsLossData = _lossHelper.IsError && IsRecording;
                 }
 
-                var sound = package.SoundPackage;
-                var decoded = sound.Decompress();
+                var decoded = package.SoundPackage.Decompress();
 
                 //  опускаем сигнал вниз, так как при отсутствии значений, он равен 512
                 for (var i = 0; i < decoded.Length; ++i)
@@ -702,6 +701,10 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _record.Fhrs.Add(new FhrData() { Time = DateTime.Now, Fhr = fhr.Fhr1, Toco = fhr.Toco });
         }
 
+
+        private DateTime _lastAxisUpdate = DateTime.MinValue;
+        private readonly TimeSpan _axisInterval = TimeSpan.FromSeconds(1);
+
         /// <summary>
         /// Обновляем график записи
         /// </summary>
@@ -712,8 +715,14 @@ namespace Bioss.Ultrasound.UI.ViewModels
             var time = _plottingTimeSpanHelper.CollectTimeSpan(DateTime.Now);
 
             _chartDrawer.Update(time, heartRate, toco);
-            _plottingHelper.ResetAxisWithMax(time);
-            _chartDrawer.InvalidatePlot(true);
+            if (DateTime.UtcNow - _lastAxisUpdate > _axisInterval)
+            {
+                _plottingHelper.ResetAxisWithMax(time);
+                _lastAxisUpdate = DateTime.UtcNow;
+            }
+
+            _chartDrawer.InvalidateGraficPlot(true);
+
         }
 
         /// <summary>

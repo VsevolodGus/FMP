@@ -25,7 +25,7 @@ namespace Bioss.Ultrasound.UI.Helpers
 
         private readonly PlottingHelper _plottingHelper;
         private readonly InvalidateHelper _invalidateHelper = new InvalidateHelper();
-
+        // TODO подчищать бы их
         private readonly LineSeries _fhrSeries;
         private readonly LineSeries _tocoSeries;
         private readonly Axis _xAxis;
@@ -85,7 +85,7 @@ namespace Bioss.Ultrasound.UI.Helpers
                 var dataPointTime = TimeSpanAxis.ToDouble(time);
 
                 _fhrSeries.Points.Add(new DataPoint(dataPointTime, _gapValueHelper.GetValueOrGap(fhr)));
-                _tocoSeries.Points.Add(new DataPoint(dataPointTime, toco));
+                _tocoSeries.Points.Add(new DataPoint(dataPointTime, toco));      
             }
         }
 
@@ -156,12 +156,28 @@ namespace Bioss.Ultrasound.UI.Helpers
 
         public void InvalidatePlot(bool optimization = false)
         {
-            if (optimization && !_invalidateHelper.NeedInvalidate())
+            if (optimization)
                 return;
 
             try
             {
                 _model.InvalidatePlot(true);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+                Debug.WriteLine(e.StackTrace);
+            }
+        }
+
+        public void InvalidateGraficPlot(bool throttle = false)
+        {
+            if (throttle && !_invalidateHelper.NeedInvalidate())
+                return;
+
+            try
+            {
+                _model.InvalidatePlot(false);
             }
             catch (Exception e)
             {
@@ -244,13 +260,43 @@ namespace Bioss.Ultrasound.UI.Helpers
 
         private double GetYbyX(double xPosition, List<DataPoint> points)
         {
-            if (points.Count < 2)
+            if (points == null || points.Count == 0)
                 return 0;
 
-            var number = xPosition;
-            var point = points.Aggregate((point1, point2) => Math.Abs(point1.X - number) < Math.Abs(point2.X - number) ? point1 : point2);
-            return point.Y;
+            int left = 0;
+            int right = points.Count - 1;
+
+            while (left <= right)
+            {
+                int mid = (left + right) / 2;
+                double midX = points[mid].X;
+
+                if (midX == xPosition)
+                    return points[mid].Y;
+
+                if (midX < xPosition)
+                    left = mid + 1;
+                else
+                    right = mid - 1;
+            }
+
+            // left теперь указывает на первую точку больше xPosition
+            // right — на последнюю точку меньше xPosition
+
+            if (left >= points.Count)
+                return points[^1].Y;
+
+            if (right < 0)
+                return points[0].Y;
+
+            var leftPoint = points[left];
+            var rightPoint = points[right];
+
+            return Math.Abs(leftPoint.X - xPosition) < Math.Abs(rightPoint.X - xPosition)
+                ? leftPoint.Y
+                : rightPoint.Y;
         }
+
     }
 
     class GapValueHelper
@@ -282,16 +328,10 @@ namespace Bioss.Ultrasound.UI.Helpers
         // Класс нужен для того, чтоб сообщить, как часть нужно обновлять график
         // очень частое обновление сильно нагружает устройство
         // очень частое обновление на андроид приводит к збою приложения
-
-        private readonly int _waitStep;
         private int _count;
-
-        public InvalidateHelper()
-        {
-            _waitStep = Device.RuntimePlatform == Device.Android
-                ? 10
-                : 2;
-        }
+        private readonly int _waitStep = Device.RuntimePlatform == Device.Android
+                ? 15
+                : 5;
 
         public bool NeedInvalidate()
         {
