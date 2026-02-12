@@ -70,7 +70,7 @@ public class FhrPackageTests
              package.Fhr2 +
              package.Toco +
              package.Afm +
-             package.Status1.RawValue +
+             package.QualitySignal.RawValue +
              package.Status2.RawValue) % 256;
 
         Assert.Equal(expected, package.Parity);
@@ -112,7 +112,7 @@ public class FhrPackageTests
         Assert.Equal(50, package.Toco);
         Assert.Equal(7, package.Afm);
 
-        Assert.Equal(8, package.Status1.RawValue);
+        Assert.Equal(8, package.QualitySignal.RawValue);
         Assert.Equal(9, package.Status2.RawValue);
 
         Assert.Equal(data[9], package.Parity);
@@ -167,7 +167,7 @@ public class FhrPackageTests
              package.Fhr2 +
              package.Toco +
              package.Afm +
-             package.Status1.RawValue +
+             package.QualitySignal.RawValue +
              package.Status2.RawValue) % 256;
 
         Assert.Equal(expected, package.Parity);
@@ -209,7 +209,7 @@ public class FhrPackageTests
         Assert.Equal(50, package.Toco);
         Assert.Equal(7, package.Afm);
 
-        Assert.Equal(8, package.Status1.RawValue);
+        Assert.Equal(8, package.QualitySignal.RawValue);
         Assert.Equal(9, package.Status2.RawValue);
 
         Assert.Equal(data[9], package.Parity);

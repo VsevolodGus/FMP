@@ -36,15 +36,13 @@ namespace Bioss.Ultrasound.Ble.Models
         public byte Afm { get; private set; }
 
         // See `Status1Options` for details
-        public Status1 Status1 { get; private set; }
+        public QualityFhrSignalStatus QualitySignal { get; private set; }
 
         // See `Status2Options` for details
-        public Status2 Status2 { get; private set; }
+        public BattaryStatus Status2 { get; private set; }
 
         // (data 1 + … +  dataN) % 256
         public byte Parity { get; private set; }
-
-        public byte[] Data { get; private set; }
 
         public bool IsValid
         {
@@ -59,7 +57,7 @@ namespace Bioss.Ultrasound.Ble.Models
                 if (Control != 0x03)
                     return false;
 
-                var sum = ((int)Fhr1 + (int)Fhr2 + (int)Toco + (int)Afm + (int)Status1.RawValue + (int)Status2.RawValue) % 256;
+                var sum = ((int)Fhr1 + (int)Fhr2 + (int)Toco + (int)Afm + (int)QualitySignal.RawValue + (int)Status2.RawValue) % 256;
 
                 byte csc = sum < 256 
                     ? (byte)sum 
@@ -91,8 +89,8 @@ namespace Bioss.Ultrasound.Ble.Models
             package.Fhr2 = data[4];
             package.Toco = data[5];
             package.Afm = data[6];
-            package.Status1 = new Status1(data[7]);
-            package.Status2 = new Status2(data[8]);
+            package.QualitySignal = new QualityFhrSignalStatus(data[7]);
+            package.Status2 = new BattaryStatus(data[8]);
             package.Parity = data[9];
 
             return package;
@@ -112,8 +110,8 @@ namespace Bioss.Ultrasound.Ble.Models
                 Fhr2 = data[4],
                 Toco = data[5],
                 Afm = data[6],
-                Status1 = new Status1(data[7]),
-                Status2 = new Status2(data[8]),
+                QualitySignal = new QualityFhrSignalStatus(data[7]),
+                Status2 = new BattaryStatus(data[8]),
                 Parity = data[9]
             };
 
