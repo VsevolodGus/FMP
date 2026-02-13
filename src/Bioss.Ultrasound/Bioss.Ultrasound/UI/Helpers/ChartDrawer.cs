@@ -26,7 +26,6 @@ namespace Bioss.Ultrasound.UI.Helpers
         private readonly GapValueHelper _gapValueHelper = new GapValueHelper();
 
         private readonly PlottingHelper _plottingHelper;
-        private readonly InvalidateHelper _invalidateHelper = new InvalidateHelper();
        
         private readonly LineSeries _fhrSeries;
         private readonly LineSeries _tocoSeries;
@@ -89,8 +88,10 @@ namespace Bioss.Ultrasound.UI.Helpers
                 _fhrSeries.Points.Add(new DataPoint(dataPointTime, _gapValueHelper.GetValueOrGap(fhr)));
                 _tocoSeries.Points.Add(new DataPoint(dataPointTime, toco));
 
-                if (!isRecording)
-                    return;
+                // TODO не перепутать бы
+                //if (!isRecording)
+                //    return;
+                return;
 
                 if (_fhrSeries.Points.Count > maxCountPointsInLine)
                     _fhrSeries.Points.RemoveRange(0, 100);
@@ -157,6 +158,7 @@ namespace Bioss.Ultrasound.UI.Helpers
             _model.Annotations.Add(OxyTools.MakeImageAnnotation(TimeSpanAxis.ToDouble(timeSpan), 5, imageName, keySpace, width));
         }
 
+        // TODO метод не нужен
         public void InvalidatePlot(in bool optimization = false)
         {
             if (optimization)
@@ -320,27 +322,6 @@ namespace Bioss.Ultrasound.UI.Helpers
             _lastValue = value;
 
             return returnValue;
-        }
-    }
-
-    class InvalidateHelper
-    {
-        // Класс нужен для того, чтоб сообщить, как часть нужно обновлять график
-        // очень частое обновление сильно нагружает устройство
-        // очень частое обновление на андроид приводит к збою приложения
-        private int _count;
-        private readonly int _waitStep = Device.RuntimePlatform == Device.Android
-                ? 15
-                : 5;
-
-        public bool NeedInvalidate()
-        {
-            _count++;
-            if (_count < _waitStep)
-                return false;
-
-            _count = 0;
-            return true;
         }
     }
 }

@@ -4,7 +4,7 @@ namespace Bioss.Ultrasound.Collections
 {
     public class RingBuffer<T>
     {
-        static readonly object _locker = new object();
+        private readonly object _locker = new object();
 
         private T[] _items;
         private int _count = 0;

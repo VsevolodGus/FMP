@@ -23,6 +23,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Xamarin.CommunityToolkit.ObjectModel;
@@ -98,7 +99,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         /// Минимальное время прошедшее между рассчетами
         /// Перерыв нужен, чтобы успели набраться новые данные и выполниться другие фоноые процессы
         /// </summary>
-        private readonly long _intervalCalculatingTicks = TimeSpan.FromSeconds(10).Ticks;
+        private readonly long _intervalCalculatingTicks = TimeSpan.FromSeconds(5).Ticks;
         /// <summary>
         /// Время последнего запуска рассчета
         /// </summary>
@@ -499,6 +500,12 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     return;
                 }
 
+                if (await StopRecord(_record?.CardiotocographyInfo?.IsRoodDawsonCriteriaValid() ?? false, AppStrings.Dialog_CriteriaMet))
+                {
+                    _logger.Log("The recording was stopped according to the Dawes-Redman criteria");
+                    return;
+                }
+
                 if (package.FHRPackage != null)
                 {
                     var fhrPackage = package.FHRPackage;
@@ -538,7 +545,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 _pcmPlayer.AddSound(decoded);
                 WriteRecord(package, decoded);
 
-                await CalculateCriteriaAsync();
+                CalculateCriteria();
             }
             catch(Exception ex)
             {
@@ -550,7 +557,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         /// Вычисления связанные с Кртиериями Доуса Редмана
         /// </summary>
         /// <returns></returns>
-        private async ValueTask CalculateCriteriaAsync()
+        private void CalculateCriteria()
         {
             try
             {
@@ -571,12 +578,12 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
                 _isCalculationRunning = true;
 
-                var cardiografy = _catAnaService.CargiographAnalayzeWithUserSettings(_record);
-                if (await StopRecord(cardiografy.IsRoodDawsonCriteriaValid(), AppStrings.Dialog_CriteriaMet))
-                    _logger.Log("The recording was stopped according to the Dawes-Redman criteria");
-                
-                _isCalculationRunning = false;
-                _lastCalculationDateUtc = DateTime.UtcNow;
+                Task.Run(() =>
+                {
+                    _catAnaService.CargiographAnalayzeWithUserSettings(_record);
+                    Volatile.Write(ref _isCalculationRunning, false);
+                    _lastCalculationDateUtc = DateTime.UtcNow;
+                });
             }
             catch(Exception ex)
             {
@@ -743,7 +750,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         /// </summary>
         /// <param name="sound">тип звука</param>
         /// <param name="loop">единично или звенеть пока не отключат</param>
-        private void PlayBell(Sounds sound, in bool loop = false)
+        private void PlayBell(in Sounds sound, in bool loop = false)
         {
             if (loop)
                 IsBell = true;
@@ -754,6 +761,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
         private const int RenderFps = 4;
         private volatile bool _hasNewChartData;
+        private int _nowRendering;
         private void StartRenderLoop()
         {
             if (_renderLoopRunning)
@@ -768,6 +776,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     _renderLoopRunning = false;
                     return false;
                 }
+
+                if (Interlocked.Exchange(ref _nowRendering, 1) == 1)
+                    return true;
 
                 // обновление свойств
                 RecordTimePassed = _recordTimePassedHelper.DisplayTimePassed();
@@ -796,6 +807,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     _chartDrawer.InvalidateGraficPlot();
                 }
 
+                Interlocked.Exchange(ref _nowRendering, 0);
                 return true;
             });
         }
