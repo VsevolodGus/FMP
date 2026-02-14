@@ -383,7 +383,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             ClearChart();
             _lossHelper.Clear();
-            StartRenderLoop();
             _recordTimePassedHelper.Init(
                 _appSettings.IsAutoRecordTime,
                 (int)TimeSpan.FromMinutes(_appSettings.RecordTimeMinutes).TotalSeconds,
@@ -469,10 +468,12 @@ namespace Bioss.Ultrasound.UI.ViewModels
             Devices.Clear();
 
             if (isConnected)
+            {
+                StartRenderLoop();
                 await _devicesScaner.StopAsync();
+            }
             else
                 _devicesScaner.Start();
-
 
 
             if (IsRecording && !isConnected)
@@ -771,7 +772,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             Device.StartTimer(TimeSpan.FromMilliseconds(1000 / RenderFps), () =>
             {
-                if (!_isRecording)
+                if (!_isConnected)
                 {
                     _renderLoopRunning = false;
                     return false;
