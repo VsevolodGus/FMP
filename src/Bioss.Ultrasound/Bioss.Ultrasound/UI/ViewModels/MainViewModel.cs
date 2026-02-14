@@ -33,8 +33,7 @@ using Xamarin.Forms;
 namespace Bioss.Ultrasound.UI.ViewModels
 {
     /// <summary>
-    /// 1) OnNewPackage - изолировать от UI потока
-    /// 2) оптимизировать через in все синхронные методы
+    /// 1) запись должна сразу идти
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
@@ -65,10 +64,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly ILogger _logger;
 
 
-
         private IDevice _selectedDevice;
-
-
         private bool _isConnected;
         private byte _fhr;
         private byte _toco;
@@ -82,8 +78,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private string _recordTimePassed;
         private bool _isLowBatteryLevel;
         private double _soundLevel;
-        private double _lossPercentage;
-        private string _lossPercentageMinute;
         private bool _isLossData;
 
         private bool _isBell;
@@ -166,30 +160,34 @@ namespace Bioss.Ultrasound.UI.ViewModels
             }
         }
 
+        private byte _uiFhr;
         public byte FHR
         {
-            get => _fhr;
-            set => SetProperty(ref _fhr, value);
+            get => _uiFhr;
+            set => SetProperty(ref _uiFhr, value);
         }
 
+        private byte _uiToco;
         public byte Toco
         {
-            get => _toco;
-            set => SetProperty(ref _toco, value);
+            get => _uiToco;
+            set => SetProperty(ref _uiToco, value);
         }
 
+        private int _uiFetalMovements;
         public int FetalMovements
         {
-            get => _fetalMovements;
-            set => SetProperty(ref _fetalMovements, value);
+            get => _uiFetalMovements;
+            set => SetProperty(ref _uiFetalMovements, value);
         }
 
+        private byte _uiBatteryLevel;
         public byte BatteryLevel
         {
-            get => _batteryLevel;
+            get => _uiBatteryLevel;
             set
             {
-                SetProperty(ref _batteryLevel, value);
+                SetProperty(ref _uiBatteryLevel, value);
                 IsLowBatteryLevel = _batteryLevel <= 25;
             }
         }
@@ -263,16 +261,18 @@ namespace Bioss.Ultrasound.UI.ViewModels
             set => SetProperty(ref _soundLevel, value);
         }
 
+        private double _uiLossPercentage;
         public double LossPercentage
         {
-            get => _lossPercentage;
-            set => SetProperty(ref _lossPercentage, value);
+            get => _uiLossPercentage;
+            set => SetProperty(ref _uiLossPercentage, value);
         }
 
+        private string _uiLossPercentageMinute;
         public string LossPercentageMinute
         {
-            get => _lossPercentageMinute;
-            set => SetProperty(ref _lossPercentageMinute, value);
+            get => _uiLossPercentageMinute;
+            set => SetProperty(ref _uiLossPercentageMinute, value);
         }
 
         public bool IsBell
@@ -789,7 +789,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 BatteryLevel = _batteryLevel;
                 
                 LossPercentage = Math.Round(_lossHelper.PercentAll() * 100, 0);
-                IsLossData = _lossHelper.IsError && IsRecording && _recordTimePassedHelper.CurrentRecordTime.TotalSeconds > 5; // Чтобы не пересчитывать пока датчик  
+                IsLossData = _lossHelper.IsError && IsRecording; 
 
                 var newMinute = _lossHelper.IsQueryFull
                     ? $"{Math.Round(_lossHelper.PercentInMin() * 100, 0)}"
