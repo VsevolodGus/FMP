@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 namespace Bioss.Ultrasound.Domain.Collections
@@ -10,7 +9,7 @@ namespace Bioss.Ultrasound.Domain.Collections
     {
         private readonly ConcurrentQueue<KeyValuePair<DateTime, T>> _queue = new();
         private readonly TimeSpan _span;
-
+        
         public TimeQueue(TimeSpan span)
         {
             _span = span;
@@ -21,22 +20,20 @@ namespace Bioss.Ultrasound.Domain.Collections
         public void Add(T value)
         {
             var now = DateTime.Now;
-            _queue.Enqueue(new(DateTime.Now, value));
+            _queue.Enqueue(new(now, value));
 
             var cutTime = now.Subtract(_span);
             
             while (true)
             {
-                KeyValuePair<DateTime, T> element;
-                if (!_queue.TryPeek(out element))
+                if (!_queue.TryPeek(out var element))
                     break;
 
                 if (element.Key >= cutTime)
                     break;
 
                 IsFull = true;
-                KeyValuePair<DateTime, T> deleting;
-                _queue.TryDequeue(out deleting);
+                _queue.TryDequeue(out _);
             }
         }
 
@@ -45,7 +42,7 @@ namespace Bioss.Ultrasound.Domain.Collections
             if (_queue.IsEmpty)
                 return .0;
 
-            var valueCount = _queue.Count(a => a.Value.Equals(value));
+            var valueCount = _queue.Count(a => EqualityComparer<T>.Default.Equals(a.Value, value));
             return (double)valueCount / _queue.Count;
         }
 

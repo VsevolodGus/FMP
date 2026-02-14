@@ -69,7 +69,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private byte _fhr;
         private byte _toco;
         private int _fetalMovements;
-        private byte _batteryLevel;
+        private byte _batteryLevel = 50; // ставлю дефолт значение, чтобы отрабатывал не сразу при подключении
 
         private PlotModel _plotModel;
 
@@ -200,7 +200,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 if (!SetProperty(ref _isLowBatteryLevel, value))
                     return;
 
-                if (value && _appSettings.IsBatteryLowSound)
                 if (value && _appSettings.IsBatteryLowSound)
                     PlayBell(Sounds.LowBattery, true);
                 else
@@ -473,7 +472,10 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 await _devicesScaner.StopAsync();
             }
             else
+            {
                 _devicesScaner.Start();
+                ClearChart();
+            }
 
 
             if (IsRecording && !isConnected)
