@@ -94,6 +94,8 @@ namespace Bioss.Ultrasound.Services
                 graphics.MUH = PdfFontEncoding.Unicode;
                 
                 var timeMinutes = i * minutesCountInPage;
+                // TODO убрать отсюда, каждый раз генерирует полную модель графика
+                // если запись большая, то GC люто нагружается да и создание графика дорогая операция
                 var model = oxyHelper.GetPlotModel(record, plottingHelper, timeMinutes, i);
                 oxyHelper.DrawChart(graphics, model);
                 oxyHelper.DrawChartTitles(graphics, page, _infoService.PdfRecordingSpeed);
