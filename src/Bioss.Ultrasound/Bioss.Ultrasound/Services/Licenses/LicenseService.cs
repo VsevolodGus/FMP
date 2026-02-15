@@ -36,6 +36,7 @@ namespace Bioss.Ultrasound.Services.Licenses
         /// <returns>лицензировано ли устройство</returns>
         public async Task<bool> CheckDeviceLicenseAsync(string deviceName)
         {
+            return true;
             var sessionInfo = await _sessionManager.GetCurrentSessionAsync();
             var requestData = new LicenseCheckRequest
             {

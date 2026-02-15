@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Bioss.Ultrasound.Data.Database;
 using Bioss.Ultrasound.Data.Database.Entities;
-using Bioss.Ultrasound.Data.Database.Entities.Enums;
 using Bioss.Ultrasound.Domain.Models;
 using Bioss.Ultrasound.Mapping;
 using Bioss.Ultrasound.Repository.Abstracts;

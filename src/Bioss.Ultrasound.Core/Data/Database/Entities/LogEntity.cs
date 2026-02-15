@@ -1,0 +1,22 @@
+﻿using SQLite;
+
+namespace Bioss.Ultrasound.Core.Data.Database.Entities;
+
+[Table("logs")]
+public class LogEntity
+{
+    [Column("id")]
+    [PrimaryKey, AutoIncrement]
+    public long Id { get; set; }
+
+    [Column("level")]
+    public byte Level { get; set; }
+
+    [Column("message")]
+    [MaxLength(4095)]
+    public string Message { get; set; }
+
+    [Column("unixDateTimeMs")]
+    [MaxLength(4095)]
+    public long UnixDateTimeMs { get; set; }
+}

@@ -1,0 +1,606 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppName" xml:space="preserve">
+    <value>FMP</value>
+  </data>
+  <data name="Startup_PermissionsMessage" xml:space="preserve">
+    <value>The application is designed to work with the Fetal Monitor. It requires bluetooth permission to work.</value>
+  </data>
+  <data name="Startup_RequestPermissions" xml:space="preserve">
+    <value>Get Permission</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="PermissionDialogQuestion2" xml:space="preserve">
+    <value>To use this application the {0} permission is required. Please go into Settings and turn on {0} for the app.</value>
+  </data>
+  <data name="PermissionDialogTitle" xml:space="preserve">
+    <value>{0} Permission</value>
+  </data>
+  <data name="BluetoothSearch" xml:space="preserve">
+    <value>Bluetooth search...</value>
+  </data>
+  <data name="Main_Title" xml:space="preserve">
+    <value>Monitor</value>
+  </data>
+  <data name="Main_HoldStopButton" xml:space="preserve">
+    <value>To stop recording, hold down the Stop button for 2 seconds</value>
+  </data>
+  <data name="Dialog_DisconnectMessage" xml:space="preserve">
+    <value>Disconnect from device?</value>
+  </data>
+  <data name="Dialog_RecordCompleted" xml:space="preserve">
+    <value>The recording time has expired. To complete?</value>
+  </data>
+  <data name="Continue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="Menu_About" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="Menu_AboutDescription" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="Menu_Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Menu_SettingsDescription" xml:space="preserve">
+    <value>Change app settings</value>
+  </data>
+  <data name="Menu_Title" xml:space="preserve">
+    <value>Menu</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>Privacy policy</value>
+  </data>
+  <data name="Records_Title" xml:space="preserve">
+    <value>Records</value>
+  </data>
+  <data name="Records_EmptyList" xml:space="preserve">
+    <value>You don't have any records</value>
+  </data>
+  <data name="Settings_AutoToco" xml:space="preserve">
+    <value>Automatic reset TOCO</value>
+  </data>
+  <data name="Settings_Title" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="Settings_SectionInfo" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Settings_Organization" xml:space="preserve">
+    <value>Organization</value>
+  </data>
+  <data name="Settings_OrganizationPlaceholder" xml:space="preserve">
+    <value>Enter organization</value>
+  </data>
+  <data name="Settings_Doctor" xml:space="preserve">
+    <value>Doctor</value>
+  </data>
+  <data name="Settings_DoctorPlaceholder" xml:space="preserve">
+    <value>Enter name</value>
+  </data>
+  <data name="Settings_IsPersonal" xml:space="preserve">
+    <value>Personal device</value>
+  </data>
+  <data name="Settings_IsPersonalDescription" xml:space="preserve">
+    <value>Select if using the device personally</value>
+  </data>
+  <data name="Settings_UserName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Settings_UserNamePlaceholder" xml:space="preserve">
+    <value>Enter your name</value>
+  </data>
+  <data name="Settings_UserBirthday" xml:space="preserve">
+    <value>Date of birth</value>
+  </data>
+  <data name="Settings_UserBirthdayDescriptionNotSelected" xml:space="preserve">
+    <value>Date of birth not entered</value>
+  </data>
+  <data name="Settings_UserBirthdayDescriptionAge" xml:space="preserve">
+    <value>You are {0} full years old</value>
+  </data>
+  <data name="Settings_PregnancyStart" xml:space="preserve">
+    <value>Gestation period</value>
+  </data>
+  <data name="Settings_PregnancyStartDescriptionNotSelected" xml:space="preserve">
+    <value>Gestation period not entered</value>
+  </data>
+  <data name="Settings_PregnancyStartDescriptionTime" xml:space="preserve">
+    <value>You are pregnant {0} weeks and {1} days</value>
+  </data>
+  <data name="Settings_Connection" xml:space="preserve">
+    <value>Connection</value>
+  </data>
+  <data name="Settings_AutoConnect" xml:space="preserve">
+    <value>Auto connect</value>
+  </data>
+  <data name="Settings_AutoConnectDescription" xml:space="preserve">
+    <value>The app will automatically connect to the first device it detects</value>
+  </data>
+  <data name="Settings_Monitor" xml:space="preserve">
+    <value>Monitor</value>
+  </data>
+  <data name="Settings_AutoMonitor" xml:space="preserve">
+    <value>Auto end recording</value>
+  </data>
+  <data name="Settings_MonitorConfirmRecordCompletion" xml:space="preserve">
+    <value>Confirm completion of recording</value>
+  </data>
+  <data name="Settings_MonitorConfirmRecordCompletionDescription" xml:space="preserve">
+    <value>A dialog will be displayed to confirm the completion of the recording after the specified time has elapsed</value>
+  </data>
+  <data name="Settings_MonitorFinishTimes" xml:space="preserve">
+    <value>Recording time</value>
+  </data>
+  <data name="Settings_MonitorFinishMinuteFormat" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="Settings_MonitorSoundBatteryLow" xml:space="preserve">
+    <value>Sound signal when the battery is low</value>
+  </data>
+  <data name="Settings_MonitorSoundLossData" xml:space="preserve">
+    <value>Sound signal for large signal loss</value>
+  </data>
+  <data name="Settings_MonitorSoundLevel" xml:space="preserve">
+    <value>Notification volume</value>
+  </data>
+  <data name="Settings_SectionPdf" xml:space="preserve">
+    <value>PDF</value>
+  </data>
+  <data name="Settings_PdfRecordingSpeed" xml:space="preserve">
+    <value>Recording speed</value>
+  </data>
+  <data name="Settings_PdfRecordingSpeedFormat" xml:space="preserve">
+    <value>{0} cm/min</value>
+  </data>
+  <data name="Settings_SectionChart" xml:space="preserve">
+    <value>Chart</value>
+  </data>
+  <data name="Settings_ChartScale" xml:space="preserve">
+    <value>Scale</value>
+  </data>
+  <data name="Settings_ChartScalePageTitle" xml:space="preserve">
+    <value>Select scale</value>
+  </data>
+  <data name="Settings_ChartVariantsMinuteFormat" xml:space="preserve">
+    <value>{0} min</value>
+  </data>
+  <data name="Settings_ChartFHRArea" xml:space="preserve">
+    <value>FHR area</value>
+  </data>
+  <data name="Settings_ChartYScaleFormat" xml:space="preserve">
+    <value>{0}-{1} bpm</value>
+  </data>
+  <data name="Settings_PregnancyNumber" xml:space="preserve">
+    <value>Pregnancy number</value>
+  </data>
+  <data name="Record_DialogDeleteTitle" xml:space="preserve">
+    <value>Deleting</value>
+  </data>
+  <data name="Record_DialogDeleteMessage" xml:space="preserve">
+    <value>Are you sure you want to delete this record?</value>
+  </data>
+  <data name="LossPercentage" xml:space="preserve">
+    <value>Loss percentage</value>
+  </data>
+  <data name="LossPercentageMin" xml:space="preserve">
+    <value>Loss/min: {0} %</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Submit" xml:space="preserve">
+    <value>Submit</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="PDF_UserBirthdayDescriptionAge" xml:space="preserve">
+    <value>{0} years</value>
+  </data>
+  <data name="PDF_NotSpecified" xml:space="preserve">
+    <value>Not specified</value>
+  </data>
+  <data name="PDF_HeaderLeftCorner" xml:space="preserve">
+    <value>FMP "BIPULS"</value>
+  </data>
+  <data name="PDF_HeaderDateOfResearch" xml:space="preserve">
+    <value>Date of research</value>
+  </data>
+  <data name="PDF_HeaderPatient" xml:space="preserve">
+    <value>Patient</value>
+  </data>
+  <data name="PDF_HeaderDoctor" xml:space="preserve">
+    <value>Doctor</value>
+  </data>
+  <data name="PDF_FooterPageNumbers" xml:space="preserve">
+    <value>page {0} of {1}</value>
+  </data>
+  <data name="PDF_FooterSN" xml:space="preserve">
+    <value>Monitor Name: {0}</value>
+  </data>
+  <data name="PDF_TableCTGParameters" xml:space="preserve">
+    <value>CTG parameters</value>
+  </data>
+  <data name="PDF_TableMotherParameters" xml:space="preserve">
+    <value>Mother parameters</value>
+  </data>
+  <data name="PDF_RecordingDuration" xml:space="preserve">
+    <value>Recording duration</value>
+  </data>
+  <data name="PDF_FetalMovements" xml:space="preserve">
+    <value>Fetal movements</value>
+  </data>
+  <data name="PDF_GestationalAge" xml:space="preserve">
+    <value>Gestational age</value>
+  </data>
+  <data name="PDF_SignaLoss" xml:space="preserve">
+    <value>Signal loss</value>
+  </data>
+  <data name="PDF_Temperature" xml:space="preserve">
+    <value>Temperature</value>
+  </data>
+  <data name="PDF_Pulse" xml:space="preserve">
+    <value>Pulse</value>
+  </data>
+  <data name="PDF_Sugar" xml:space="preserve">
+    <value>Sugar</value>
+  </data>
+  <data name="PDF_HeartRate" xml:space="preserve">
+    <value>Heart rate</value>
+  </data>
+  <data name="PDF_Comment" xml:space="preserve">
+    <value>Patient comment</value>
+  </data>
+  <data name="PDF_DoctorsConclusion" xml:space="preserve">
+    <value>Doctor's conclusion:</value>
+  </data>
+  <data name="PleaseWait" xml:space="preserve">
+    <value>Please wait...</value>
+  </data>
+  <data name="TurnOnYourDevice" xml:space="preserve">
+    <value>Turn on your device</value>
+  </data>
+  <data name="BiometricPopup_Title" xml:space="preserve">
+    <value>Biometric</value>
+  </data>
+  <data name="BiometricPopup_Temperature" xml:space="preserve">
+    <value>Temperature</value>
+  </data>
+  <data name="BiometricPopup_Sugar" xml:space="preserve">
+    <value>Sugar</value>
+  </data>
+  <data name="BiometricPopup_Diastolic" xml:space="preserve">
+    <value>Diastolic</value>
+  </data>
+  <data name="BiometricPopup_Systolic" xml:space="preserve">
+    <value>Systolic</value>
+  </data>
+  <data name="BiometricPopup_Pulse" xml:space="preserve">
+    <value>Pulse</value>
+  </data>
+  <data name="BiometricPopup_Comment" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="BiometricPopup_ErrorEnter" xml:space="preserve">
+    <value>Data entered incorrectly</value>
+  </data>
+  <data name="Unit_Celsius" xml:space="preserve">
+    <value>°C</value>
+  </data>
+  <data name="Unit_BloodGlucose" xml:space="preserve">
+    <value>mmol/l</value>
+  </data>
+  <data name="Unit_MillimetreOfMercury" xml:space="preserve">
+    <value>mmHg</value>
+  </data>
+  <data name="Unit_HeartRate" xml:space="preserve">
+    <value>bpm</value>
+  </data>
+  <data name="Unit_min" xml:space="preserve">
+    <value>min</value>
+  </data>
+  <data name="Unit_years" xml:space="preserve">
+    <value>years</value>
+  </data>
+  <data name="Unit_CelsiusDescription" xml:space="preserve">
+    <value>Degree Celsius, °C</value>
+  </data>
+  <data name="Unit_BloodGlucoseDescription" xml:space="preserve">
+    <value>Blood glucose, mmol/l</value>
+  </data>
+  <data name="Unit_MillimetreOfMercuryDescription" xml:space="preserve">
+    <value>Millimetre of mercury, mmHg</value>
+  </data>
+  <data name="Unit_HeartRateDescription" xml:space="preserve">
+    <value>bpm</value>
+  </data>
+  <data name="WarningLowBatteryLevel" xml:space="preserve">
+    <value>Low battery level</value>
+  </data>
+  <data name="WarningLossData" xml:space="preserve">
+    <value>Large loss of heart rate signal</value>
+  </data>
+  <data name="Chart_FHRAxysTitle" xml:space="preserve">
+    <value>FHR, bpm</value>
+  </data>
+  <data name="Chart_TOCOAxysTitle" xml:space="preserve">
+    <value>TOCO, %</value>
+  </data>
+  <data name="DocPrivacy" xml:space="preserve">
+    <value>privacy.txt</value>
+  </data>
+  <data name="DawesRedmanCriteriaMetMessage" xml:space="preserve">
+    <value>The Dawes-Redman criteria have been met</value>
+  </data>
+  <data name="DawesRedmanCriteriaNotMetMessage" xml:space="preserve">
+    <value>The Dawes-Redman criteria are not met</value>
+  </data>
+  <data name="wqeqw123" xml:space="preserve">
+    <value>Комментарии пациента:</value>
+    <comment>Комментарии пациента:</comment>
+  </data>
+  <data name="PDF_EpisodeConditionSTV" xml:space="preserve">
+    <value>- or STV lasting ≥ 7 minutes;
+- or STV lasting ≥ 5 minutes and one acceleration &gt;10 beats/min.</value>
+    <comment>*- или ЭВВ длительностью ≥ 7 минут;\r\n- или ЭВВ длительностью ≥ 5 минут и одна акцелерация &gt;10 уд/мин.\r\n</comment>
+  </data>
+  <data name="PDF_RecordingDurationMin10" xml:space="preserve">
+    <value>Recording duration, min(≥10)</value>
+    <comment>Длительность записи, мин(≥10)</comment>
+  </data>
+  <data name="PDF_SinusRhythmMin2" xml:space="preserve">
+    <value>Sin. rhythm, min(≤2)</value>
+    <comment>Син. ритм, мин(≤2)</comment>
+  </data>
+  <data name="PDF_MotherParameters" xml:space="preserve">
+    <value>Mother parameters</value>
+    <comment>Параметры матери</comment>
+  </data>
+  <data name="PDF_SignalLossMax20" xml:space="preserve">
+    <value>Signal loss, % (≤ 20)</value>
+    <comment>Потери сигнала, % (≤ 20)</comment>
+  </data>
+  <data name="PDF_LTV" xml:space="preserve">
+    <value>LTV, ms (bpm)</value>
+    <comment>LTV, мс (уд/мин)</comment>
+  </data>
+  <data name="PDF_EmptyValueLTV" xml:space="preserve">
+    <value>---(---)</value>
+    <comment>---(---)</comment>
+  </data>
+  <data name="PDF_TemperatureC" xml:space="preserve">
+    <value>Temperature, °C</value>
+    <comment>Температура, °C</comment>
+  </data>
+  <data name="PDF_BasalFHRRange110_160" xml:space="preserve">
+    <value>Basal FHR, bpm (110-160)</value>
+    <comment>Базальная ЧСС, уд/мин (110-160)</comment>
+  </data>
+  <data name="PDF_STVMin4" xml:space="preserve">
+    <value>STV, ms (≥ 4)</value>
+    <comment>STV, мс (≥ 4)</comment>
+  </data>
+  <data name="PDF_PulseBpm" xml:space="preserve">
+    <value>Pulse, bpm</value>
+    <comment>ЧСС, уд/мин</comment>
+  </data>
+  <data name="PDF_EmptyValue" xml:space="preserve">
+    <value>---</value>
+    <comment>---</comment>
+  </data>
+  <data name="PDF_AccCountMore10" xml:space="preserve">
+    <value>Number of Acc. &gt; 10 bpm</value>
+    <comment>Кол-во Акц. &gt; 10 уд/мин</comment>
+  </data>
+  <data name="PDF_OscillationFrequency" xml:space="preserve">
+    <value>Oscillation frequency, ms</value>
+    <comment>Частота осцилляций, мс</comment>
+  </data>
+  <data name="PDF_SugarMmolL" xml:space="preserve">
+    <value>Sugar, mmol/L</value>
+    <comment>Сахар, ммоль/л</comment>
+  </data>
+  <data name="PDF_AccCountMore15" xml:space="preserve">
+    <value>Number of Acc. &gt; 15 bpm</value>
+    <comment>Кол-во Акц. &gt; 15 уд/мин</comment>
+  </data>
+  <data name="PDF_UCFrequencyMin3" xml:space="preserve">
+    <value>Frequency of UC, 1/h (≥ 3)</value>
+    <comment>Частота ШП, 1/ч (≥ 3)</comment>
+  </data>
+  <data name="PDF_DecCountMore20" xml:space="preserve">
+    <value>Number of Dec. &gt; 20 bpm</value>
+    <comment>Кол-во Дец. &gt; 20 уд./мин</comment>
+  </data>
+  <data name="PDF_TimeDependentParameters" xml:space="preserve">
+    <value>Time-dependent parameters</value>
+    <comment>Срокозависмые параметры</comment>
+  </data>
+  <data name="PDF_27_3" xml:space="preserve">
+    <value>27/3*</value>
+    <comment>27/3*</comment>
+  </data>
+  <data name="PDF_HighVariability" xml:space="preserve">
+    <value>High variability, min</value>
+    <comment>Высокая вариаб., мин</comment>
+  </data>
+  <data name="PDF_LowVariability" xml:space="preserve">
+    <value>Low variability, min</value>
+    <comment>Низкая вариаб., мин</comment>
+  </data>
+  <data name="PDF_DawsonRedmanCriteriaMet" xml:space="preserve">
+    <value>The Dawson-Redman criteria are met.</value>
+    <comment>Критерии Доуса-Редмана соблюдены</comment>
+  </data>
+  <data name="PDF_DawsonRedmanCriteriaNoMet" xml:space="preserve">
+    <value>The Dawson-Redman criteria are not met</value>
+    <comment>Критерии Доуса-Редмана не соблюдены</comment>
+  </data>
+  <data name="PDF_GestationalAgeByDefault" xml:space="preserve">
+    <value>Default gestation period</value>
+  </data>
+  <data name="Button_Ok" xml:space="preserve">
+    <value>OK</value>
+    <comment>OK</comment>
+  </data>
+  <data name="PDF_EpisodeCondition28Plus" xml:space="preserve">
+    <value>- STVlasting ≥ 5 minutes and one acceleration &gt;15 beats/min.</value>
+    <comment>- ЭВВ длительностью ≥ 5 минут и одна акцелерация &gt;15 уд/мин.</comment>
+  </data>
+  <data name="Settings_MonitorAutoCompleteRecordByCriteria" xml:space="preserve">
+    <value>When meeting the Dawes-Redman Criteria</value>
+    <comment>When meeting the Dawes-Redman Criteria</comment>
+  </data>
+  <data name="Dialog_CriteriaMet" xml:space="preserve">
+    <value>The recording can be stopped, the Dawes-Redman criteria are met.</value>
+    <comment>Критерии  выполнены, завершить запись?</comment>
+  </data>
+  <data name="NetworkUnvailable_MainText" xml:space="preserve">
+    <value>No internet connection</value>
+  </data>
+  <data name="NetworkUnvailable_AdditionalText" xml:space="preserve">
+    <value>Check the connection and try again.</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Loading</value>
+  </data>
+  <data name="Main_DeviceNotLicense" xml:space="preserve">
+    <value>The device is not licensed</value>
+  </data>
+  <data name="Dialog_PregnancyStartNotCorrect" xml:space="preserve">
+    <value>The acceptable range of gestation period is 24-40 weeks.</value>
+  </data>
+  <data name="Settings_PregnancyWeek" xml:space="preserve">
+    <value>Week of pregnancy</value>
+  </data>
+  <data name="Settings_PregnancyDay" xml:space="preserve">
+    <value>Pregnancy Day</value>
+  </data>
+  <data name="About_Instruction" xml:space="preserve">
+    <value>Instruction</value>
+  </data>
+</root>
