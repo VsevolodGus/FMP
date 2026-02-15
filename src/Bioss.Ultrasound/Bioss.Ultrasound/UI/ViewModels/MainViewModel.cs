@@ -32,9 +32,6 @@ using Xamarin.Forms;
 
 namespace Bioss.Ultrasound.UI.ViewModels
 {
-    /// <summary>
-    /// 1) запись должна сразу идти
-    /// </summary>
     public class MainViewModel : ViewModelBase
     {
         private static readonly IReadOnlyCollection<string> DevicePrefixesFilter = new string[]

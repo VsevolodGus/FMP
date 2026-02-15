@@ -48,20 +48,22 @@ namespace Bioss.Ultrasound.UI.Helpers
                 LineStyle = LineStyle.Solid,
                 Color = color,
                 StrokeThickness = 2,
-                YAxisKey = yAxisKey
+                YAxisKey = yAxisKey,
+                CanTrackerInterpolatePoints = false,
+                TrackerFormatString = string.Empty
             };
         }
 
         public static void ResetAxisRange(Axis axis, in int from, in int to)
         {
-            axis.Reset();
+            //axis.Reset();
             axis.Minimum = from;
             axis.Maximum = to;
         }
 
         public static void ResetDateTimeAxisRange(Axis axis, in TimeSpan from, in TimeSpan to)
         {
-            axis.Reset();
+            //axis.Reset();
             axis.Minimum = TimeSpanAxis.ToDouble(from);
             axis.Maximum = TimeSpanAxis.ToDouble(to);
         }
