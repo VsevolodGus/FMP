@@ -14,8 +14,7 @@ namespace Bioss.Ultrasound.Ble
         {
             _adapter = CrossBluetoothLE.Current.Adapter;
 
-            _adapter.ScanMode = ScanMode.Balanced;
-            _adapter.ScanMatchMode = ScanMatchMode.STICKY;
+            _adapter.ScanTimeout = 30_000;
             _adapter.DeviceDiscovered += OnDeviceDiscoveredAsync;
             _adapter.ScanTimeoutElapsed += OnScanTimeoutElapsed;
         }

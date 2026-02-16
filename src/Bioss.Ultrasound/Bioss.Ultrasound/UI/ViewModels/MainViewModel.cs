@@ -7,6 +7,7 @@ using Bioss.Ultrasound.DependencyExtensions;
 using Bioss.Ultrasound.Domain.Constants;
 using Bioss.Ultrasound.Domain.Models;
 using Bioss.Ultrasound.Domain.Plotting;
+using Bioss.Ultrasound.Extensions;
 using Bioss.Ultrasound.Repository.Abstracts;
 using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Services;
@@ -378,7 +379,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
             };
 
             ClearChart();
-            _lossHelper.Clear();
             _recordTimePassedHelper.Init(
                 _appSettings.IsAutoRecordTime,
                 (int)TimeSpan.FromMinutes(_appSettings.RecordTimeMinutes).TotalSeconds,
@@ -512,26 +512,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
                     _fhr = fhrPackage.Fhr1;
                     _toco = fhrPackage.Toco;
-
-                    switch (fhrPackage.Status2.BatteryLevel)
-                    {
-                        case Ble.Models.Enums.BatteryLevel.Excellent:
-                            _batteryLevel = 100;
-                            break;
-                        case Ble.Models.Enums.BatteryLevel.Good:
-                            _batteryLevel = 75;
-                            break;
-                        case Ble.Models.Enums.BatteryLevel.Normal:
-                            _batteryLevel = 50;
-                            break;
-                        case Ble.Models.Enums.BatteryLevel.Bad:
-                            _batteryLevel = 25;
-                            break;
-                        case Ble.Models.Enums.BatteryLevel.Critical:
-                            _batteryLevel = 0;
-                            break;
-                    }
-
+                    _batteryLevel = fhrPackage.Status2.BatteryLevel.GetDigitBatteryLevel();
+                    
                     UpdateDataPlots(_fhr, _toco);
                     _lossHelper.Add(_fhr);
                 }
@@ -730,6 +712,15 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _plottingTimeSpanHelper.Reset();
 
             FetalMovements = 0;
+
+            _lossHelper.Clear();
+            _toco = 0;
+            _fhr = 0;
+            _fetalMovements = 0;
+            _hasNewChartData = false;
+            _isLossData = false;
+            _isCalculationRunning = false;
+            
         }
 
         /// <summary>
