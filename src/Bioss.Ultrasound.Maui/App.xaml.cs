@@ -1,12 +1,15 @@
-﻿namespace Bioss.Ultrasound.Maui
-{
-    public partial class App : Application
-    {
-        public App()
-        {
-            InitializeComponent();
+﻿using Bioss.Ultrasound.Maui.Pages;
 
-            MainPage = new AppShell();
-        }
+namespace Bioss.Ultrasound.Maui;
+
+public partial class App : Application
+{
+    public App(IServiceProvider services)
+    {
+        InitializeComponent();
+
+        MainPage = new NavigationPage(services.GetRequiredService<MenuPage>());
+
+        //new AppShell();
     }
 }

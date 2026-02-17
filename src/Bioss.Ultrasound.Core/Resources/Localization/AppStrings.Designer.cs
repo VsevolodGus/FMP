@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Bioss.Ultrasound.Resources.Localization {
+namespace Bioss.Ultrasound.Core.Resources.Localization {
     using System;
     
     
@@ -22,7 +22,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class AppStrings {
+    public class AppStrings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace Bioss.Ultrasound.Resources.Localization {
         ///   Возвращает кэшированный экземпляр ResourceManager, использованный этим классом.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Bioss.Ultrasound.Resources.Localization.AppStrings", typeof(AppStrings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Bioss.Ultrasound.Core.Resources.Localization.AppStrings", typeof(AppStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         ///   обращений к ресурсу с помощью этого класса ресурса со строгой типизацией.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,9 +61,18 @@ namespace Bioss.Ultrasound.Resources.Localization {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Instruction.
+        /// </summary>
+        public static string About_Instruction {
+            get {
+                return ResourceManager.GetString("About_Instruction", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на FMP.
         /// </summary>
-        internal static string AppName {
+        public static string AppName {
             get {
                 return ResourceManager.GetString("AppName", resourceCulture);
             }
@@ -72,7 +81,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Comment.
         /// </summary>
-        internal static string BiometricPopup_Comment {
+        public static string BiometricPopup_Comment {
             get {
                 return ResourceManager.GetString("BiometricPopup_Comment", resourceCulture);
             }
@@ -81,7 +90,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Diastolic.
         /// </summary>
-        internal static string BiometricPopup_Diastolic {
+        public static string BiometricPopup_Diastolic {
             get {
                 return ResourceManager.GetString("BiometricPopup_Diastolic", resourceCulture);
             }
@@ -90,7 +99,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Data entered incorrectly.
         /// </summary>
-        internal static string BiometricPopup_ErrorEnter {
+        public static string BiometricPopup_ErrorEnter {
             get {
                 return ResourceManager.GetString("BiometricPopup_ErrorEnter", resourceCulture);
             }
@@ -99,7 +108,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Pulse.
         /// </summary>
-        internal static string BiometricPopup_Pulse {
+        public static string BiometricPopup_Pulse {
             get {
                 return ResourceManager.GetString("BiometricPopup_Pulse", resourceCulture);
             }
@@ -108,7 +117,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Sugar.
         /// </summary>
-        internal static string BiometricPopup_Sugar {
+        public static string BiometricPopup_Sugar {
             get {
                 return ResourceManager.GetString("BiometricPopup_Sugar", resourceCulture);
             }
@@ -117,7 +126,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Systolic.
         /// </summary>
-        internal static string BiometricPopup_Systolic {
+        public static string BiometricPopup_Systolic {
             get {
                 return ResourceManager.GetString("BiometricPopup_Systolic", resourceCulture);
             }
@@ -126,7 +135,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Temperature.
         /// </summary>
-        internal static string BiometricPopup_Temperature {
+        public static string BiometricPopup_Temperature {
             get {
                 return ResourceManager.GetString("BiometricPopup_Temperature", resourceCulture);
             }
@@ -135,7 +144,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Biometric.
         /// </summary>
-        internal static string BiometricPopup_Title {
+        public static string BiometricPopup_Title {
             get {
                 return ResourceManager.GetString("BiometricPopup_Title", resourceCulture);
             }
@@ -144,7 +153,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Bluetooth search....
         /// </summary>
-        internal static string BluetoothSearch {
+        public static string BluetoothSearch {
             get {
                 return ResourceManager.GetString("BluetoothSearch", resourceCulture);
             }
@@ -153,7 +162,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на OK.
         /// </summary>
-        internal static string Button_Ok {
+        public static string Button_Ok {
             get {
                 return ResourceManager.GetString("Button_Ok", resourceCulture);
             }
@@ -162,7 +171,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Cancel.
         /// </summary>
-        internal static string Cancel {
+        public static string Cancel {
             get {
                 return ResourceManager.GetString("Cancel", resourceCulture);
             }
@@ -171,7 +180,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на FHR, bpm.
         /// </summary>
-        internal static string Chart_FHRAxysTitle {
+        public static string Chart_FHRAxysTitle {
             get {
                 return ResourceManager.GetString("Chart_FHRAxysTitle", resourceCulture);
             }
@@ -180,7 +189,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на TOCO, %.
         /// </summary>
-        internal static string Chart_TOCOAxysTitle {
+        public static string Chart_TOCOAxysTitle {
             get {
                 return ResourceManager.GetString("Chart_TOCOAxysTitle", resourceCulture);
             }
@@ -189,7 +198,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Continue.
         /// </summary>
-        internal static string Continue {
+        public static string Continue {
             get {
                 return ResourceManager.GetString("Continue", resourceCulture);
             }
@@ -198,7 +207,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на The Dawes-Redman criteria have been met.
         /// </summary>
-        internal static string DawesRedmanCriteriaMetMessage {
+        public static string DawesRedmanCriteriaMetMessage {
             get {
                 return ResourceManager.GetString("DawesRedmanCriteriaMetMessage", resourceCulture);
             }
@@ -207,25 +216,43 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на The Dawes-Redman criteria are not met.
         /// </summary>
-        internal static string DawesRedmanCriteriaNotMetMessage {
+        public static string DawesRedmanCriteriaNotMetMessage {
             get {
                 return ResourceManager.GetString("DawesRedmanCriteriaNotMetMessage", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на The recording can be stopped, the Dawes-Redman criteria are met..
+        /// </summary>
+        public static string Dialog_CriteriaMet {
+            get {
+                return ResourceManager.GetString("Dialog_CriteriaMet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Disconnect from device?.
         /// </summary>
-        internal static string Dialog_DisconnectMessage {
+        public static string Dialog_DisconnectMessage {
             get {
                 return ResourceManager.GetString("Dialog_DisconnectMessage", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на The acceptable range of gestation period is 24-40 weeks..
+        /// </summary>
+        public static string Dialog_PregnancyStartNotCorrect {
+            get {
+                return ResourceManager.GetString("Dialog_PregnancyStartNotCorrect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на The recording time has expired. To complete?.
         /// </summary>
-        internal static string Dialog_RecordCompleted {
+        public static string Dialog_RecordCompleted {
             get {
                 return ResourceManager.GetString("Dialog_RecordCompleted", resourceCulture);
             }
@@ -234,16 +261,25 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на privacy.txt.
         /// </summary>
-        internal static string DocPrivacy {
+        public static string DocPrivacy {
             get {
                 return ResourceManager.GetString("DocPrivacy", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Loading.
+        /// </summary>
+        public static string Loading {
+            get {
+                return ResourceManager.GetString("Loading", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Loss percentage.
         /// </summary>
-        internal static string LossPercentage {
+        public static string LossPercentage {
             get {
                 return ResourceManager.GetString("LossPercentage", resourceCulture);
             }
@@ -252,16 +288,25 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Loss/min: {0} %.
         /// </summary>
-        internal static string LossPercentageMin {
+        public static string LossPercentageMin {
             get {
                 return ResourceManager.GetString("LossPercentageMin", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на The device is not licensed.
+        /// </summary>
+        public static string Main_DeviceNotLicense {
+            get {
+                return ResourceManager.GetString("Main_DeviceNotLicense", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на To stop recording, hold down the Stop button for 2 seconds.
         /// </summary>
-        internal static string Main_HoldStopButton {
+        public static string Main_HoldStopButton {
             get {
                 return ResourceManager.GetString("Main_HoldStopButton", resourceCulture);
             }
@@ -270,7 +315,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Monitor.
         /// </summary>
-        internal static string Main_Title {
+        public static string Main_Title {
             get {
                 return ResourceManager.GetString("Main_Title", resourceCulture);
             }
@@ -279,7 +324,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на About.
         /// </summary>
-        internal static string Menu_About {
+        public static string Menu_About {
             get {
                 return ResourceManager.GetString("Menu_About", resourceCulture);
             }
@@ -288,7 +333,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Information.
         /// </summary>
-        internal static string Menu_AboutDescription {
+        public static string Menu_AboutDescription {
             get {
                 return ResourceManager.GetString("Menu_AboutDescription", resourceCulture);
             }
@@ -297,7 +342,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Settings.
         /// </summary>
-        internal static string Menu_Settings {
+        public static string Menu_Settings {
             get {
                 return ResourceManager.GetString("Menu_Settings", resourceCulture);
             }
@@ -306,7 +351,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Change app settings.
         /// </summary>
-        internal static string Menu_SettingsDescription {
+        public static string Menu_SettingsDescription {
             get {
                 return ResourceManager.GetString("Menu_SettingsDescription", resourceCulture);
             }
@@ -315,16 +360,34 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Menu.
         /// </summary>
-        internal static string Menu_Title {
+        public static string Menu_Title {
             get {
                 return ResourceManager.GetString("Menu_Title", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Check the connection and try again..
+        /// </summary>
+        public static string NetworkUnvailable_AdditionalText {
+            get {
+                return ResourceManager.GetString("NetworkUnvailable_AdditionalText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на No internet connection.
+        /// </summary>
+        public static string NetworkUnvailable_MainText {
+            get {
+                return ResourceManager.GetString("NetworkUnvailable_MainText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на 27/3*.
         /// </summary>
-        internal static string PDF_27_3 {
+        public static string PDF_27_3 {
             get {
                 return ResourceManager.GetString("PDF_27_3", resourceCulture);
             }
@@ -333,7 +396,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Number of Acc. &gt; 10 bpm.
         /// </summary>
-        internal static string PDF_AccCountMore10 {
+        public static string PDF_AccCountMore10 {
             get {
                 return ResourceManager.GetString("PDF_AccCountMore10", resourceCulture);
             }
@@ -342,7 +405,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Number of Acc. &gt; 15 bpm.
         /// </summary>
-        internal static string PDF_AccCountMore15 {
+        public static string PDF_AccCountMore15 {
             get {
                 return ResourceManager.GetString("PDF_AccCountMore15", resourceCulture);
             }
@@ -351,7 +414,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Basal FHR, bpm (110-160).
         /// </summary>
-        internal static string PDF_BasalFHRRange110_160 {
+        public static string PDF_BasalFHRRange110_160 {
             get {
                 return ResourceManager.GetString("PDF_BasalFHRRange110_160", resourceCulture);
             }
@@ -360,7 +423,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Patient comment.
         /// </summary>
-        internal static string PDF_Comment {
+        public static string PDF_Comment {
             get {
                 return ResourceManager.GetString("PDF_Comment", resourceCulture);
             }
@@ -369,7 +432,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на The Dawson-Redman criteria are met..
         /// </summary>
-        internal static string PDF_DawsonRedmanCriteriaMet {
+        public static string PDF_DawsonRedmanCriteriaMet {
             get {
                 return ResourceManager.GetString("PDF_DawsonRedmanCriteriaMet", resourceCulture);
             }
@@ -378,7 +441,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на The Dawson-Redman criteria are not met.
         /// </summary>
-        internal static string PDF_DawsonRedmanCriteriaNoMet {
+        public static string PDF_DawsonRedmanCriteriaNoMet {
             get {
                 return ResourceManager.GetString("PDF_DawsonRedmanCriteriaNoMet", resourceCulture);
             }
@@ -387,7 +450,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Number of Dec. &gt; 20 bpm.
         /// </summary>
-        internal static string PDF_DecCountMore20 {
+        public static string PDF_DecCountMore20 {
             get {
                 return ResourceManager.GetString("PDF_DecCountMore20", resourceCulture);
             }
@@ -396,7 +459,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Doctor&apos;s conclusion:.
         /// </summary>
-        internal static string PDF_DoctorsConclusion {
+        public static string PDF_DoctorsConclusion {
             get {
                 return ResourceManager.GetString("PDF_DoctorsConclusion", resourceCulture);
             }
@@ -405,7 +468,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на ---.
         /// </summary>
-        internal static string PDF_EmptyValue {
+        public static string PDF_EmptyValue {
             get {
                 return ResourceManager.GetString("PDF_EmptyValue", resourceCulture);
             }
@@ -414,7 +477,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на ---(---).
         /// </summary>
-        internal static string PDF_EmptyValueLTV {
+        public static string PDF_EmptyValueLTV {
             get {
                 return ResourceManager.GetString("PDF_EmptyValueLTV", resourceCulture);
             }
@@ -423,7 +486,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на - STVlasting ≥ 5 minutes and one acceleration &gt;15 beats/min..
         /// </summary>
-        internal static string PDF_EpisodeCondition28Plus {
+        public static string PDF_EpisodeCondition28Plus {
             get {
                 return ResourceManager.GetString("PDF_EpisodeCondition28Plus", resourceCulture);
             }
@@ -433,7 +496,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         ///   Ищет локализованную строку, похожую на - or STV lasting ≥ 7 minutes;
         ///- or STV lasting ≥ 5 minutes and one acceleration &gt;10 beats/min..
         /// </summary>
-        internal static string PDF_EpisodeConditionSTV {
+        public static string PDF_EpisodeConditionSTV {
             get {
                 return ResourceManager.GetString("PDF_EpisodeConditionSTV", resourceCulture);
             }
@@ -442,7 +505,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Fetal movements.
         /// </summary>
-        internal static string PDF_FetalMovements {
+        public static string PDF_FetalMovements {
             get {
                 return ResourceManager.GetString("PDF_FetalMovements", resourceCulture);
             }
@@ -451,7 +514,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на page {0} of {1}.
         /// </summary>
-        internal static string PDF_FooterPageNumbers {
+        public static string PDF_FooterPageNumbers {
             get {
                 return ResourceManager.GetString("PDF_FooterPageNumbers", resourceCulture);
             }
@@ -460,7 +523,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Monitor Name: {0}.
         /// </summary>
-        internal static string PDF_FooterSN {
+        public static string PDF_FooterSN {
             get {
                 return ResourceManager.GetString("PDF_FooterSN", resourceCulture);
             }
@@ -469,7 +532,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Gestational age.
         /// </summary>
-        internal static string PDF_GestationalAge {
+        public static string PDF_GestationalAge {
             get {
                 return ResourceManager.GetString("PDF_GestationalAge", resourceCulture);
             }
@@ -478,16 +541,16 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Default gestation period.
         /// </summary>
-        internal static string PDF_GestationalAgeByDefault {
+        public static string PDF_GestationalAgeByDefault {
             get {
                 return ResourceManager.GetString("PDF_GestationalAgeByDefault", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на .
+        ///   Ищет локализованную строку, похожую на Date of research.
         /// </summary>
-        internal static string PDF_HeaderDateOfResearch {
+        public static string PDF_HeaderDateOfResearch {
             get {
                 return ResourceManager.GetString("PDF_HeaderDateOfResearch", resourceCulture);
             }
@@ -496,7 +559,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Doctor.
         /// </summary>
-        internal static string PDF_HeaderDoctor {
+        public static string PDF_HeaderDoctor {
             get {
                 return ResourceManager.GetString("PDF_HeaderDoctor", resourceCulture);
             }
@@ -505,7 +568,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на FMP &quot;BIPULS&quot;.
         /// </summary>
-        internal static string PDF_HeaderLeftCorner {
+        public static string PDF_HeaderLeftCorner {
             get {
                 return ResourceManager.GetString("PDF_HeaderLeftCorner", resourceCulture);
             }
@@ -514,7 +577,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Patient.
         /// </summary>
-        internal static string PDF_HeaderPatient {
+        public static string PDF_HeaderPatient {
             get {
                 return ResourceManager.GetString("PDF_HeaderPatient", resourceCulture);
             }
@@ -523,7 +586,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Heart rate.
         /// </summary>
-        internal static string PDF_HeartRate {
+        public static string PDF_HeartRate {
             get {
                 return ResourceManager.GetString("PDF_HeartRate", resourceCulture);
             }
@@ -532,7 +595,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на High variability, min.
         /// </summary>
-        internal static string PDF_HighVariability {
+        public static string PDF_HighVariability {
             get {
                 return ResourceManager.GetString("PDF_HighVariability", resourceCulture);
             }
@@ -541,7 +604,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Low variability, min.
         /// </summary>
-        internal static string PDF_LowVariability {
+        public static string PDF_LowVariability {
             get {
                 return ResourceManager.GetString("PDF_LowVariability", resourceCulture);
             }
@@ -550,7 +613,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на LTV, ms (bpm).
         /// </summary>
-        internal static string PDF_LTV {
+        public static string PDF_LTV {
             get {
                 return ResourceManager.GetString("PDF_LTV", resourceCulture);
             }
@@ -559,7 +622,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Mother parameters.
         /// </summary>
-        internal static string PDF_MotherParameters {
+        public static string PDF_MotherParameters {
             get {
                 return ResourceManager.GetString("PDF_MotherParameters", resourceCulture);
             }
@@ -568,7 +631,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Not specified.
         /// </summary>
-        internal static string PDF_NotSpecified {
+        public static string PDF_NotSpecified {
             get {
                 return ResourceManager.GetString("PDF_NotSpecified", resourceCulture);
             }
@@ -577,7 +640,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Oscillation frequency, ms.
         /// </summary>
-        internal static string PDF_OscillationFrequency {
+        public static string PDF_OscillationFrequency {
             get {
                 return ResourceManager.GetString("PDF_OscillationFrequency", resourceCulture);
             }
@@ -586,7 +649,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Pulse.
         /// </summary>
-        internal static string PDF_Pulse {
+        public static string PDF_Pulse {
             get {
                 return ResourceManager.GetString("PDF_Pulse", resourceCulture);
             }
@@ -595,7 +658,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Pulse, bpm.
         /// </summary>
-        internal static string PDF_PulseBpm {
+        public static string PDF_PulseBpm {
             get {
                 return ResourceManager.GetString("PDF_PulseBpm", resourceCulture);
             }
@@ -604,7 +667,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Recording duration.
         /// </summary>
-        internal static string PDF_RecordingDuration {
+        public static string PDF_RecordingDuration {
             get {
                 return ResourceManager.GetString("PDF_RecordingDuration", resourceCulture);
             }
@@ -613,7 +676,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Recording duration, min(≥10).
         /// </summary>
-        internal static string PDF_RecordingDurationMin10 {
+        public static string PDF_RecordingDurationMin10 {
             get {
                 return ResourceManager.GetString("PDF_RecordingDurationMin10", resourceCulture);
             }
@@ -622,7 +685,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Signal loss, % (≤ 20).
         /// </summary>
-        internal static string PDF_SignalLossMax20 {
+        public static string PDF_SignalLossMax20 {
             get {
                 return ResourceManager.GetString("PDF_SignalLossMax20", resourceCulture);
             }
@@ -631,7 +694,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Signal loss.
         /// </summary>
-        internal static string PDF_SignaLoss {
+        public static string PDF_SignaLoss {
             get {
                 return ResourceManager.GetString("PDF_SignaLoss", resourceCulture);
             }
@@ -640,7 +703,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Sin. rhythm, min(≤2).
         /// </summary>
-        internal static string PDF_SinusRhythmMin2 {
+        public static string PDF_SinusRhythmMin2 {
             get {
                 return ResourceManager.GetString("PDF_SinusRhythmMin2", resourceCulture);
             }
@@ -649,7 +712,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на STV, ms (≥ 4).
         /// </summary>
-        internal static string PDF_STVMin4 {
+        public static string PDF_STVMin4 {
             get {
                 return ResourceManager.GetString("PDF_STVMin4", resourceCulture);
             }
@@ -658,7 +721,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Sugar.
         /// </summary>
-        internal static string PDF_Sugar {
+        public static string PDF_Sugar {
             get {
                 return ResourceManager.GetString("PDF_Sugar", resourceCulture);
             }
@@ -667,7 +730,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Sugar, mmol/L.
         /// </summary>
-        internal static string PDF_SugarMmolL {
+        public static string PDF_SugarMmolL {
             get {
                 return ResourceManager.GetString("PDF_SugarMmolL", resourceCulture);
             }
@@ -676,7 +739,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на CTG parameters.
         /// </summary>
-        internal static string PDF_TableCTGParameters {
+        public static string PDF_TableCTGParameters {
             get {
                 return ResourceManager.GetString("PDF_TableCTGParameters", resourceCulture);
             }
@@ -685,7 +748,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Mother parameters.
         /// </summary>
-        internal static string PDF_TableMotherParameters {
+        public static string PDF_TableMotherParameters {
             get {
                 return ResourceManager.GetString("PDF_TableMotherParameters", resourceCulture);
             }
@@ -694,7 +757,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Temperature.
         /// </summary>
-        internal static string PDF_Temperature {
+        public static string PDF_Temperature {
             get {
                 return ResourceManager.GetString("PDF_Temperature", resourceCulture);
             }
@@ -703,7 +766,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Temperature, °C.
         /// </summary>
-        internal static string PDF_TemperatureC {
+        public static string PDF_TemperatureC {
             get {
                 return ResourceManager.GetString("PDF_TemperatureC", resourceCulture);
             }
@@ -712,7 +775,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Time-dependent parameters.
         /// </summary>
-        internal static string PDF_TimeDependentParameters {
+        public static string PDF_TimeDependentParameters {
             get {
                 return ResourceManager.GetString("PDF_TimeDependentParameters", resourceCulture);
             }
@@ -721,7 +784,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Frequency of UC, 1/h (≥ 3).
         /// </summary>
-        internal static string PDF_UCFrequencyMin3 {
+        public static string PDF_UCFrequencyMin3 {
             get {
                 return ResourceManager.GetString("PDF_UCFrequencyMin3", resourceCulture);
             }
@@ -730,7 +793,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на {0} years.
         /// </summary>
-        internal static string PDF_UserBirthdayDescriptionAge {
+        public static string PDF_UserBirthdayDescriptionAge {
             get {
                 return ResourceManager.GetString("PDF_UserBirthdayDescriptionAge", resourceCulture);
             }
@@ -739,7 +802,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на To use this application the {0} permission is required. Please go into Settings and turn on {0} for the app..
         /// </summary>
-        internal static string PermissionDialogQuestion2 {
+        public static string PermissionDialogQuestion2 {
             get {
                 return ResourceManager.GetString("PermissionDialogQuestion2", resourceCulture);
             }
@@ -748,7 +811,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на {0} Permission.
         /// </summary>
-        internal static string PermissionDialogTitle {
+        public static string PermissionDialogTitle {
             get {
                 return ResourceManager.GetString("PermissionDialogTitle", resourceCulture);
             }
@@ -757,7 +820,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Please wait....
         /// </summary>
-        internal static string PleaseWait {
+        public static string PleaseWait {
             get {
                 return ResourceManager.GetString("PleaseWait", resourceCulture);
             }
@@ -766,7 +829,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Privacy policy.
         /// </summary>
-        internal static string PrivacyPolicy {
+        public static string PrivacyPolicy {
             get {
                 return ResourceManager.GetString("PrivacyPolicy", resourceCulture);
             }
@@ -775,7 +838,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Are you sure you want to delete this record?.
         /// </summary>
-        internal static string Record_DialogDeleteMessage {
+        public static string Record_DialogDeleteMessage {
             get {
                 return ResourceManager.GetString("Record_DialogDeleteMessage", resourceCulture);
             }
@@ -784,7 +847,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Deleting.
         /// </summary>
-        internal static string Record_DialogDeleteTitle {
+        public static string Record_DialogDeleteTitle {
             get {
                 return ResourceManager.GetString("Record_DialogDeleteTitle", resourceCulture);
             }
@@ -793,7 +856,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на You don&apos;t have any records.
         /// </summary>
-        internal static string Records_EmptyList {
+        public static string Records_EmptyList {
             get {
                 return ResourceManager.GetString("Records_EmptyList", resourceCulture);
             }
@@ -802,7 +865,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Records.
         /// </summary>
-        internal static string Records_Title {
+        public static string Records_Title {
             get {
                 return ResourceManager.GetString("Records_Title", resourceCulture);
             }
@@ -811,7 +874,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Settings.
         /// </summary>
-        internal static string Settings {
+        public static string Settings {
             get {
                 return ResourceManager.GetString("Settings", resourceCulture);
             }
@@ -820,7 +883,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Auto connect.
         /// </summary>
-        internal static string Settings_AutoConnect {
+        public static string Settings_AutoConnect {
             get {
                 return ResourceManager.GetString("Settings_AutoConnect", resourceCulture);
             }
@@ -829,7 +892,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на The app will automatically connect to the first device it detects.
         /// </summary>
-        internal static string Settings_AutoConnectDescription {
+        public static string Settings_AutoConnectDescription {
             get {
                 return ResourceManager.GetString("Settings_AutoConnectDescription", resourceCulture);
             }
@@ -838,7 +901,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Auto end recording.
         /// </summary>
-        internal static string Settings_AutoMonitor {
+        public static string Settings_AutoMonitor {
             get {
                 return ResourceManager.GetString("Settings_AutoMonitor", resourceCulture);
             }
@@ -847,7 +910,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Automatic reset TOCO.
         /// </summary>
-        internal static string Settings_AutoToco {
+        public static string Settings_AutoToco {
             get {
                 return ResourceManager.GetString("Settings_AutoToco", resourceCulture);
             }
@@ -856,7 +919,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на FHR area.
         /// </summary>
-        internal static string Settings_ChartFHRArea {
+        public static string Settings_ChartFHRArea {
             get {
                 return ResourceManager.GetString("Settings_ChartFHRArea", resourceCulture);
             }
@@ -865,7 +928,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Scale.
         /// </summary>
-        internal static string Settings_ChartScale {
+        public static string Settings_ChartScale {
             get {
                 return ResourceManager.GetString("Settings_ChartScale", resourceCulture);
             }
@@ -874,7 +937,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Select scale.
         /// </summary>
-        internal static string Settings_ChartScalePageTitle {
+        public static string Settings_ChartScalePageTitle {
             get {
                 return ResourceManager.GetString("Settings_ChartScalePageTitle", resourceCulture);
             }
@@ -883,7 +946,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на {0} min.
         /// </summary>
-        internal static string Settings_ChartVariantsMinuteFormat {
+        public static string Settings_ChartVariantsMinuteFormat {
             get {
                 return ResourceManager.GetString("Settings_ChartVariantsMinuteFormat", resourceCulture);
             }
@@ -892,7 +955,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на {0}-{1} bpm.
         /// </summary>
-        internal static string Settings_ChartYScaleFormat {
+        public static string Settings_ChartYScaleFormat {
             get {
                 return ResourceManager.GetString("Settings_ChartYScaleFormat", resourceCulture);
             }
@@ -901,7 +964,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Connection.
         /// </summary>
-        internal static string Settings_Connection {
+        public static string Settings_Connection {
             get {
                 return ResourceManager.GetString("Settings_Connection", resourceCulture);
             }
@@ -910,7 +973,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Doctor.
         /// </summary>
-        internal static string Settings_Doctor {
+        public static string Settings_Doctor {
             get {
                 return ResourceManager.GetString("Settings_Doctor", resourceCulture);
             }
@@ -919,7 +982,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Enter name.
         /// </summary>
-        internal static string Settings_DoctorPlaceholder {
+        public static string Settings_DoctorPlaceholder {
             get {
                 return ResourceManager.GetString("Settings_DoctorPlaceholder", resourceCulture);
             }
@@ -928,7 +991,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Personal device.
         /// </summary>
-        internal static string Settings_IsPersonal {
+        public static string Settings_IsPersonal {
             get {
                 return ResourceManager.GetString("Settings_IsPersonal", resourceCulture);
             }
@@ -937,7 +1000,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Select if using the device personally.
         /// </summary>
-        internal static string Settings_IsPersonalDescription {
+        public static string Settings_IsPersonalDescription {
             get {
                 return ResourceManager.GetString("Settings_IsPersonalDescription", resourceCulture);
             }
@@ -946,16 +1009,25 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Monitor.
         /// </summary>
-        internal static string Settings_Monitor {
+        public static string Settings_Monitor {
             get {
                 return ResourceManager.GetString("Settings_Monitor", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на When meeting the Dawes-Redman Criteria.
+        /// </summary>
+        public static string Settings_MonitorAutoCompleteRecordByCriteria {
+            get {
+                return ResourceManager.GetString("Settings_MonitorAutoCompleteRecordByCriteria", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Confirm completion of recording.
         /// </summary>
-        internal static string Settings_MonitorConfirmRecordCompletion {
+        public static string Settings_MonitorConfirmRecordCompletion {
             get {
                 return ResourceManager.GetString("Settings_MonitorConfirmRecordCompletion", resourceCulture);
             }
@@ -964,7 +1036,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на A dialog will be displayed to confirm the completion of the recording after the specified time has elapsed.
         /// </summary>
-        internal static string Settings_MonitorConfirmRecordCompletionDescription {
+        public static string Settings_MonitorConfirmRecordCompletionDescription {
             get {
                 return ResourceManager.GetString("Settings_MonitorConfirmRecordCompletionDescription", resourceCulture);
             }
@@ -973,7 +1045,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на {0} min.
         /// </summary>
-        internal static string Settings_MonitorFinishMinuteFormat {
+        public static string Settings_MonitorFinishMinuteFormat {
             get {
                 return ResourceManager.GetString("Settings_MonitorFinishMinuteFormat", resourceCulture);
             }
@@ -982,7 +1054,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Recording time.
         /// </summary>
-        internal static string Settings_MonitorFinishTimes {
+        public static string Settings_MonitorFinishTimes {
             get {
                 return ResourceManager.GetString("Settings_MonitorFinishTimes", resourceCulture);
             }
@@ -991,7 +1063,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Sound signal when the battery is low.
         /// </summary>
-        internal static string Settings_MonitorSoundBatteryLow {
+        public static string Settings_MonitorSoundBatteryLow {
             get {
                 return ResourceManager.GetString("Settings_MonitorSoundBatteryLow", resourceCulture);
             }
@@ -1000,7 +1072,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Notification volume.
         /// </summary>
-        internal static string Settings_MonitorSoundLevel {
+        public static string Settings_MonitorSoundLevel {
             get {
                 return ResourceManager.GetString("Settings_MonitorSoundLevel", resourceCulture);
             }
@@ -1009,7 +1081,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Sound signal for large signal loss.
         /// </summary>
-        internal static string Settings_MonitorSoundLossData {
+        public static string Settings_MonitorSoundLossData {
             get {
                 return ResourceManager.GetString("Settings_MonitorSoundLossData", resourceCulture);
             }
@@ -1018,7 +1090,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Organization.
         /// </summary>
-        internal static string Settings_Organization {
+        public static string Settings_Organization {
             get {
                 return ResourceManager.GetString("Settings_Organization", resourceCulture);
             }
@@ -1027,7 +1099,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Enter organization.
         /// </summary>
-        internal static string Settings_OrganizationPlaceholder {
+        public static string Settings_OrganizationPlaceholder {
             get {
                 return ResourceManager.GetString("Settings_OrganizationPlaceholder", resourceCulture);
             }
@@ -1036,7 +1108,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Recording speed.
         /// </summary>
-        internal static string Settings_PdfRecordingSpeed {
+        public static string Settings_PdfRecordingSpeed {
             get {
                 return ResourceManager.GetString("Settings_PdfRecordingSpeed", resourceCulture);
             }
@@ -1045,16 +1117,25 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на {0} cm/min.
         /// </summary>
-        internal static string Settings_PdfRecordingSpeedFormat {
+        public static string Settings_PdfRecordingSpeedFormat {
             get {
                 return ResourceManager.GetString("Settings_PdfRecordingSpeedFormat", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Pregnancy Day.
+        /// </summary>
+        public static string Settings_PregnancyDay {
+            get {
+                return ResourceManager.GetString("Settings_PregnancyDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Pregnancy number.
         /// </summary>
-        internal static string Settings_PregnancyNumber {
+        public static string Settings_PregnancyNumber {
             get {
                 return ResourceManager.GetString("Settings_PregnancyNumber", resourceCulture);
             }
@@ -1063,7 +1144,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Gestation period.
         /// </summary>
-        internal static string Settings_PregnancyStart {
+        public static string Settings_PregnancyStart {
             get {
                 return ResourceManager.GetString("Settings_PregnancyStart", resourceCulture);
             }
@@ -1072,7 +1153,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Gestation period not entered.
         /// </summary>
-        internal static string Settings_PregnancyStartDescriptionNotSelected {
+        public static string Settings_PregnancyStartDescriptionNotSelected {
             get {
                 return ResourceManager.GetString("Settings_PregnancyStartDescriptionNotSelected", resourceCulture);
             }
@@ -1081,16 +1162,25 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на You are pregnant {0} weeks and {1} days.
         /// </summary>
-        internal static string Settings_PregnancyStartDescriptionTime {
+        public static string Settings_PregnancyStartDescriptionTime {
             get {
                 return ResourceManager.GetString("Settings_PregnancyStartDescriptionTime", resourceCulture);
             }
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Week of pregnancy.
+        /// </summary>
+        public static string Settings_PregnancyWeek {
+            get {
+                return ResourceManager.GetString("Settings_PregnancyWeek", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Chart.
         /// </summary>
-        internal static string Settings_SectionChart {
+        public static string Settings_SectionChart {
             get {
                 return ResourceManager.GetString("Settings_SectionChart", resourceCulture);
             }
@@ -1099,7 +1189,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Info.
         /// </summary>
-        internal static string Settings_SectionInfo {
+        public static string Settings_SectionInfo {
             get {
                 return ResourceManager.GetString("Settings_SectionInfo", resourceCulture);
             }
@@ -1108,7 +1198,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на PDF.
         /// </summary>
-        internal static string Settings_SectionPdf {
+        public static string Settings_SectionPdf {
             get {
                 return ResourceManager.GetString("Settings_SectionPdf", resourceCulture);
             }
@@ -1117,7 +1207,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Settings.
         /// </summary>
-        internal static string Settings_Title {
+        public static string Settings_Title {
             get {
                 return ResourceManager.GetString("Settings_Title", resourceCulture);
             }
@@ -1126,7 +1216,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Date of birth.
         /// </summary>
-        internal static string Settings_UserBirthday {
+        public static string Settings_UserBirthday {
             get {
                 return ResourceManager.GetString("Settings_UserBirthday", resourceCulture);
             }
@@ -1135,7 +1225,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на You are {0} full years old.
         /// </summary>
-        internal static string Settings_UserBirthdayDescriptionAge {
+        public static string Settings_UserBirthdayDescriptionAge {
             get {
                 return ResourceManager.GetString("Settings_UserBirthdayDescriptionAge", resourceCulture);
             }
@@ -1144,7 +1234,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Date of birth not entered.
         /// </summary>
-        internal static string Settings_UserBirthdayDescriptionNotSelected {
+        public static string Settings_UserBirthdayDescriptionNotSelected {
             get {
                 return ResourceManager.GetString("Settings_UserBirthdayDescriptionNotSelected", resourceCulture);
             }
@@ -1153,7 +1243,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Name.
         /// </summary>
-        internal static string Settings_UserName {
+        public static string Settings_UserName {
             get {
                 return ResourceManager.GetString("Settings_UserName", resourceCulture);
             }
@@ -1162,7 +1252,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Enter your name.
         /// </summary>
-        internal static string Settings_UserNamePlaceholder {
+        public static string Settings_UserNamePlaceholder {
             get {
                 return ResourceManager.GetString("Settings_UserNamePlaceholder", resourceCulture);
             }
@@ -1171,7 +1261,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на The application is designed to work with the Fetal Monitor. It requires bluetooth permission to work..
         /// </summary>
-        internal static string Startup_PermissionsMessage {
+        public static string Startup_PermissionsMessage {
             get {
                 return ResourceManager.GetString("Startup_PermissionsMessage", resourceCulture);
             }
@@ -1180,7 +1270,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Get Permission.
         /// </summary>
-        internal static string Startup_RequestPermissions {
+        public static string Startup_RequestPermissions {
             get {
                 return ResourceManager.GetString("Startup_RequestPermissions", resourceCulture);
             }
@@ -1189,7 +1279,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Submit.
         /// </summary>
-        internal static string Submit {
+        public static string Submit {
             get {
                 return ResourceManager.GetString("Submit", resourceCulture);
             }
@@ -1198,7 +1288,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Turn on your device.
         /// </summary>
-        internal static string TurnOnYourDevice {
+        public static string TurnOnYourDevice {
             get {
                 return ResourceManager.GetString("TurnOnYourDevice", resourceCulture);
             }
@@ -1207,7 +1297,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на mmol/l.
         /// </summary>
-        internal static string Unit_BloodGlucose {
+        public static string Unit_BloodGlucose {
             get {
                 return ResourceManager.GetString("Unit_BloodGlucose", resourceCulture);
             }
@@ -1216,7 +1306,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Blood glucose, mmol/l.
         /// </summary>
-        internal static string Unit_BloodGlucoseDescription {
+        public static string Unit_BloodGlucoseDescription {
             get {
                 return ResourceManager.GetString("Unit_BloodGlucoseDescription", resourceCulture);
             }
@@ -1225,7 +1315,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на °C.
         /// </summary>
-        internal static string Unit_Celsius {
+        public static string Unit_Celsius {
             get {
                 return ResourceManager.GetString("Unit_Celsius", resourceCulture);
             }
@@ -1234,7 +1324,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Degree Celsius, °C.
         /// </summary>
-        internal static string Unit_CelsiusDescription {
+        public static string Unit_CelsiusDescription {
             get {
                 return ResourceManager.GetString("Unit_CelsiusDescription", resourceCulture);
             }
@@ -1243,7 +1333,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на bpm.
         /// </summary>
-        internal static string Unit_HeartRate {
+        public static string Unit_HeartRate {
             get {
                 return ResourceManager.GetString("Unit_HeartRate", resourceCulture);
             }
@@ -1252,7 +1342,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на bpm.
         /// </summary>
-        internal static string Unit_HeartRateDescription {
+        public static string Unit_HeartRateDescription {
             get {
                 return ResourceManager.GetString("Unit_HeartRateDescription", resourceCulture);
             }
@@ -1261,7 +1351,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на mmHg.
         /// </summary>
-        internal static string Unit_MillimetreOfMercury {
+        public static string Unit_MillimetreOfMercury {
             get {
                 return ResourceManager.GetString("Unit_MillimetreOfMercury", resourceCulture);
             }
@@ -1270,7 +1360,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Millimetre of mercury, mmHg.
         /// </summary>
-        internal static string Unit_MillimetreOfMercuryDescription {
+        public static string Unit_MillimetreOfMercuryDescription {
             get {
                 return ResourceManager.GetString("Unit_MillimetreOfMercuryDescription", resourceCulture);
             }
@@ -1279,7 +1369,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на min.
         /// </summary>
-        internal static string Unit_min {
+        public static string Unit_min {
             get {
                 return ResourceManager.GetString("Unit_min", resourceCulture);
             }
@@ -1288,7 +1378,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на years.
         /// </summary>
-        internal static string Unit_years {
+        public static string Unit_years {
             get {
                 return ResourceManager.GetString("Unit_years", resourceCulture);
             }
@@ -1297,7 +1387,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Version.
         /// </summary>
-        internal static string Version {
+        public static string Version {
             get {
                 return ResourceManager.GetString("Version", resourceCulture);
             }
@@ -1306,7 +1396,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Large loss of heart rate signal.
         /// </summary>
-        internal static string WarningLossData {
+        public static string WarningLossData {
             get {
                 return ResourceManager.GetString("WarningLossData", resourceCulture);
             }
@@ -1315,7 +1405,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Low battery level.
         /// </summary>
-        internal static string WarningLowBatteryLevel {
+        public static string WarningLowBatteryLevel {
             get {
                 return ResourceManager.GetString("WarningLowBatteryLevel", resourceCulture);
             }
@@ -1324,7 +1414,7 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Комментарии пациента:.
         /// </summary>
-        internal static string wqeqw123 {
+        public static string wqeqw123 {
             get {
                 return ResourceManager.GetString("wqeqw123", resourceCulture);
             }
@@ -1333,72 +1423,9 @@ namespace Bioss.Ultrasound.Resources.Localization {
         /// <summary>
         ///   Ищет локализованную строку, похожую на Yes.
         /// </summary>
-        internal static string Yes {
+        public static string Yes {
             get {
                 return ResourceManager.GetString("Yes", resourceCulture);
-            }
-        }
-
-        internal static string Settings_MonitorAutoCompleteRecordByCriteria
-        {
-            get
-            {
-                return ResourceManager.GetString("Settings_MonitorAutoCompleteRecordByCriteria", resourceCulture);
-            }
-        } 
-        
-        internal static string Dialog_CriteriaMet {
-            get {
-                return ResourceManager.GetString("Dialog_CriteriaMet", resourceCulture);
-            }
-        }  
-        
-        internal static string NetworkUnvailable_MainText {
-            get {
-                return ResourceManager.GetString("NetworkUnvailable_MainText", resourceCulture);
-            }
-        }
-        
-        internal static string NetworkUnvailable_AdditionalText {
-            get {
-                return ResourceManager.GetString("NetworkUnvailable_AdditionalText", resourceCulture);
-            }
-        } 
-        
-        internal static string Loading{
-            get {
-                return ResourceManager.GetString("Loading", resourceCulture);
-            }
-        } 
-        
-        internal static string Main_DeviceNotLicense {
-            get {
-                return ResourceManager.GetString("Main_DeviceNotLicense", resourceCulture);
-            }
-        }
-        
-        internal static string Dialog_PregnancyStartNotCorrect {
-            get {
-                return ResourceManager.GetString("Dialog_PregnancyStartNotCorrect", resourceCulture);
-            }
-        } 
-        
-        internal static string Settings_PregnancyWeek {
-            get {
-                return ResourceManager.GetString("Settings_PregnancyWeek", resourceCulture);
-            }
-        }
-        
-        internal static string Settings_PregnancyDay {
-            get {
-                return ResourceManager.GetString("Settings_PregnancyDay", resourceCulture);
-            }
-        } 
-        
-        internal static string About_Instruction
-        {
-            get {
-                return ResourceManager.GetString("About_Instruction", resourceCulture);
             }
         }
     }

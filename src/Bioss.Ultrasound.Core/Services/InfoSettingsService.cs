@@ -68,7 +68,7 @@ namespace Bioss.Ultrasound.Services
         /// </summary>
         public int PregnancyWeek
         {
-            get => Preferences.Get(PREGNANCY_WEEK, Constants.DefaultCountWeek, NAME);
+            get => Preferences.Get(PREGNANCY_WEEK, AppConstants.DefaultCountWeek, NAME);
             set
             {
                 Preferences.Set(PREGNANCY_WEEK, value, NAME);
@@ -81,7 +81,7 @@ namespace Bioss.Ultrasound.Services
         /// </summary>
         public int PregnancyDay
         {
-            get => Preferences.Get(PREGNANCY_DAY, Constants.DefaultCountDay, NAME);
+            get => Preferences.Get(PREGNANCY_DAY, AppConstants.DefaultCountDay, NAME);
             set => Preferences.Set(PREGNANCY_DAY, value, NAME);
         }
 

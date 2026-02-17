@@ -28,7 +28,7 @@ internal class SessionManager : ISessionManager
                 TemporaryToken = tempraryToken,
                 DeviceOs = DeviceInformation.DeviceOs,
                 DeviceModel = DeviceInformation.DeviceModel,
-                Version = Core.Constants.AppVersion
+                Version = Core.AppConstants.AppVersion
             });
 
             return new SessionInfo

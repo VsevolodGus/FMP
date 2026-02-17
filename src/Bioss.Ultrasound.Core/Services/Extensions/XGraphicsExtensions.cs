@@ -1,6 +1,6 @@
-﻿using Bioss.Ultrasound.Core.Services.Constants;
+﻿using Bioss.Ultrasound.Core.Resources.Localization;
+using Bioss.Ultrasound.Core.Services.Constants;
 using Bioss.Ultrasound.Core.Tools;
-using Bioss.Ultrasound.Resources.Localization;
 using PdfSharpCore.Drawing;
 using PdfSharpCore.Pdf;
 

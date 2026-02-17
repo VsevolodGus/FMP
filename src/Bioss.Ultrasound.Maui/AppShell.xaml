@@ -3,13 +3,13 @@
     x:Class="Bioss.Ultrasound.Maui.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:Bioss.Ultrasound.Maui"
+    xmlns:local="clr-namespace:Bioss.Ultrasound.Maui.Pages"
     Shell.FlyoutBehavior="Disabled"
     Title="Bioss.Ultrasound.Maui">
 
     <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+        Title="About"
+        ContentTemplate="{DataTemplate local:AboutPage}"
+        Route="AboutPage" />
 
 </Shell>

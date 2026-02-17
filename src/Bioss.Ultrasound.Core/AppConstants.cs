@@ -1,6 +1,6 @@
 ﻿namespace Bioss.Ultrasound.Core;
 
-internal struct Constants
+public struct AppConstants
 {
     public const int DefaultCountDay = 1;
     public const int DefaultCountWeek = 32;
