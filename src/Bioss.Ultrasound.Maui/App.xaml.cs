@@ -31,7 +31,7 @@ public partial class App : Application
         AutoResetTocoService autoResetToco,
         AppSettingsService appSettings,
         IPermission permission,
-        MenuPage menuPage, 
+        MainTabbedPage menuPage, 
         IMyDevice myDevice)
     {
         InitializeComponent();

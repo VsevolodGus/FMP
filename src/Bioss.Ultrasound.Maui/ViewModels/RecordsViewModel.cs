@@ -53,7 +53,7 @@ public partial class RecordsViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public async Task SelectedRecordCommand()
+    public async Task SelectedRecordAction()
     {
         if (SelectedRecord == null)
             return;
@@ -68,9 +68,8 @@ public partial class RecordsViewModel : ObservableObject
     /// AppearingCommand вызывается каждый раз при выборе вкладки.
     /// Данные загружаются один раз, дальше актуализируются по событиям
     /// </summary>
-    /// 
     [RelayCommand]
-    public async Task AppearingCommand()
+    public async Task Appearing()
     {
         if (_isFirstLoading)
             return;

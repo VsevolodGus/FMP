@@ -2,34 +2,57 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:lang="clr-namespace:Bioss.Ultrasound.Core.Resources.Localization;assembly=Bioss.Ultrasound.Core"
+    xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:Class="Bioss.Ultrasound.Maui.Pages.RecordsPage"
-    Title="Records">
+    Title="{x:Static lang:AppStrings.Records_Title}">
 
-    <VerticalStackLayout
-        Padding="30"
-        Spacing="20"
-        VerticalOptions="Center"
-        HorizontalOptions="Center">
+    <ContentPage.Behaviors>
+        <xct:EventToCommandBehavior
+            EventName="Appearing"
+            Command="{Binding AppearingCommand}" />
 
-        <Label
-            Text="Record Page"
-            FontSize="26"
-            FontAttributes="Bold"
-            HorizontalTextAlignment="Center" />
+        <xct:EventToCommandBehavior
+            EventName="Disappearing"
+            Command="{Binding DisappearingCommand}" />
+    </ContentPage.Behaviors>
 
-        <Label
-            Text="Graph and recording logic will be connected here"
-            FontSize="14"
-            HorizontalTextAlignment="Center" />
+    <CollectionView
+        SelectionMode="Single"
+        ItemsSource="{Binding Records}"
+        SelectedItem="{Binding SelectedRecord}"
+        SelectionChangedCommand="{Binding SelectedRecordActionCommand}">
 
-        <Button
-            Text="Start"
-            />
+        <CollectionView.EmptyView>
+            <Grid>
+                <Label
+                    Text="{x:Static lang:AppStrings.Records_EmptyList}"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center"
+                    Margin="16"
+                    HorizontalTextAlignment="Center"
+                    TextColor="Gray"/>
+            </Grid>
+        </CollectionView.EmptyView>
 
-        <Button
-            Text="Stop"
-            />
+        <CollectionView.ItemTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid Padding="20,10">
+                        <VerticalStackLayout Spacing="0">
+                            <Label Text="{Binding StartTime, StringFormat='{0:dd MMM yyyy HH:mm}'}" />
+                            <Label Text="{Binding RecordingTime}" TextColor="DarkSlateGray" />
+                        </VerticalStackLayout>
+                    </Grid>
 
-    </VerticalStackLayout>
+                    <BoxView
+                        VerticalOptions="End"
+                        HeightRequest="1"
+                        BackgroundColor="LightGray"
+                        Margin="20,0,0,0"/>
+                </Grid>
+            </DataTemplate>
+        </CollectionView.ItemTemplate>
 
+    </CollectionView>
 </ContentPage>

@@ -1,6 +1,8 @@
 ﻿using Bioss.Ultrasound.Core.Ble.Devices;
 using Bioss.Ultrasound.Core.Data.Database;
 using Bioss.Ultrasound.Core.DependencyExtensions;
+using Bioss.Ultrasound.Core.Repository;
+using Bioss.Ultrasound.Core.Repository.Abstracts;
 using Bioss.Ultrasound.Core.Services;
 using Bioss.Ultrasound.Core.Services.Logging;
 using Bioss.Ultrasound.Core.Services.Logging.Abstracts;
@@ -11,6 +13,7 @@ using Bioss.Ultrasound.Maui.Pages;
 using Bioss.Ultrasound.Maui.Platforms.Android.Extensions;
 using Bioss.Ultrasound.Maui.ViewModels;
 using Bioss.Ultrasound.Services;
+using CommunityToolkit.Maui;
 
 namespace Bioss.Ultrasound.Maui;
 
@@ -41,21 +44,26 @@ public static class MauiProgram
         builder.Services.AddSingleton<ILogger, ServerLogger>();
         builder.Services.AddSingleton<IUnsentLogDispatcher, ServerLogger>();
         builder.Services.AddSingleton<ISessionManager, SessionManager>();
+        builder.Services.AddSingleton<IRepository, Repository>();
 
 
         builder.Services.AddSingleton<MenuPage>();
         builder.Services.AddSingleton<AboutPage>();
         builder.Services.AddSingleton<DocumentPage>();
         builder.Services.AddSingleton<SettingsPage>();
+        builder.Services.AddSingleton<MainTabbedPage>();
+        builder.Services.AddSingleton<RecordsPage>();
 
         builder.Services.AddSingleton<MenuViewModel>();
         builder.Services.AddSingleton<AboutViewModel>();
         builder.Services.AddSingleton<DocumentViewModel>();
+        builder.Services.AddSingleton<RecordsViewModel>();
         builder.Services.AddSingleton<SettingsViewModel>();
 
 
         builder
             .UseMauiApp<App>()
+            .UseMauiCommunityToolkit()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

@@ -68,6 +68,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" Version="8.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
@@ -83,6 +84,9 @@
 	    <DependentUpon>%(Filename)</DependentUpon>
 	  </Compile>
 	  <Compile Update="Pages\DocumentPage.xaml.cs">
+	    <DependentUpon>%(Filename)</DependentUpon>
+	  </Compile>
+	  <Compile Update="Pages\MainTabbedPage.xaml.cs">
 	    <DependentUpon>%(Filename)</DependentUpon>
 	  </Compile>
 	  <Compile Update="Pages\MenuPage.xaml.cs">
@@ -108,6 +112,10 @@
 	    <Generator></Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\DocumentPage.xaml">
+	    <SubType>Designer</SubType>
+	    <Generator></Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\MainTabbedPage.xaml">
 	    <SubType>Designer</SubType>
 	    <Generator></Generator>
 	  </MauiXaml>
