@@ -86,9 +86,6 @@
 	  <Compile Update="Pages\DocumentPage.xaml.cs">
 	    <DependentUpon>%(Filename)</DependentUpon>
 	  </Compile>
-	  <Compile Update="Pages\MainTabbedPage.xaml.cs">
-	    <DependentUpon>%(Filename)</DependentUpon>
-	  </Compile>
 	  <Compile Update="Pages\MenuPage.xaml.cs">
 	    <DependentUpon>%(Filename)</DependentUpon>
 	  </Compile>
@@ -112,10 +109,6 @@
 	    <Generator></Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\DocumentPage.xaml">
-	    <SubType>Designer</SubType>
-	    <Generator></Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Pages\MainTabbedPage.xaml">
 	    <SubType>Designer</SubType>
 	    <Generator></Generator>
 	  </MauiXaml>

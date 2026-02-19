@@ -47,11 +47,12 @@ public static class MauiProgram
         builder.Services.AddSingleton<IRepository, Repository>();
 
 
+        builder.Services.AddSingleton<AppShell>();
+
         builder.Services.AddSingleton<MenuPage>();
         builder.Services.AddSingleton<AboutPage>();
         builder.Services.AddSingleton<DocumentPage>();
         builder.Services.AddSingleton<SettingsPage>();
-        builder.Services.AddSingleton<MainTabbedPage>();
         builder.Services.AddSingleton<RecordsPage>();
 
         builder.Services.AddSingleton<MenuViewModel>();

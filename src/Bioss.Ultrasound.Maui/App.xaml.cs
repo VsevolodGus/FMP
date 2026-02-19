@@ -7,6 +7,7 @@ using Bioss.Ultrasound.Core.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Core.Services.Sessions;
 using Bioss.Ultrasound.Maui.Pages;
 using Bioss.Ultrasound.Services;
+using Microsoft.Maui.Controls;
 
 namespace Bioss.Ultrasound.Maui;
 
@@ -31,7 +32,8 @@ public partial class App : Application
         AutoResetTocoService autoResetToco,
         AppSettingsService appSettings,
         IPermission permission,
-        MainTabbedPage menuPage, 
+        AppShell shell,
+        //MainTabbedPage menuPage, 
         IMyDevice myDevice)
     {
         InitializeComponent();
@@ -49,7 +51,8 @@ public partial class App : Application
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
         InitAsync();
-        MainPage = new NavigationPage(menuPage);
+        //MainPage = new NavigationPage(menuPage);
+        MainPage = shell;
         //MainPage = new AppShell();
 
     }
