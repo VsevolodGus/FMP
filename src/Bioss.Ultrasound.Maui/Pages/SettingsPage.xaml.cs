@@ -5,7 +5,7 @@ public partial class SettingsPage : ContentPage
 {
     public SettingsPage(SettingsViewModel settingsViewModel)
     {
-        //InitializeComponent();
+        InitializeComponent();
         BindingContext = settingsViewModel;
     }
 }

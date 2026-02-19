@@ -17,7 +17,7 @@ public class MyDeviceAndroid : IMyDevice
     private static readonly ConnectParameters connectParameters = new ConnectParameters(true, true);
 
     private readonly ILogger _logger;
-    private readonly IAdapter _adapter;
+    private IAdapter _adapter;
     private IDevice _device;
     private readonly HashSet<ICharacteristic> _subscribedToValueUpdated = new();
     private IGeneration _guids;
@@ -28,7 +28,10 @@ public class MyDeviceAndroid : IMyDevice
     public MyDeviceAndroid(ILogger logger)
     {
         _logger = logger;
+    }
 
+    public void Init()
+    {
         _adapter = CrossBluetoothLE.Current.Adapter;
         _adapter.DeviceConnected += OnConnected;
         _adapter.DeviceDisconnected += OnDisconnected;

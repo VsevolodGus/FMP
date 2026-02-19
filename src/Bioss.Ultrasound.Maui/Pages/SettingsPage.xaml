@@ -2,34 +2,175 @@
 <ContentPage
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:lang="clr-namespace:Bioss.Ultrasound.Core.Resources.Localization;assembly=Bioss.Ultrasound.Core"
     x:Class="Bioss.Ultrasound.Maui.Pages.SettingsPage"
-    Title="Record">
+    Title="{x:Static lang:AppStrings.Settings_Title}">
 
-    <VerticalStackLayout
-        Padding="30"
-        Spacing="20"
-        VerticalOptions="Center"
-        HorizontalOptions="Center">
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="18">
 
-        <Label
-            Text="Record Page"
-            FontSize="26"
-            FontAttributes="Bold"
-            HorizontalTextAlignment="Center" />
+            <!-- TOCO -->
+            <Label Text="TOCO" FontAttributes="Bold" FontSize="16" />
+            <HorizontalStackLayout Spacing="12">
+                <Label Text="{x:Static lang:AppStrings.Settings_AutoToco}" VerticalOptions="Center" />
+                <Switch IsToggled="{Binding IsAutoToco}" HorizontalOptions="EndAndExpand" />
+            </HorizontalStackLayout>
 
-        <Label
-            Text="Graph and recording logic will be connected here"
-            FontSize="14"
-            HorizontalTextAlignment="Center" />
+            <!-- Connection -->
+            <Label Text="{x:Static lang:AppStrings.Settings_Connection}" FontAttributes="Bold" FontSize="16" />
+            <VerticalStackLayout Spacing="6">
+                <HorizontalStackLayout Spacing="12">
+                    <Label Text="{x:Static lang:AppStrings.Settings_AutoConnect}" VerticalOptions="Center" />
+                    <Switch IsToggled="{Binding IsAutoConnect}" HorizontalOptions="EndAndExpand" />
+                </HorizontalStackLayout>
+                <Label Text="{x:Static lang:AppStrings.Settings_AutoConnectDescription}"
+                       FontSize="12"
+                       TextColor="Gray" />
+            </VerticalStackLayout>
 
-        <Button
-            Text="Start"
-            />
+            <!-- Monitor -->
+            <Label Text="{x:Static lang:AppStrings.Settings_Monitor}" FontAttributes="Bold" FontSize="16" />
 
-        <Button
-            Text="Stop"
-            />
+            <HorizontalStackLayout Spacing="12">
+                <Label Text="{x:Static lang:AppStrings.Settings_AutoMonitor}" VerticalOptions="Center" />
+                <Switch IsToggled="{Binding IsAutoRecordTime}" HorizontalOptions="EndAndExpand" />
+            </HorizontalStackLayout>
 
-    </VerticalStackLayout>
+            <!-- Picker: AutoRecordTimes -->
+            <VerticalStackLayout IsVisible="{Binding IsAutoRecordTime}" Spacing="6">
+                <Label Text="{x:Static lang:AppStrings.Settings_MonitorFinishTimes}" />
+                <Picker ItemsSource="{Binding AutoRecordTimes}"
+                        ItemDisplayBinding="{Binding Name}"
+                        SelectedItem="{Binding AutoRecordTime}" />
+            </VerticalStackLayout>
 
+            <VerticalStackLayout IsVisible="{Binding IsAutoRecordTime}" Spacing="6">
+                <HorizontalStackLayout Spacing="12">
+                    <Label Text="{x:Static lang:AppStrings.Settings_MonitorConfirmRecordCompletion}" VerticalOptions="Center" />
+                    <Switch IsToggled="{Binding ConfirmRecordCompleated}" HorizontalOptions="EndAndExpand" />
+                </HorizontalStackLayout>
+                <Label Text="{x:Static lang:AppStrings.Settings_MonitorConfirmRecordCompletionDescription}"
+                       FontSize="12"
+                       TextColor="Gray" />
+            </VerticalStackLayout>
+
+            <HorizontalStackLayout IsVisible="{Binding IsAutoRecordTime}" Spacing="12">
+                <Label Text="{x:Static lang:AppStrings.Settings_MonitorAutoCompleteRecordByCriteria}" VerticalOptions="Center" />
+                <Switch IsToggled="{Binding IsAutoCompleteRecordByCriteria}" HorizontalOptions="EndAndExpand" />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Spacing="12">
+                <Label Text="{x:Static lang:AppStrings.Settings_MonitorSoundBatteryLow}" VerticalOptions="Center" />
+                <Switch IsToggled="{Binding IsBatteryLowSound}" HorizontalOptions="EndAndExpand" />
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Spacing="12">
+                <Label Text="{x:Static lang:AppStrings.Settings_MonitorSoundLossData}" VerticalOptions="Center" />
+                <Switch IsToggled="{Binding IsLossDataSound}" HorizontalOptions="EndAndExpand" />
+            </HorizontalStackLayout>
+
+            <!-- Sound level -->
+            <Grid ColumnDefinitions="*,Auto,Auto" RowDefinitions="Auto" ColumnSpacing="12">
+                <Label Text="{x:Static lang:AppStrings.Settings_MonitorSoundLevel}" VerticalOptions="Center" />
+                <Label Grid.Column="1" Text="{Binding AlarmVolume}" VerticalOptions="Center" />
+                <Stepper Grid.Column="2"
+                         VerticalOptions="Center"
+                         Increment="1"
+                         Minimum="1"
+                         Maximum="10"
+                         Value="{Binding AlarmVolume}" />
+            </Grid>
+
+            <!-- Chart -->
+            <Label Text="{x:Static lang:AppStrings.Settings_SectionChart}" FontAttributes="Bold" FontSize="16" />
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{x:Static lang:AppStrings.Settings_ChartScale}" />
+                <Picker ItemsSource="{Binding ChartXScales}"
+                        ItemDisplayBinding="{Binding Name}"
+                        SelectedItem="{Binding ChartXScale}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{x:Static lang:AppStrings.Settings_ChartFHRArea}" />
+                <Picker ItemsSource="{Binding ChartYScales}"
+                        ItemDisplayBinding="{Binding Name}"
+                        SelectedItem="{Binding ChartYScale}" />
+            </VerticalStackLayout>
+
+            <!-- Info -->
+            <Label Text="{x:Static lang:AppStrings.Settings_SectionInfo}" FontAttributes="Bold" FontSize="16" />
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{x:Static lang:AppStrings.Settings_Organization}" />
+                <Entry Placeholder="{x:Static lang:AppStrings.Settings_OrganizationPlaceholder}"
+                       Text="{Binding Organization}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{x:Static lang:AppStrings.Settings_Doctor}" />
+                <Entry Placeholder="{x:Static lang:AppStrings.Settings_DoctorPlaceholder}"
+                       Text="{Binding Doctor}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout Spacing="6">
+                <HorizontalStackLayout Spacing="12">
+                    <Label Text="{x:Static lang:AppStrings.Settings_IsPersonal}" VerticalOptions="Center" />
+                    <Switch IsToggled="{Binding IsPersonalDevice}" HorizontalOptions="EndAndExpand" />
+                </HorizontalStackLayout>
+                <Label Text="{x:Static lang:AppStrings.Settings_IsPersonalDescription}"
+                       FontSize="12"
+                       TextColor="Gray" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding IsPersonalDevice}" Spacing="6">
+                <Label Text="{x:Static lang:AppStrings.Settings_UserName}" />
+                <Entry Placeholder="{x:Static lang:AppStrings.Settings_UserNamePlaceholder}"
+                       Text="{Binding Patient}" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding IsPersonalDevice}" Spacing="6">
+                <Label Text="{x:Static lang:AppStrings.Settings_UserBirthday}" />
+                <DatePicker Date="{Binding Birthday}" />
+                <Label Text="{Binding PatientAge}" FontSize="12" TextColor="Gray" />
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding IsPersonalDevice}" Spacing="6">
+                <Label Text="{x:Static lang:AppStrings.Settings_PregnancyWeek}" />
+                <!-- У MAUI нет NumberPicker из коробки: временно Stepper + Label -->
+                <HorizontalStackLayout Spacing="12">
+                    <Label Text="{Binding PregnancyWeek}" VerticalOptions="Center" />
+                    <Stepper Minimum="24" Maximum="40" Increment="1" Value="{Binding PregnancyWeek}" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding IsPersonalDevice}" Spacing="6">
+                <Label Text="{x:Static lang:AppStrings.Settings_PregnancyDay}" />
+                <HorizontalStackLayout Spacing="12">
+                    <Label Text="{Binding PregnancyDay}" VerticalOptions="Center" />
+                    <Stepper Minimum="1" Maximum="6" Increment="1" Value="{Binding PregnancyDay}" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+
+            <VerticalStackLayout IsVisible="{Binding IsPersonalDevice}" Spacing="6">
+                <Label Text="{x:Static lang:AppStrings.Settings_PregnancyNumber}" />
+                <HorizontalStackLayout Spacing="12">
+                    <Label Text="{Binding PregnancyNumber}" VerticalOptions="Center" />
+                    <Stepper Minimum="1" Maximum="10" Increment="1" Value="{Binding PregnancyNumber}" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+
+            <!-- PDF -->
+            <Label Text="{x:Static lang:AppStrings.Settings_SectionPdf}" FontAttributes="Bold" FontSize="16" />
+
+            <VerticalStackLayout Spacing="6">
+                <Label Text="{x:Static lang:AppStrings.Settings_PdfRecordingSpeed}" />
+                <Picker ItemsSource="{Binding RecordingSpeeds}"
+                        ItemDisplayBinding="{Binding Name}"
+                        SelectedItem="{Binding RecordingSpeed}" />
+            </VerticalStackLayout>
+
+            <BoxView HeightRequest="24" Opacity="0" />
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

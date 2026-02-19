@@ -1,7 +1,8 @@
 ﻿using Bioss.Ultrasound.Core.Services.Server;
+
 namespace Bioss.Ultrasound.Core.Services.Sessions;
 
-internal class SessionManager : ISessionManager
+public class SessionManager : ISessionManager
 {
     private readonly ServerHttpProvider _serverHttpProvider;
 

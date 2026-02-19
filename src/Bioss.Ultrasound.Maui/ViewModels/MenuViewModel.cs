@@ -9,7 +9,6 @@ public class MenuViewModel : ObservableObject
 {
     private readonly INavigationService _navigation;
 
-
     public IReadOnlyList<Setting> Settings { get; }
     public MenuViewModel(INavigationService navigation)
     {
@@ -21,7 +20,7 @@ public class MenuViewModel : ObservableObject
             {
                 Name = AppStrings.Menu_Settings,
                 Description = AppStrings.Menu_SettingsDescription,
-                Action = async () => await _navigation.NavigateToAsync<AboutPage>()
+                Action = async () => await _navigation.NavigateToAsync<SettingsPage>()
             },
             new Setting
             {

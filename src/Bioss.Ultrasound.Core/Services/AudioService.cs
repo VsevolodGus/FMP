@@ -12,7 +12,7 @@ public enum Sounds
 
 public class AudioService
 {
-    private const string audioResourceName = "Bioss.Ultrasound.Resources.Audio.MixkitAlarmTone996.wav";
+    private const string audioResourceName = "Bioss.Ultrasound.Core.Resources.Audio.MixkitAlarmTone996.wav";
     private readonly Dictionary<Sounds, SoundPlayer> _players = new()
     {
         { Sounds.Attention, new SoundPlayer(audioResourceName) },

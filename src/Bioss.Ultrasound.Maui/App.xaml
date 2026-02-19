@@ -1,14 +1,62 @@
-﻿<?xml version = "1.0" encoding = "UTF-8" ?>
-<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:local="clr-namespace:Bioss.Ultrasound.Maui"
-             x:Class="Bioss.Ultrasound.Maui.App">
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Application
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:Bioss.Ultrasound.Maui.Converters"
+    x:Class="Bioss.Ultrasound.Maui.App">
+
     <Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
-                <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
+
+        <!-- Converters -->
+        <converters:ReverseBoolConverter x:Key="ReverseBoolConverter" />
+        <converters:SoundLevelToPercentConverter x:Key="SoundLevelToPercentConverter" />
+        <converters:LossPercentageToColorConverter x:Key="LossPercentageToColorConverter" />
+
+        <!-- Colors -->
+        <Color x:Key="NavBarBackgroundColor">#F6F6F7</Color>
+        <Color x:Key="NavBarTextColor">Black</Color>
+
+        <Color x:Key="PrimaryTextColor">#333333</Color>
+        <Color x:Key="SecondaryTextColor">Gray</Color>
+
+        <Color x:Key="ButtonBackgroundColor">#EEEEEE</Color>
+        <Color x:Key="ButtonTextColor">#333333</Color>
+        <Color x:Key="ButtonPopupMainTextColor">Green</Color>
+
+        <!-- Styles -->
+
+        <!-- NavigationPage style (если используешь NavigationPage) -->
+        <Style TargetType="NavigationPage">
+            <Setter Property="BarBackgroundColor" Value="{DynamicResource NavBarBackgroundColor}" />
+            <Setter Property="BarTextColor" Value="{DynamicResource NavBarTextColor}" />
+        </Style>
+
+        <!-- ContentPage base style -->
+        <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
+            <!-- В MAUI "BackButtonTitle" как в Xamarin.Forms обычно не применяется.
+                 Если нужно убрать текст на iOS — делается через Shell/handlers. -->
+        </Style>
+
+        <!-- Default button -->
+        <Style TargetType="Button">
+            <Setter Property="BackgroundColor" Value="{DynamicResource ButtonBackgroundColor}" />
+            <Setter Property="TextColor" Value="{DynamicResource ButtonTextColor}" />
+        </Style>
+
+        <!-- Popup main button -->
+        <Style TargetType="Button" x:Key="Style.Button.Popup.Main">
+            <Setter Property="BackgroundColor" Value="{DynamicResource ButtonBackgroundColor}" />
+            <Setter Property="TextColor" Value="{DynamicResource ButtonPopupMainTextColor}" />
+        </Style>
+
+        <!-- Labels: gray when disabled -->
+        <Style TargetType="Label">
+            <Style.Triggers>
+                <Trigger TargetType="Label" Property="IsEnabled" Value="False">
+                    <Setter Property="TextColor" Value="Gray" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
     </Application.Resources>
 </Application>

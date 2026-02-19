@@ -11,6 +11,7 @@ public interface IMyDevice
     event EventHandler<bool> ConnectedChanged;
     event EventHandler<Package> NewPackage;
 
+    void Init();
     Task ConnectAsync(IDevice device);
     Task DisconnectAsync();
 

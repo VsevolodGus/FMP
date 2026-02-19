@@ -13,7 +13,7 @@ namespace Bioss.Ultrasound.Core.Ble.Devices;
 public class MyDeviceIos : IMyDevice
 {
     private readonly ILogger _logger;
-    private readonly IAdapter _adapter;
+    private IAdapter _adapter;
     private IDevice _device;
     private readonly List<ICharacteristic> _subscribedToValueUpdated = new();
     private IGeneration _guids;
@@ -21,13 +21,15 @@ public class MyDeviceIos : IMyDevice
     public MyDeviceIos(ILogger logger)
     {
         _logger = logger;
+    }
 
+    public void Init()
+    {
         _adapter = CrossBluetoothLE.Current.Adapter;
         _adapter.DeviceConnected += OnConnected;
         _adapter.DeviceDisconnected += OnDisconnected;
         _adapter.DeviceConnectionLost += OnConnectionLost;
     }
-
     public bool IsConnected { get; private set; }
     public string Name => _device?.Name;
 
@@ -159,4 +161,5 @@ public class MyDeviceIos : IMyDevice
     {
         Debug.WriteLine($"MyDevice ios: {message}");
     }
+
 }
