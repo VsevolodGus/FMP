@@ -1,9 +1,12 @@
-﻿using Bioss.Ultrasound.Core.Ble.Devices;
+﻿using Acr.UserDialogs;
+using Bioss.Ultrasound.Core.Ble;
+using Bioss.Ultrasound.Core.Ble.Devices;
 using Bioss.Ultrasound.Core.Data.Database;
 using Bioss.Ultrasound.Core.DependencyExtensions;
 using Bioss.Ultrasound.Core.Repository;
 using Bioss.Ultrasound.Core.Repository.Abstracts;
 using Bioss.Ultrasound.Core.Services;
+using Bioss.Ultrasound.Core.Services.Licenses;
 using Bioss.Ultrasound.Core.Services.Logging;
 using Bioss.Ultrasound.Core.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Core.Services.Server;
@@ -33,28 +36,34 @@ public static class MauiProgram
         builder.Services.AddSingleton<AutoResetTocoService>();
         builder.Services.AddSingleton<ServerHttpProvider>();
         builder.Services.AddSingleton<AudioService>();
+        builder.Services.AddSingleton<DevicesScaner>();
+        builder.Services.AddSingleton<CatAnaService>();
         var dbPath = Path.Combine(FileSystem.AppDataDirectory, "db.sqlite");
         builder.Services.AddSingleton(new AppDatabase(dbPath));
 
         // выбор по  platform
         builder.Services.AddSingleton<ISystemVolume, SystemVolume>();
         builder.Services.AddSingleton<IPermission, BLEPermission>();        
+        builder.Services.AddSingleton<IPcmPlayer, PcmPlayer>();        
 
         builder.Services.AddSingleton<IMyDevice, MyDeviceAndroid>();
         builder.Services.AddSingleton<ILogger, ServerLogger>();
         builder.Services.AddSingleton<IUnsentLogDispatcher, ServerLogger>();
         builder.Services.AddSingleton<ISessionManager, SessionManager>();
+        builder.Services.AddSingleton<ILicenseService, LicenseService>();
         builder.Services.AddSingleton<IRepository, Repository>();
-
+        builder.Services.AddSingleton<IUserDialogs>(UserDialogs.Instance);
 
         builder.Services.AddSingleton<AppShell>();
 
+        builder.Services.AddSingleton<MainPage>();
         builder.Services.AddSingleton<MenuPage>();
         builder.Services.AddSingleton<AboutPage>();
         builder.Services.AddSingleton<DocumentPage>();
         builder.Services.AddSingleton<SettingsPage>();
         builder.Services.AddSingleton<RecordsPage>();
 
+        builder.Services.AddSingleton<MainViewModel>();
         builder.Services.AddSingleton<MenuViewModel>();
         builder.Services.AddSingleton<AboutViewModel>();
         builder.Services.AddSingleton<DocumentViewModel>();

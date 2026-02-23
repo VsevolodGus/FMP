@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:lang="clr-namespace:Bioss.Ultrasound.Core.Resources.Localization;assembly=Bioss.Ultrasound.Core"
+    xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    x:Class="Bioss.Ultrasound.Maui.Pages.MainPage"
+    Title="{x:Static lang:AppStrings.Main_Title}">
+
+    <ContentPage.Behaviors>
+        <!-- Если хочешь авто-скан при открытии -->
+        <xct:EventToCommandBehavior EventName="Appearing"
+                                   Command="{Binding RestartScanAsyncCommand}" />
+    </ContentPage.Behaviors>
+
+    <VerticalStackLayout Padding="16" Spacing="12">
+
+        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
+            <Label Text="{x:Static lang:AppStrings.BluetoothSearch}"
+                   VerticalOptions="Center"
+                   FontAttributes="Bold" />
+
+            <Button Grid.Column="1"
+                    Text="Scan"
+                    Command="{Binding RestartScanAsyncCommand}" />
+
+            <Button Grid.Column="2"
+                    Text="Disconnect"
+                    Command="{Binding DisconnectAsyncCommand}"
+                    IsEnabled="{Binding IsConnected}" />
+        </Grid>
+
+        <CollectionView ItemsSource="{Binding Devices}"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedDevice, Mode=TwoWay}">
+
+            <CollectionView.EmptyView>
+                <Grid>
+                    <Label Text="{x:Static lang:AppStrings.TurnOnYourDevice}"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           Margin="16"
+                           HorizontalTextAlignment="Center"
+                           TextColor="Gray" />
+                </Grid>
+            </CollectionView.EmptyView>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="16,10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Image Source="ic_bluetooth.png"
+                               WidthRequest="20"
+                               HeightRequest="20"
+                               VerticalOptions="Center" />
+
+                        <Label Grid.Column="1"
+                               Text="{Binding Name}"
+                               VerticalOptions="Center"
+                               Margin="12,0,0,0" />
+
+                        <BoxView Grid.ColumnSpan="2"
+                                 HeightRequest="1"
+                                 VerticalOptions="End"
+                                 BackgroundColor="LightGray"
+                                 Margin="0,10,0,0" />
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+
+        </CollectionView>
+
+        <Button Text="Connect"
+                Command="{Binding ConnectSelectedAsyncCommand}"
+                IsEnabled="{Binding SelectedDevice}" />
+
+        <Label Text="{Binding IsConnected, StringFormat='Connected: {0}'}"
+               TextColor="Gray"
+               HorizontalTextAlignment="Center" />
+
+    </VerticalStackLayout>
+</ContentPage>

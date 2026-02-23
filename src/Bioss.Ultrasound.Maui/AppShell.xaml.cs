@@ -12,7 +12,7 @@ public partial class AppShell : Shell
         // TabBar снизу
         var tabBar = new TabBar();
 
-        tabBar.Items.Add(CreateTab<MenuPage>(services, AppStrings.Main_Title, "ic_heart_pulse.svg"));
+        tabBar.Items.Add(CreateTab<MainPage>(services, AppStrings.Main_Title, "ic_heart_pulse.svg"));
         tabBar.Items.Add(CreateTab<RecordsPage>(services, AppStrings.Records_Title, "ic_records.svg"));
         tabBar.Items.Add(CreateTab<MenuPage>(services, AppStrings.Menu_Title, "ic_menu.svg"));
 

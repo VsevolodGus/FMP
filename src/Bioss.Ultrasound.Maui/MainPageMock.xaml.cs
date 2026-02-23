@@ -1,10 +1,10 @@
 ﻿namespace Bioss.Ultrasound.Maui;
 
-public partial class MainPage : ContentPage
+public partial class MainPageMock : ContentPage
 {
     int count = 0;
 
-    public MainPage()
+    public MainPageMock()
     {
         InitializeComponent();
     }

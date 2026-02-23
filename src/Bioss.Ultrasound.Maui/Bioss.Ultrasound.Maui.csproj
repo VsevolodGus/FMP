@@ -68,6 +68,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Acr.UserDialogs" Version="9.2.2" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="8.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
@@ -80,10 +81,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="MainPageMock.xaml.cs">
+	    <DependentUpon>MainPageMock.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Pages\AboutPage.xaml.cs">
 	    <DependentUpon>%(Filename)</DependentUpon>
 	  </Compile>
 	  <Compile Update="Pages\DocumentPage.xaml.cs">
+	    <DependentUpon>%(Filename)</DependentUpon>
+	  </Compile>
+	  <Compile Update="Pages\MainPage.xaml.cs">
 	    <DependentUpon>%(Filename)</DependentUpon>
 	  </Compile>
 	  <Compile Update="Pages\MenuPage.xaml.cs">
@@ -111,6 +118,10 @@
 	  <MauiXaml Update="Pages\DocumentPage.xaml">
 	    <SubType>Designer</SubType>
 	    <Generator></Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Pages\MainPage.xaml">
+	    <SubType>Designer</SubType>
+	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Pages\MenuPage.xaml">
 	    <SubType>Designer</SubType>
