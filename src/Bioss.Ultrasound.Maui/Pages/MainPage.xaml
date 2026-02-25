@@ -8,79 +8,129 @@
     Title="{x:Static lang:AppStrings.Main_Title}">
 
     <ContentPage.Behaviors>
-        <!-- Если хочешь авто-скан при открытии -->
+        <!-- Авто-старт сканирования при входе -->
         <xct:EventToCommandBehavior EventName="Appearing"
                                    Command="{Binding RestartScanAsyncCommand}" />
     </ContentPage.Behaviors>
 
-    <VerticalStackLayout Padding="16" Spacing="12">
+    <Grid>
 
-        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="10">
-            <Label Text="{x:Static lang:AppStrings.BluetoothSearch}"
-                   VerticalOptions="Center"
-                   FontAttributes="Bold" />
+        <!-- ======= STATE: NOT CONNECTED (как на скрине 2) ======= -->
+        <Grid
+            RowDefinitions="220,*"
+            IsVisible="{Binding IsConnected, Converter={StaticResource ReverseBoolConverter}}">
 
-            <Button Grid.Column="1"
-                    Text="Scan"
-                    Command="{Binding RestartScanAsyncCommand}" />
+            <!-- Верхняя карточка с “пульсом” -->
+            <Border
+                Grid.Row="0"
+                BackgroundColor="White"
+                Stroke="#E6E6E6"
+                StrokeThickness="1"
+                Padding="0"
+                Margin="0"
+                StrokeShape="RoundRectangle 0">
+                <Border.Shadow>
+                    <Shadow Brush="#80000000" Opacity="0.12" Radius="12" Offset="0,4"/>
+                </Border.Shadow>
 
-            <Button Grid.Column="2"
-                    Text="Disconnect"
-                    Command="{Binding DisconnectAsyncCommand}"
-                    IsEnabled="{Binding IsConnected}" />
+                <!-- ClipToBounds чтобы круги не вылазили -->
+                <Grid x:Name="PulseRoot" ClipToBounds="True">
+
+                    <!-- Пульсирующие круги -->
+                    <Ellipse x:Name="Ring1" Fill="#D7E6FF" Opacity="0.65"
+                             WidthRequest="340" HeightRequest="340"
+                             HorizontalOptions="Center" VerticalOptions="Center"/>
+
+                    <Ellipse x:Name="Ring2" Fill="#B9D3FF" Opacity="0.55"
+                             WidthRequest="260" HeightRequest="260"
+                             HorizontalOptions="Center" VerticalOptions="Center"/>
+
+                    <Ellipse x:Name="Ring3" Fill="#8FB9FF" Opacity="0.45"
+                             WidthRequest="190" HeightRequest="190"
+                             HorizontalOptions="Center" VerticalOptions="Center"/>
+
+                    <!-- Центральный круг + иконка -->
+                    <Grid WidthRequest="84" HeightRequest="84"
+                          HorizontalOptions="Center" VerticalOptions="Center">
+                        <Ellipse Fill="#4E86E6" Opacity="0.9"/>
+                        <Image Source="ic_bluetooth.png"
+                               WidthRequest="28" HeightRequest="28"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Grid>
+
+                    <!-- Подпись снизу -->
+                    <Label
+                        Text="{x:Static lang:AppStrings.BluetoothSearch}"
+                        TextColor="DarkSlateGray"
+                        HorizontalTextAlignment="Center"
+                        VerticalOptions="End"
+                        Margin="16"
+                        FontSize="14"/>
+                </Grid>
+            </Border>
+
+            <!-- Список устройств -->
+            <CollectionView
+                Grid.Row="1"
+                ItemsSource="{Binding Devices}"
+                SelectionMode="Single"
+                SelectedItem="{Binding SelectedDevice, Mode=TwoWay}"
+                SelectionChangedCommand="{Binding ConnectSelectedAsyncCommand}">
+
+                <CollectionView.EmptyView>
+                    <Grid>
+                        <Label
+                            Text="{x:Static lang:AppStrings.TurnOnYourDevice}"
+                            HorizontalOptions="Center"
+                            VerticalOptions="Center"
+                            Margin="16"
+                            HorizontalTextAlignment="Center"
+                            TextColor="Gray"/>
+                    </Grid>
+                </CollectionView.EmptyView>
+
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid Padding="16,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Image Source="ic_bluetooth.png"
+                                   WidthRequest="20"
+                                   HeightRequest="20"
+                                   VerticalOptions="Center" />
+
+                            <Label Grid.Column="1"
+                                   Text="{Binding Name}"
+                                   VerticalOptions="Center"
+                                   Margin="12,0,0,0" />
+
+                            <BoxView Grid.ColumnSpan="2"
+                                     HeightRequest="1"
+                                     VerticalOptions="End"
+                                     BackgroundColor="#DDDDDD"
+                                     Margin="0,10,0,0"/>
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
         </Grid>
 
-        <CollectionView ItemsSource="{Binding Devices}"
-                        SelectionMode="Single"
-                        SelectedItem="{Binding SelectedDevice, Mode=TwoWay}">
+        <!-- ======= STATE: CONNECTED (пока заглушка) ======= -->
+        <Grid IsVisible="{Binding IsConnected}" Padding="16">
+            <VerticalStackLayout Spacing="12" VerticalOptions="Center">
+                <Label Text="Connected"
+                       FontAttributes="Bold"
+                       FontSize="20"
+                       HorizontalTextAlignment="Center"/>
+                <Button Text="Disconnect"
+                        Command="{Binding DisconnectAsyncCommand}"
+                        HorizontalOptions="Center"/>
+            </VerticalStackLayout>
+        </Grid>
 
-            <CollectionView.EmptyView>
-                <Grid>
-                    <Label Text="{x:Static lang:AppStrings.TurnOnYourDevice}"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center"
-                           Margin="16"
-                           HorizontalTextAlignment="Center"
-                           TextColor="Gray" />
-                </Grid>
-            </CollectionView.EmptyView>
-
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Grid Padding="16,10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto"/>
-                            <ColumnDefinition Width="*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Image Source="ic_bluetooth.png"
-                               WidthRequest="20"
-                               HeightRequest="20"
-                               VerticalOptions="Center" />
-
-                        <Label Grid.Column="1"
-                               Text="{Binding Name}"
-                               VerticalOptions="Center"
-                               Margin="12,0,0,0" />
-
-                        <BoxView Grid.ColumnSpan="2"
-                                 HeightRequest="1"
-                                 VerticalOptions="End"
-                                 BackgroundColor="LightGray"
-                                 Margin="0,10,0,0" />
-                    </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-
-        </CollectionView>
-
-        <Button Text="Connect"
-                Command="{Binding ConnectSelectedAsyncCommand}"
-                IsEnabled="{Binding SelectedDevice}" />
-
-        <Label Text="{Binding IsConnected, StringFormat='Connected: {0}'}"
-               TextColor="Gray"
-               HorizontalTextAlignment="Center" />
-
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>
