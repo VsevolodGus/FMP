@@ -69,27 +69,39 @@
 
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <Grid Padding="16,10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
+                        <!-- общий контейнер с горизонтальным padding как в Xamarin -->
+                        <Grid Padding="25,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
 
-                            <Image Source="ic_bluetooth.png"
-                                   WidthRequest="20"
-                                   HeightRequest="20"
-                                   VerticalOptions="Center" />
+                            <!-- контент строки -->
+                            <HorizontalStackLayout Grid.Row="0"
+                                   Spacing="16"
+                                   Padding="0,16"
+                                   HeightRequest="48">
 
-                            <Label Grid.Column="1"
-                                   Text="{Binding Name}"
-                                   VerticalOptions="Center"
-                                   Margin="12,0,0,0" />
+                                <Image Source="ic_bluetooth.png"
+                                    WidthRequest="20"
+                                    HeightRequest="20"
+                                    VerticalOptions="Center">
+                                    <Image.Behaviors>
+                                        <xct:IconTintColorBehavior TintColor="Gray" />
+                                    </Image.Behaviors>
+                                </Image>
 
-                            <BoxView Grid.ColumnSpan="2"
-                                     HeightRequest="1"
-                                     VerticalOptions="End"
-                                     BackgroundColor="#DDDDDD"
-                                     Margin="0,10,0,0"/>
+
+                                <Label Text="{Binding Name}"
+                                       VerticalOptions="Center"
+                                       VerticalTextAlignment="Center"
+                                       TextColor="#808080"/>
+                            </HorizontalStackLayout>
+
+                            <!-- разделитель: теперь он ограничен padding-ом контейнера -->
+                            <BoxView Grid.Row="1"
+                     HeightRequest="0.5"
+                     BackgroundColor="#CCCCCC"/>
                         </Grid>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
