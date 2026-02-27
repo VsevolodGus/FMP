@@ -142,6 +142,23 @@ namespace Bioss.Ultrasound.Collections
             return values;
         }
 
+        public T Peek(int offset)
+        {
+            if (offset < 0 || offset >= _count) throw new ArgumentOutOfRangeException(nameof(offset));
+            return _items[(Tail + offset) % Capacity];
+        }
+
+        public bool TryPopInto(Span<T> dest, int length)
+        {
+            if (length > _count) return false;
+            for (int i = 0; i < length; i++)
+                dest[i] = _items[(Tail + i) % Capacity];
+
+            Tail = (Tail + length) % Capacity;
+            _count -= length;
+            return true;
+        }
+
 
         private void AtomicCountAdd(int value)
         {
