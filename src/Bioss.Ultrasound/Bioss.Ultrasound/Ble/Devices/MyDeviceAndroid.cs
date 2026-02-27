@@ -18,6 +18,7 @@ namespace Bioss.Ultrasound.Ble.Devices
 {
     public class MyDeviceAndroid : IMyDevice
     {
+        private const int sizeBuffer = 1024;
         private static readonly ConnectParameters connectParameters = new ConnectParameters(true, true);
 
         private readonly ILogger _logger;
@@ -27,7 +28,7 @@ namespace Bioss.Ultrasound.Ble.Devices
         private IGeneration _guids;
         private bool _disconnecting;
 
-        private RingBuffer<byte> _buffer = new RingBuffer<byte>(1024);
+        private RingBuffer<byte> _buffer = new RingBuffer<byte>(sizeBuffer);
 
         public MyDeviceAndroid(ILogger logger)
         {
@@ -145,52 +146,94 @@ namespace Bioss.Ultrasound.Ble.Devices
             }
         }
 
+        private readonly static int SoundLen = SoundPackage.DataLength;              // 107
+        private readonly static int FhrLen = FHRPackage.DataLength;                // 10
+        private readonly static int FullLen = SoundPackage.DataLength + FHRPackage.DataLength; // 117
+
         private void Ch_ValueUpdated(object sender, CharacteristicUpdatedEventArgs e)
         {
-            if (_guids == null)
+            if (_guids == null || !IsConnected)
                 return;
 
-            if (!IsConnected)
+            if (e.Characteristic.Id != _guids.ChCustomRead)
                 return;
 
-            var characteristic = e.Characteristic;
+            var data = e.Characteristic.Value;
+            if (data == null || data.Length == 0)
+                return;
 
-            //DebugWriteLine($"ValueUpdated: {characteristic.Uuid} {characteristic.Value} {characteristic.Value.Length}");
-            //DebugWriteLine($"ValueUpdated: len: {characteristic.Value.Length}, data: {BitConverter.ToString(characteristic.Value)}");
+            // всегда в буфер, чтобы не ломать порядок
+            _buffer.Push(data);
 
-            if (_guids.ChCustomRead == characteristic.Id)
+            // парсим буфер последовательно
+            ParseBuffer();
+        }
+
+        private void ParseBuffer()
+        {
+            // рабочий буфер на стеке, без GC
+            Span<byte> scratch = stackalloc byte[FullLen];
+
+            while (_buffer.Count >= 3)
             {
-                var data = e.Characteristic.Value;
-
-                var checkStartPackage = data.Length >= 3 && data[0] == 0x55 && data[1] == 0xAA && data[2] == 0x09;
-
-                if (!checkStartPackage)
+                // 1) синхронизация по заголовку sound: 55 AA 09
+                if (!IsSoundHeaderAtBufferHead())
                 {
-                    _buffer.Push(data);
+                    _buffer.Pop(); // выкидываем 1 байт и ищем дальше
+                    continue;
+                }
+
+                // 2) ждём минимум soundLen
+                if (_buffer.Count < SoundLen)
                     return;
-                }
-                
-                var packageData = _buffer.Pop(_buffer.Count);
-                _buffer.Push(data);
 
-                if (packageData is null)
-                    return;
-                
-                var package = Package.Init(packageData.AsSpan());
-                if (!(package?.IsValid ?? false))
-                {
-                    DebugWriteLine($"ValueUpdated: Invalid package recieved");
-                    return;
-                }
+                // 3) определяем, есть ли прицепленный FHR сразу после sound
+                var len = SoundLen;
 
-                try
-                {
-                    NewPackage?.Invoke(this, package);
-                }
-                catch (Exception ex)
-                {
-                    _logger.Log($"Proccess NewPackage with error: {ex}", ServerLogLevel.Warn);
-                }
+                if (_buffer.Count >= FullLen && IsFhrHeaderAtOffset(SoundLen))
+                    len = FullLen;
+
+                if (_buffer.Count < len)
+                    return;
+
+                // 4) снимаем ровно один кадр без аллокаций
+                if (!_buffer.TryPopInto(scratch[..len], len))
+                    return;
+
+                // 5) парсим и отдаём строго по порядку
+                ProcessFrame(scratch[..len]);
+            }
+        }
+
+        // TODO вынести отсюда
+        private bool IsSoundHeaderAtBufferHead()
+        {
+            return _buffer.Peek(0) == 0x55
+                && _buffer.Peek(1) == 0xAA
+                && _buffer.Peek(2) == 0x09;
+        }
+
+        // TODO вынести отсюда
+        private bool IsFhrHeaderAtOffset(int offset)
+        {
+            return _buffer.Peek(offset + 0) == 0x55
+                && _buffer.Peek(offset + 1) == 0xAA
+                && _buffer.Peek(offset + 2) == 0x03;
+        }
+
+        private void ProcessFrame(ReadOnlySpan<byte> frame)
+        {
+            var package = Package.Init(frame);
+            if (package?.IsValid != true)
+                return;
+
+            try
+            {
+                NewPackage?.Invoke(this, package);
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Proccess NewPackage with error: {ex}", ServerLogLevel.Warn);
             }
         }
 
@@ -229,7 +272,7 @@ namespace Bioss.Ultrasound.Ble.Devices
 
                 var oldSubs = _subscribedToValueUpdated.ToList();
                 _subscribedToValueUpdated.Clear();
-                _buffer = new RingBuffer<byte>(1024);
+                _buffer = new RingBuffer<byte>(sizeBuffer);
 
                 foreach (var c in oldSubs)
                 {
