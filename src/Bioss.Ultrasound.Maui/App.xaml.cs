@@ -5,9 +5,7 @@ using Bioss.Ultrasound.Core.Network;
 using Bioss.Ultrasound.Core.Services.Logging;
 using Bioss.Ultrasound.Core.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Core.Services.Sessions;
-using Bioss.Ultrasound.Maui.Pages;
 using Bioss.Ultrasound.Services;
-using Microsoft.Maui.Controls;
 
 namespace Bioss.Ultrasound.Maui;
 
@@ -22,7 +20,7 @@ public partial class App : Application
     private readonly AutoResetTocoService _autoResetToco;
     private readonly AppSettingsService _appSettings;
 
-    private readonly Task? _connectDbTask;
+    private readonly Task _connectDbTask;
 
     public App(
         AppDatabase database,
@@ -33,10 +31,11 @@ public partial class App : Application
         AppSettingsService appSettings,
         IPermission permission,
         AppShell shell,
-        //MainTabbedPage menuPage, 
         IMyDevice myDevice)
     {
         InitializeComponent();
+
+        UserAppTheme = AppTheme.Light;
 
         _database = database;
         _serverLogger = serverLogger;
@@ -51,15 +50,14 @@ public partial class App : Application
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
         InitAsync();
-        //MainPage = new NavigationPage(menuPage);
         MainPage = shell;
-        //MainPage = new AppShell();
+
 
     }
 
-    protected override async void OnStart()
+    protected override void OnStart()
     {
-        
+
     }
 
 
