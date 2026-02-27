@@ -46,9 +46,11 @@ public partial class App : Application
         _permission = permission;
         _myDevice = myDevice;
 
+        _connectDbTask = _database.ConnectAsync();
         Connectivity.Current.ConnectivityChanged += Connectivity_ConnectivityChanged;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
+        
         InitAsync();
         MainPage = shell;
 
