@@ -39,7 +39,7 @@ public partial class MainViewModel : ObservableObject
 
     public ObservableCollection<IDevice> Devices { get; } = new();
 
-    [ObservableProperty] private IDevice? selectedDevice;
+    [ObservableProperty] private IDevice selectedDevice;
     [ObservableProperty] private bool isConnected;
 
     public MainViewModel(
@@ -152,7 +152,7 @@ public partial class MainViewModel : ObservableObject
         Devices.Add(device);
     }
 
-    private async void OnConnectedChanged(object? sender, bool connected)
+    private async void OnConnectedChanged(object sender, bool connected)
     {
         IsConnected = connected;
 

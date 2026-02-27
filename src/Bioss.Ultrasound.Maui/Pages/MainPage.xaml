@@ -4,6 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:lang="clr-namespace:Bioss.Ultrasound.Core.Resources.Localization;assembly=Bioss.Ultrasound.Core"
     xmlns:xct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+    xmlns:controls="clr-namespace:Bioss.Ultrasound.Maui.Controls"
+    xmlns:image="clr-namespace:Bioss.Ultrasound.Core.Resources.Localization;assembly=Bioss.Ultrasound.Core"
     x:Class="Bioss.Ultrasound.Maui.Pages.MainPage"
     Title="{x:Static lang:AppStrings.Main_Title}">
 
@@ -16,56 +18,32 @@
     <Grid>
 
         <!-- ======= STATE: NOT CONNECTED (как на скрине 2) ======= -->
-        <Grid
-            RowDefinitions="220,*"
-            IsVisible="{Binding IsConnected, Converter={StaticResource ReverseBoolConverter}}">
+        <Grid RowDefinitions="1*,2*"
+              IsVisible="{Binding IsConnected, Converter={StaticResource ReverseBoolConverter}}">
 
-            <!-- Верхняя карточка с “пульсом” -->
-            <Border
-                Grid.Row="0"
-                BackgroundColor="White"
-                Stroke="#E6E6E6"
-                StrokeThickness="1"
-                Padding="0"
-                Margin="0"
-                StrokeShape="RoundRectangle 0">
+            <Border Grid.Row="0"
+            BackgroundColor="White"
+            Stroke="#E6E6E6"
+            StrokeThickness="1"
+            Margin="0"
+            Padding="0">
                 <Border.Shadow>
                     <Shadow Brush="#80000000" Opacity="0.12" Radius="12" Offset="0,4"/>
                 </Border.Shadow>
 
-                <!-- ClipToBounds чтобы круги не вылазили -->
-                <Grid x:Name="PulseRoot" ClipToBounds="True">
+                <Grid IsClippedToBounds="True">
+                    <controls:Pulse AutoStart="{Binding IsConnected, Converter={StaticResource ReverseBoolConverter}}"
+                            PulseColor="CornflowerBlue"
+                            Speed="10"
+                            Source="Bioss.Ultrasound.Core.Resources.Images.bluetooth.png"
+                            VerticalOptions="FillAndExpand"
+                            HorizontalOptions="FillAndExpand"/>
 
-                    <!-- Пульсирующие круги -->
-                    <Ellipse x:Name="Ring1" Fill="#D7E6FF" Opacity="0.65"
-                             WidthRequest="340" HeightRequest="340"
-                             HorizontalOptions="Center" VerticalOptions="Center"/>
-
-                    <Ellipse x:Name="Ring2" Fill="#B9D3FF" Opacity="0.55"
-                             WidthRequest="260" HeightRequest="260"
-                             HorizontalOptions="Center" VerticalOptions="Center"/>
-
-                    <Ellipse x:Name="Ring3" Fill="#8FB9FF" Opacity="0.45"
-                             WidthRequest="190" HeightRequest="190"
-                             HorizontalOptions="Center" VerticalOptions="Center"/>
-
-                    <!-- Центральный круг + иконка -->
-                    <Grid WidthRequest="84" HeightRequest="84"
-                          HorizontalOptions="Center" VerticalOptions="Center">
-                        <Ellipse Fill="#4E86E6" Opacity="0.9"/>
-                        <Image Source="ic_bluetooth.png"
-                               WidthRequest="28" HeightRequest="28"
-                               HorizontalOptions="Center" VerticalOptions="Center" />
-                    </Grid>
-
-                    <!-- Подпись снизу -->
-                    <Label
-                        Text="{x:Static lang:AppStrings.BluetoothSearch}"
-                        TextColor="DarkSlateGray"
-                        HorizontalTextAlignment="Center"
-                        VerticalOptions="End"
-                        Margin="16"
-                        FontSize="14"/>
+                    <Label Text="{x:Static lang:AppStrings.BluetoothSearch}"
+                   VerticalOptions="End"
+                   HorizontalTextAlignment="Center"
+                   Padding="16"
+                   TextColor="DarkSlateGray"/>
                 </Grid>
             </Border>
 

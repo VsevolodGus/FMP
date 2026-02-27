@@ -68,12 +68,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="Resources\Images\bluetooth.png" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Acr.UserDialogs" Version="9.2.2" />
 		<PackageReference Include="CommunityToolkit.Maui" Version="8.0.0" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+		<PackageReference Include="SkiaSharp.Views.Maui.Controls" Version="3.119.2" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -81,6 +86,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Controls\ErrorView.xaml.cs">
+	    <DependentUpon>%(Filename)</DependentUpon>
+	  </Compile>
 	  <Compile Update="MainPageMock.xaml.cs">
 	    <DependentUpon>MainPageMock.xaml</DependentUpon>
 	  </Compile>
@@ -111,6 +119,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="Controls\ErrorView.xaml">
+	    <SubType>Designer</SubType>
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Pages\AboutPage.xaml">
 	    <SubType>Designer</SubType>
 	    <Generator></Generator>

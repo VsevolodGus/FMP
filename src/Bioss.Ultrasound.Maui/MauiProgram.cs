@@ -17,6 +17,7 @@ using Bioss.Ultrasound.Maui.Platforms.Android.Extensions;
 using Bioss.Ultrasound.Maui.ViewModels;
 using Bioss.Ultrasound.Services;
 using CommunityToolkit.Maui;
+using SkiaSharp.Views.Maui.Controls.Hosting;
 
 namespace Bioss.Ultrasound.Maui;
 
@@ -74,6 +75,7 @@ public static class MauiProgram
         builder
             .UseMauiApp<App>()
             .UseMauiCommunityToolkit()
+            .UseSkiaSharp()
             .ConfigureFonts(fonts =>
             {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

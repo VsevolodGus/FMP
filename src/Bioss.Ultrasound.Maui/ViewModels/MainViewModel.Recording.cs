@@ -82,7 +82,7 @@ public partial class MainViewModel
         }
     }
 
-    private void OnNewPackage(object? sender, Package package)
+    private void OnNewPackage(object sender, Package package)
     {
         // Минимум на сейчас: просто обновляем значения для UI
         try

@@ -27,7 +27,7 @@ public partial class AppShell : Shell
             Icon = ImageSource.FromFile(iconFile),
 
             // ВАЖНО: фабрика создаёт страницу через DI, поэтому конструкторы с параметрами работают
-            ContentTemplate = new DataTemplate(() => (Page)services.GetRequiredService<T>())
+            ContentTemplate = new DataTemplate(services.GetRequiredService<T>)
         };
     }
 }
