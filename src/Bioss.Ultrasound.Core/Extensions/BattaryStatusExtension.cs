@@ -2,9 +2,9 @@
 
 namespace Bioss.Ultrasound.Core.Extensions;
 
-internal static class BattaryStatusExtension
+public static class BattaryStatusExtension
 {
-    internal static byte GetDigitBatteryLevel(this BatteryLevel batteryLevel)
+    public static byte GetDigitBatteryLevel(this BatteryLevel batteryLevel)
         => batteryLevel switch
         {
             BatteryLevel.Excellent => 100,

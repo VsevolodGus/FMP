@@ -6,7 +6,6 @@ using Bioss.Ultrasound.Core.DependencyExtensions;
 using Bioss.Ultrasound.Core.Repository.Abstracts;
 using Bioss.Ultrasound.Core.Services.Licenses;
 using Bioss.Ultrasound.Core.Services;
-using Bioss.Ultrasound.Services;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Plugin.BLE.Abstractions.Contracts;

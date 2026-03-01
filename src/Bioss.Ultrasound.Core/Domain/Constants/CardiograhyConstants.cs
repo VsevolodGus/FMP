@@ -1,6 +1,6 @@
 ﻿namespace Bioss.Ultrasound.Core.Domain.Constants;
 
-internal struct CardiograhyConstants
+public struct CardiograhyConstants
 {
     /// <summary>
     /// Минимальное время записи для соблюдения критериев
