@@ -20,8 +20,6 @@ public partial class App : Application
     private readonly AutoResetTocoService _autoResetToco;
     private readonly AppSettingsService _appSettings;
 
-    private readonly Task _connectDbTask;
-
     public App(
         AppDatabase database,
         ILogger serverLogger,
@@ -46,22 +44,15 @@ public partial class App : Application
         _permission = permission;
         _myDevice = myDevice;
 
-        _connectDbTask = _database.ConnectAsync();
+        InitAsync();
         Connectivity.Current.ConnectivityChanged += Connectivity_ConnectivityChanged;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
         
-        InitAsync();
         MainPage = shell;
 
 
     }
-
-    protected override void OnStart()
-    {
-
-    }
-
 
     private async ValueTask InitAsync()
     {
@@ -71,11 +62,8 @@ public partial class App : Application
                 return;
 
             await CheckPermissionsAsync();
-
             _myDevice.Init();
-
-            if (_connectDbTask != null)
-                await _connectDbTask;
+            await _database.ConnectAsync();
 
             _ = _unsentLogDispatcher.SendAllUnsentAsync(false);
             await _sessionService.GetCurrentSessionAsync();
