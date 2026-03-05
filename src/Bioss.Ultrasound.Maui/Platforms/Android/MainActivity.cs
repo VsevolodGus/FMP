@@ -14,4 +14,29 @@ public class MainActivity : MauiAppCompatActivity
         AppCompatDelegate.DefaultNightMode = AppCompatDelegate.ModeNightNo;
         base.OnCreate(savedInstanceState);
     }
+
+    private static bool _permissionsRequested;
+    protected override void OnResume()
+    {
+        base.OnResume();
+
+        if (_permissionsRequested)
+            return;
+
+        _permissionsRequested = true;
+
+        MainThread.BeginInvokeOnMainThread(async () =>
+        {
+            try
+            {
+                // ВАЖНО: Application = Microsoft.Maui.Controls.Application, не Android.App.Application
+                if (Microsoft.Maui.Controls.Application.Current is App app)
+                    await app.EnsureStartupPermissionsAsync();
+            }
+            catch
+            {
+                // при желании можно логировать
+            }
+        });
+    }
 }

@@ -58,7 +58,7 @@ public partial class App : Application
             if (!NetworkState.HasNetwork)
                 return;
 
-            await CheckPermissionsAsync();
+            await EnsureStartupPermissionsAsync();
             _myDevice.Init();
             await _database.ConnectAsync();
 
@@ -74,14 +74,16 @@ public partial class App : Application
         }
     }
 
-    private async Task<PermissionStatus> CheckPermissionsAsync()
+    /// <summary>
+    ///  Первое открытие успешно
+    /// Второе открытие все повисает на начальном экране
+    /// </summary>
+    /// <returns></returns>
+    public async Task EnsureStartupPermissionsAsync()
     {
-        var ble = _permission;
-        var status = await ble.CheckStatusAsync();
+        var status = await _permission.CheckStatusAsync();
         if (status != PermissionStatus.Granted)
-            status = await ble.RequestAsync();
-
-        return status;
+            await _permission.RequestAsync();
     }
     private async void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
