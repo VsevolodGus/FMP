@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using Bioss.Ultrasound.Core;
 using SkiaSharp;
 using SkiaSharp.Views.Maui;
 using SkiaSharp.Views.Maui.Controls;
@@ -87,7 +88,7 @@ public class Pulse : SKCanvasView
         if (propertyName == nameof(Source))
         {
             string resourceID = Source;
-            var assembly = typeof(Core.AppConstants).Assembly;
+            var assembly = typeof(AppConstants).Assembly;
             using (Stream stream = assembly.GetManifestResourceStream(resourceID))
             {
                 if (stream != null)

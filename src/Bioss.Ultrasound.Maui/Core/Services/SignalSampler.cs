@@ -63,7 +63,6 @@ namespace Bioss.Ultrasound.Core.Services
         /// <param name="getTime">метод получения времени из TObject</param>
         /// <param name="getValue">метод получения значения из TObject</param>
         /// <param name="targetFrequency">во сколько раз увеличится размер массива</param>
-        /// <param name="fullSampling">нужно ли заполнять пустоты между значениями или нет. Заполненяет пустоты от предыдущего до текущего элемента, значением текущего элемента</param>
         /// <returns></returns>
         [Description("Метод может использоваться только для увеличения нового массива")]
         public static TResultItem[] FullSampling<TObject, TResultItem>(in TimeSpan duration,

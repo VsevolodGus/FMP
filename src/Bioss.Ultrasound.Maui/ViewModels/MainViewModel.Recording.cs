@@ -15,7 +15,7 @@ public partial class MainViewModel
     [ObservableProperty] private byte toco;
     [ObservableProperty] private byte batteryLevel;
 
-    private Record? _record;
+    private Record _record;
 
     private void InitRecordingPart()
     {

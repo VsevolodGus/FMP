@@ -71,7 +71,7 @@ public class AudioService
         private static Stream GetResourceStream(string resource)
         {
             // TODO понять то-ли юзаем
-            var assembly = typeof(Sounds).GetTypeInfo().Assembly;
+            var assembly = typeof(AppConstants).GetTypeInfo().Assembly;
             return assembly.GetManifestResourceStream(resource);
         }
     }

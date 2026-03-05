@@ -44,14 +44,11 @@ public partial class App : Application
         _permission = permission;
         _myDevice = myDevice;
 
+        MainPage = shell;
+
         InitAsync();
         Connectivity.Current.ConnectivityChanged += Connectivity_ConnectivityChanged;
         AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-
-        
-        MainPage = shell;
-
-
     }
 
     private async ValueTask InitAsync()
