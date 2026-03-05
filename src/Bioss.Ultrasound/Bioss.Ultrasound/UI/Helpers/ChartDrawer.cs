@@ -88,16 +88,14 @@ namespace Bioss.Ultrasound.UI.Helpers
                 _fhrSeries.Points.Add(new DataPoint(dataPointTime, _gapValueHelper.GetValueOrGap(fhr)));
                 _tocoSeries.Points.Add(new DataPoint(dataPointTime, toco));
 
-                // TODO не перепутать бы
                 //if (!isRecording)
                 //    return;
-                return;
 
-                if (_fhrSeries.Points.Count > maxCountPointsInLine)
-                    _fhrSeries.Points.RemoveRange(0, 100);
+                //if (_fhrSeries.Points.Count > maxCountPointsInLine)
+                //    _fhrSeries.Points.RemoveRange(0, 100);
 
-                if (_tocoSeries.Points.Count > maxCountPointsInLine)
-                    _tocoSeries.Points.RemoveRange(0, 100);
+                //if (_tocoSeries.Points.Count > maxCountPointsInLine)
+                //    _tocoSeries.Points.RemoveRange(0, 100);
             }
         }
 
@@ -158,7 +156,6 @@ namespace Bioss.Ultrasound.UI.Helpers
             _model.Annotations.Add(OxyTools.MakeImageAnnotation(TimeSpanAxis.ToDouble(timeSpan), 5, imageName, keySpace, width));
         }
 
-        // TODO метод не нужен
         public void InvalidatePlot(in bool optimization = false)
         {
             if (optimization)
