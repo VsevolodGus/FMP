@@ -1,5 +1,11 @@
 ﻿namespace Bioss.Ultrasound.Core;
 
+// вынести сюда, все что связано с блютузом
+// catana рассчеты
+// базовую логику логирования
+// БД
+// маппинг
+// тулзы
 public struct AppConstants
 {
     public const int DefaultCountDay = 1;
