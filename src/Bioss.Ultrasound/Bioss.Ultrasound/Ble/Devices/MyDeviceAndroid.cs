@@ -155,44 +155,43 @@ namespace Bioss.Ultrasound.Ble.Devices
 
             var characteristic = e.Characteristic;
 
-            //DebugWriteLine($"ValueUpdated: {characteristic.Uuid} {characteristic.Value} {characteristic.Value.Length}");
-            //DebugWriteLine($"ValueUpdated: len: {characteristic.Value.Length}, data: {BitConverter.ToString(characteristic.Value)}");
+            if (_guids.ChCustomRead != characteristic.Id)
+                return;
 
-            if (_guids.ChCustomRead == characteristic.Id)
+            var data = e.Characteristic.Value;
+            if (data is null || data.Length == 0)
+                return;
+
+            var checkStartPackage = data.Length >= 3 && data[0] == 0x55 && data[1] == 0xAA && data[2] == 0x09;
+            if (!checkStartPackage)
             {
-                var data = e.Characteristic.Value;
-
-                var checkStartPackage = data.Length >= 3 && data[0] == 0x55 && data[1] == 0xAA && data[2] == 0x09;
-
-                if (!checkStartPackage)
-                {
-                    _buffer.Push(data);
-                    return;
-                }
-                
-                var packageData = _buffer.Pop(_buffer.Count);
                 _buffer.Push(data);
+                return;
+            }
 
-                if (packageData is null)
-                    return;
-                
-                var package = Package.Init(packageData.AsSpan());
-                if (!(package?.IsValid ?? false))
-                {
-                    DebugWriteLine($"ValueUpdated: Invalid package recieved");
-                    return;
-                }
+            var packageData = _buffer.Pop(_buffer.Count);
+            _buffer.Push(data);
 
-                try
-                {
-                    NewPackage?.Invoke(this, package);
-                }
-                catch (Exception ex)
-                {
-                    _logger.Log($"Proccess NewPackage with error: {ex}", ServerLogLevel.Warn);
-                }
+            if (packageData is null)
+                return;
+
+            var package = Package.Init(packageData.AsSpan());
+            if (!(package?.IsValid ?? false))
+            {
+                DebugWriteLine($"ValueUpdated: Invalid package recieved");
+                return;
+            }
+
+            try
+            {
+                NewPackage?.Invoke(this, package);
+            }
+            catch (Exception ex)
+            {
+                _logger.Log($"Proccess NewPackage with error: {ex}", ServerLogLevel.Warn);
             }
         }
+        
 
         public async Task ResetTocoAsync()
         {
