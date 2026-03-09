@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Threading;
 
 namespace Bioss.Ultrasound.Services
 {
@@ -27,7 +28,8 @@ namespace Bioss.Ultrasound.Services
             in int itemsCount,
             Func<TObject, DateTime> getTime,
             Func<TObject, TResultItem> getValue,
-            in int targetFrequency)
+            in int targetFrequency,
+            in CancellationToken cancellationToken = default)
         {
             ValidParameters(duration, items, getTime, getValue, targetFrequency);
 
@@ -36,6 +38,8 @@ namespace Bioss.Ultrasound.Services
 
             for (var i = 0; i < itemsCount; i++)
             {
+                cancellationToken.ThrowIfCancellationRequested();
+
                 var item = items[i];
                 var currentDate = getTime(item);
                 var index = CalculateIndex(startDate, currentDate, ticksPerSample);
@@ -65,7 +69,6 @@ namespace Bioss.Ultrasound.Services
         /// <param name="getTime">метод получения времени из TObject</param>
         /// <param name="getValue">метод получения значения из TObject</param>
         /// <param name="targetFrequency">во сколько раз увеличится размер массива</param>
-        /// <param name="fullSampling">нужно ли заполнять пустоты между значениями или нет. Заполненяет пустоты от предыдущего до текущего элемента, значением текущего элемента</param>
         /// <returns></returns>
         [Description("Метод может использоваться только для увеличения нового массива")]
         public static TResultItem[] FullSampling<TObject, TResultItem>(in TimeSpan duration,
@@ -74,7 +77,8 @@ namespace Bioss.Ultrasound.Services
             in int itemsCount,
             Func<TObject, DateTime> getTime,
             Func<TObject, TResultItem> getValue,
-            in int targetFrequency)
+            in int targetFrequency,
+            in CancellationToken cancellationToken = default)
         {
             ValidParameters(duration, items, getTime, getValue, targetFrequency);
 
@@ -84,6 +88,7 @@ namespace Bioss.Ultrasound.Services
             var ticksPerSample = TimeSpan.TicksPerSecond / targetFrequency;
             for(var i = 0; i < itemsCount; i++)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 var item = items[i];
                 var currentDate = getTime(item);
                 var index = CalculateIndex(startDate, currentDate, ticksPerSample);

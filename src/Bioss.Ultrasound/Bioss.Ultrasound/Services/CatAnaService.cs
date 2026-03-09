@@ -1,6 +1,7 @@
 ﻿using Bioss.Ultrasound.Data.Database.Entities.Enums;
 using Bioss.Ultrasound.Domain.Constants;
 using Bioss.Ultrasound.Domain.Models;
+using System.Threading;
 using static CatAna;
 using static CatAna.AnalysisResultUser;
 
@@ -42,7 +43,7 @@ namespace Bioss.Ultrasound.Services
         /// </summary>
         /// <param name="record">данные записи</param>
         /// <returns></returns>
-        public CardiotocographyInfo CargiographAnalayzeWithUserSettings(Record record)
+        public CardiotocographyInfo CargiographAnalayzeWithUserSettings(Record record, CancellationToken cancellationToken = default)
         {
             // каждый раз пересмеплируем, создает нагрузку большую нагрузку, надо как-то семплинг не делать в новую коллекцию, а дополнять старую
             // 1) меньше нагрузка gc, ибо создаст меньше нагрузки
@@ -53,7 +54,10 @@ namespace Bioss.Ultrasound.Services
                 record.Fhrs.Count,
                 obj => obj.Time,
                 obj => obj.Fhr,
-                TargetFrequency);
+                TargetFrequency,
+                cancellationToken);
+
+            cancellationToken.ThrowIfCancellationRequested();
 
             var movementsResult = SignalSampler.Sampling(record.RecordingTimeSpan,
                 record.StartTime,
@@ -61,7 +65,8 @@ namespace Bioss.Ultrasound.Services
                 record.Events.Count,
                 obj => obj.Time,
                 obj => obj.Event == Events.FetalMovement,
-                TargetFrequency);
+                TargetFrequency,
+                cancellationToken);
 
             record.CardiotocographyInfo = CargiographAnalayzeWithUserSettings(_infoSettingsService.PregnancyWeek, heartRateResult, movementsResult);
             return record.CardiotocographyInfo;

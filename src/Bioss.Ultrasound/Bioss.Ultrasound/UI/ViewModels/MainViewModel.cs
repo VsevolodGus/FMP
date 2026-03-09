@@ -370,6 +370,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
             IsRecording = true;
             _isCalculationRunning = false;
             _lastCalculationDateUtc = DateTime.Now;
+            CreateNewCriteriaToken();
+
 
             _logger.Log($"Started recording with {_device.Name}");
             _record = new Record
@@ -551,7 +553,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
                         || _record is null
                         || _record.Events is null
                         || _record.Fhrs is null
-                        || _record.RecordingTimeSpan.TotalMinutes < CardiograhyConstants.MinRecordingDuration)
+                        //|| _record.RecordingTimeSpan.TotalMinutes < CardiograhyConstants.MinRecordingDuration
+                        )
                     return;
 
                 // условия для запуска следующего рассчета
@@ -560,12 +563,29 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
                 _isCalculationRunning = true;
 
+                var token = _criteriaCalculationCts.Token;
                 Task.Run(() =>
                 {
-                    _catAnaService.CargiographAnalayzeWithUserSettings(_record);
-                    Volatile.Write(ref _isCalculationRunning, false);
-                    _lastCalculationDateUtc = DateTime.UtcNow;
-                });
+                    try
+                    {
+                        token.ThrowIfCancellationRequested();
+
+                        _catAnaService.CargiographAnalayzeWithUserSettings(_record, token);
+                        Volatile.Write(ref _isCalculationRunning, false);
+                        _lastCalculationDateUtc = DateTime.UtcNow;
+                    }
+                    catch (OperationCanceledException) { }
+                    catch (Exception ex)
+                    {
+                        _logger.Log($"Error when calculating criteria: {ex}", ServerLogLevel.Warn);
+                    }
+                    finally
+                    {
+                        Volatile.Write(ref _isCalculationRunning, false);
+                    }
+
+
+                }, token);
             }
             catch(Exception ex)
             {
@@ -647,6 +667,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
             {
                 _renderLoopRunning = false;
                 IsRecording = false;
+
+                CancelCriteriaCalculation();
+
                 var recordToSave = _record;
                 _record = null;
 
@@ -748,6 +771,50 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
             _systemVolume.Volume = _appSettings.SoundLevel;
             _audioService.Play(sound, loop);
+        }
+
+
+        private readonly object _criteriaSync = new();
+
+        private CancellationTokenSource _criteriaCalculationCts;
+        private Task _criteriaCalculationTask = Task.CompletedTask;
+        private CancellationToken CreateNewCriteriaToken()
+        {
+            lock (_criteriaSync)
+            {
+                _criteriaCalculationCts?.Cancel();
+                _criteriaCalculationCts?.Dispose();
+
+                _criteriaCalculationCts = new CancellationTokenSource();
+                _criteriaCalculationTask = Task.CompletedTask;
+
+                return _criteriaCalculationCts.Token;
+            }
+        }
+
+        private void CancelCriteriaCalculation()
+        {
+            lock (_criteriaSync)
+            {
+                try
+                {
+                    _criteriaCalculationCts?.Cancel();
+                }
+                catch
+                {
+                }
+            }
+        }
+
+        private void DisposeCriteriaToken()
+        {
+            lock (_criteriaSync)
+            {
+                _criteriaCalculationCts?.Dispose();
+                _criteriaCalculationCts = null;
+                _criteriaCalculationTask = Task.CompletedTask;
+                _isCalculationRunning = false;
+            }
         }
 
         private const int RenderFps = 4;
