@@ -44,6 +44,9 @@ namespace Bioss.Ultrasound.Services
         /// <returns></returns>
         public CardiotocographyInfo CargiographAnalayzeWithUserSettings(Record record)
         {
+            // каждый раз пересмеплируем, создает нагрузку большую нагрузку, надо как-то семплинг не делать в новую коллекцию, а дополнять старую
+            // 1) меньше нагрузка gc, ибо создаст меньше нагрузки
+            // 2) меньше алгоритмическая нагрузка
             var heartRateResult = SignalSampler.FullSampling<FhrData, float>(record.RecordingTimeSpan,
                 record.StartTime,
                 record.Fhrs,

@@ -17,6 +17,7 @@ using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.UI.Helpers;
 using Bioss.Ultrasound.UI.Popups;
 using Libs.DI.ViewModels;
+using OpenTK.Input;
 using OxyPlot;
 using Plugin.BLE.Abstractions.Contracts;
 using Rg.Plugins.Popup.Services;
@@ -91,7 +92,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         /// Минимальное время прошедшее между рассчетами
         /// Перерыв нужен, чтобы успели набраться новые данные и выполниться другие фоноые процессы
         /// </summary>
-        private readonly long _intervalCalculatingTicks = TimeSpan.FromSeconds(5).Ticks;
+        private readonly long _intervalCalculatingTicks = TimeSpan.FromSeconds(10).Ticks;
         /// <summary>
         /// Время последнего запуска рассчета
         /// </summary>
@@ -514,7 +515,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     _toco = fhrPackage.Toco;
                     _batteryLevel = fhrPackage.Status2.BatteryLevel.GetDigitBatteryLevel();
                     
-                    UpdateDataPlots(_fhr, _toco);
+                    UpdateDataPlots(_fhr, _toco, package.ReceivedAt);
                     _lossHelper.Add(_fhr);
                 }
 
@@ -682,7 +683,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             var fhr = package.FHRPackage;
             _record.Fhrs.Add(new FhrData() 
             { 
-                Time = DateTime.Now, 
+                Time = package.ReceivedAt, 
                 Fhr = fhr.Fhr1, 
                 Toco = fhr.Toco 
             });
@@ -693,9 +694,9 @@ namespace Bioss.Ultrasound.UI.ViewModels
         /// </summary>
         /// <param name="heartRate">значение ЧСС</param>
         /// <param name="toco">значение TOCO - маточных сокращений</param>
-        private void UpdateDataPlots(in byte heartRate, in byte toco)
+        private void UpdateDataPlots(in byte heartRate, in byte toco, in DateTime dateTime)
         {
-            var time = _plottingTimeSpanHelper.CollectTimeSpan(DateTime.Now);
+            var time = _plottingTimeSpanHelper.CollectTimeSpan(dateTime);
             _chartDrawer.Update(time, heartRate, toco);
             _hasNewChartData = true;
         }

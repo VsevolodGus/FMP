@@ -5,6 +5,11 @@ namespace Bioss.Ultrasound.Ble.Models
     public class Package
     {
         /// <summary>
+        /// Дата создания пакета
+        /// </summary>
+        public DateTime ReceivedAt { get; private set; }
+
+        /// <summary>
         /// Sound package
         /// Sending interval: 50ms
         /// </summary>
@@ -43,6 +48,7 @@ namespace Bioss.Ultrasound.Ble.Models
 
                 package.SoundPackage = SoundPackage.Init(soundsData);
                 package.FHRPackage = FHRPackage.Init(fhrData);
+                package.ReceivedAt = DateTime.Now;
                 return package;
             }
             else if (size == SoundPackage.DataLength)
@@ -50,6 +56,7 @@ namespace Bioss.Ultrasound.Ble.Models
                 var soundsData = new byte[SoundPackage.DataLength];
                 Array.Copy(data, soundsData, SoundPackage.DataLength);
                 package.SoundPackage = SoundPackage.Init(soundsData);
+                package.ReceivedAt = DateTime.Now;
                 return package;
             }
 
@@ -70,13 +77,17 @@ namespace Bioss.Ultrasound.Ble.Models
 
                 package.SoundPackage = SoundPackage.Init(soundsSpan);
                 package.FHRPackage = FHRPackage.Init(fhrSpan);
+                package.ReceivedAt = DateTime.Now;
 
                 return package;
             }
             else if (size == SoundPackage.DataLength)
             {
                 var soundsSpan = data.Slice(0, SoundPackage.DataLength);
+                
                 package.SoundPackage = SoundPackage.Init(soundsSpan);
+                package.ReceivedAt = DateTime.Now;
+
                 return package;
             }
 
