@@ -554,8 +554,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     return;
 
                 // условия для запуска следующего рассчета
-                if (_isCalculationRunning 
-                    && DateTime.UtcNow.Ticks - _lastCalculationDateUtc.Ticks < _intervalCalculatingTicks)
+                if (_isCalculationRunning || DateTime.UtcNow.Ticks - _lastCalculationDateUtc.Ticks < _intervalCalculatingTicks)
                     return;
 
                 _isCalculationRunning = true;
