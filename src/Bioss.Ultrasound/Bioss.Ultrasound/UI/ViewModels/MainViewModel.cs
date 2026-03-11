@@ -553,7 +553,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                         || _record is null
                         || _record.Events is null
                         || _record.Fhrs is null
-                        //|| _record.RecordingTimeSpan.TotalMinutes < CardiograhyConstants.MinRecordingDuration
+                        || _record.RecordingTimeSpan.TotalMinutes < CardiograhyConstants.MinRecordingDuration
                         )
                     return;
 
@@ -583,8 +583,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
                     {
                         Volatile.Write(ref _isCalculationRunning, false);
                     }
-
-
                 }, token);
             }
             catch(Exception ex)
@@ -681,6 +679,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
                 var duretionRecord = recordToSave.StopTime - recordToSave.StartTime;
                 _logger.Log($"Recording ended on the device{_device.Name}, the recording lasted {duretionRecord}");
+                _device.ResetConsumerState();
             }
             catch (Exception ex)
             {
@@ -729,6 +728,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         /// </summary>
         private void ClearChart()
         {
+            _device.ResetConsumerState();
             _chartDrawer.Clear();
             _chartDrawer.InvalidatePlot();
 
@@ -777,19 +777,14 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly object _criteriaSync = new();
 
         private CancellationTokenSource _criteriaCalculationCts;
-        private Task _criteriaCalculationTask = Task.CompletedTask;
         private CancellationToken CreateNewCriteriaToken()
         {
-            lock (_criteriaSync)
-            {
-                _criteriaCalculationCts?.Cancel();
-                _criteriaCalculationCts?.Dispose();
+            _criteriaCalculationCts?.Cancel();
+            _criteriaCalculationCts?.Dispose();
 
-                _criteriaCalculationCts = new CancellationTokenSource();
-                _criteriaCalculationTask = Task.CompletedTask;
+            _criteriaCalculationCts = new CancellationTokenSource();
 
-                return _criteriaCalculationCts.Token;
-            }
+            return _criteriaCalculationCts.Token;
         }
 
         private void CancelCriteriaCalculation()
@@ -812,7 +807,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
             {
                 _criteriaCalculationCts?.Dispose();
                 _criteriaCalculationCts = null;
-                _criteriaCalculationTask = Task.CompletedTask;
                 _isCalculationRunning = false;
             }
         }
@@ -845,7 +839,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
                 FetalMovements = _fetalMovements;
 
                 BatteryLevel = _batteryLevel;
-                
+
                 LossPercentage = Math.Round(_lossHelper.PercentAll() * 100, 0);
                 IsLossData = _lossHelper.IsError && IsRecording; 
 

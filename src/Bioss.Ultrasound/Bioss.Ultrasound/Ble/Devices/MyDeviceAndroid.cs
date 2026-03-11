@@ -1,7 +1,6 @@
 ﻿using Bioss.Ultrasound.Ble.Commands;
 using Bioss.Ultrasound.Ble.Models;
 using Bioss.Ultrasound.Ble.ProtocolGenerations;
-using Bioss.Ultrasound.Collections;
 using Bioss.Ultrasound.Services.Logging;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Plugin.BLE;
@@ -16,35 +15,28 @@ using System.Threading.Tasks;
 
 namespace Bioss.Ultrasound.Ble.Devices
 {
-    public class MyDeviceAndroid : IMyDevice
+    public class MyDeviceAndroid : MyDeviceBase, IMyDevice
     {
         private static readonly ConnectParameters connectParameters = new ConnectParameters(true, true);
 
-        private readonly ILogger _logger;
-        private readonly IAdapter _adapter;
         private IDevice _device;
         private readonly HashSet<ICharacteristic> _subscribedToValueUpdated = new();
         private IGeneration _guids;
         private bool _disconnecting;
 
-        private RingBuffer<byte> _buffer = new RingBuffer<byte>(1024);
+        public event EventHandler<bool> ConnectedChanged;
 
-        public MyDeviceAndroid(ILogger logger)
+        public MyDeviceAndroid(ILogger logger) : base(logger, CrossBluetoothLE.Current.Adapter)
         {
-            _logger = logger;
-
-            _adapter = CrossBluetoothLE.Current.Adapter;
             _adapter.DeviceConnected += OnConnected;
             _adapter.DeviceDisconnected += OnDisconnected;
             _adapter.DeviceConnectionLost += OnConnectionLost;
         }
-
         public bool IsConnected { get; private set; }
         public string Name => _device?.Name;
+       
 
-        public event EventHandler<bool> ConnectedChanged;
-        public event EventHandler<Package> NewPackage;
-
+        #region public
         public async Task ConnectAsync(IDevice device)
         {
             _device = device;
@@ -75,6 +67,24 @@ namespace Bioss.Ultrasound.Ble.Devices
             }
         }
 
+        public async Task ResetTocoAsync()
+        {
+            if (!IsConnected || _device == null)
+                return;
+
+            try
+            {
+                var customService = await _device.GetServiceAsync(_guids.SrCustom);
+                var writeCh = await customService.GetCharacteristicAsync(_guids.ChCustomWrite);
+
+                var command = new SetupCommand(7, 1, true, 0, false);
+                await writeCh.WriteAsync(command.WriteData());
+            }
+            catch { }
+        }
+        #endregion
+
+        #region Events
         private async void OnConnected(object sender, DeviceEventArgs e)
         {
             try
@@ -82,22 +92,19 @@ namespace Bioss.Ultrasound.Ble.Devices
                 if (_disconnecting || e.Device != _device)
                     return;
 
-                DebugWriteLine($"Connected {e.Device.Name}");
                 IsConnected = true;
                 ConnectedChanged?.Invoke(this, IsConnected);
 
                 _guids = await GuidsManager.GetGeneration(_device);
-
+                StartConsumer();
                 var services = await _device.GetServicesAsync();
                 //  подписываемся на все характеристики
                 foreach (var s in services)
                 {
-                    DebugWriteLine($"service: {s.Id}");
 
                     var characteristics = await s.GetCharacteristicsAsync();
                     foreach (var c in characteristics)
                     {
-                        DebugWriteLine($"   characteristic: {c.Id}, CanUpdate: {c.CanUpdate}");
 
                         if (c.CanUpdate && c.Id == _guids.ChCustomRead && _subscribedToValueUpdated.Add(c))
                         {
@@ -147,67 +154,32 @@ namespace Bioss.Ultrasound.Ble.Devices
 
         private void Ch_ValueUpdated(object sender, CharacteristicUpdatedEventArgs e)
         {
-            if (_guids == null)
-                return;
-
-            if (!IsConnected)
+            if (_guids == null || !IsConnected)
                 return;
 
             var characteristic = e.Characteristic;
-
             if (_guids.ChCustomRead != characteristic.Id)
                 return;
 
-            var data = e.Characteristic.Value;
-            if (data is null || data.Length == 0)
+            var source = characteristic.Value;
+            if (source is null || source.Length == 0)
                 return;
 
-            var checkStartPackage = data.Length >= 3 && data[0] == 0x55 && data[1] == 0xAA && data[2] == 0x09;
-            if (!checkStartPackage)
-            {
-                _buffer.Push(data);
-                return;
-            }
+            // Лучше копировать, чтобы очередь жила независимо от BLE callback / native layer
+            var data = new byte[source.Length];
+            Buffer.BlockCopy(source, 0, data, 0, source.Length);
 
-            var packageData = _buffer.Pop(_buffer.Count);
-            _buffer.Push(data);
-
-            if (packageData is null)
+            if (data.Length == 0)
                 return;
 
-            var package = Package.Init(packageData.AsSpan());
-            if (!(package?.IsValid ?? false))
+            _incomingQueue.Enqueue(new BleSignal()
             {
-                DebugWriteLine($"ValueUpdated: Invalid package recieved");
-                return;
-            }
-
-            try
-            {
-                NewPackage?.Invoke(this, package);
-            }
-            catch (Exception ex)
-            {
-                _logger.Log($"Proccess NewPackage with error: {ex}", ServerLogLevel.Warn);
-            }
+                Data = data,
+            });
         }
-        
+        #endregion
 
-        public async Task ResetTocoAsync()
-        {
-            if (!IsConnected || _device == null) 
-                return;
-
-            try
-            {
-                var customService = await _device.GetServiceAsync(_guids.SrCustom);
-                var writeCh = await customService.GetCharacteristicAsync(_guids.ChCustomWrite);
-
-                var command = new SetupCommand(7, 1, true, 0, false);
-                await writeCh.WriteAsync(command.WriteData());
-            } catch { }
-        }
-
+        #region private
         private async Task DisconnectWorkAsync(IDevice device)
         {
 
@@ -228,7 +200,6 @@ namespace Bioss.Ultrasound.Ble.Devices
 
                 var oldSubs = _subscribedToValueUpdated.ToList();
                 _subscribedToValueUpdated.Clear();
-                _buffer = new RingBuffer<byte>(1024);
 
                 foreach (var c in oldSubs)
                 {
@@ -243,6 +214,8 @@ namespace Bioss.Ultrasound.Ble.Devices
                         _logger.Log($"BLE StopUpdates ignored: {ex.Message}", ServerLogLevel.Debug);
                     }
                 }
+
+                await StopConsumerAsync().ConfigureAwait(false);
             }
             finally
             {
@@ -252,10 +225,6 @@ namespace Bioss.Ultrasound.Ble.Devices
                 _disconnecting = false;
             }
         }
-
-        private void DebugWriteLine(string message)
-        {
-            //Debug.WriteLine($"MyDevice Android: {message}");
-        }
+        #endregion
     }
 }

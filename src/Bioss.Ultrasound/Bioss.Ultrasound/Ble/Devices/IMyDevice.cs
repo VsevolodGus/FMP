@@ -17,5 +17,7 @@ namespace Bioss.Ultrasound.Ble.Devices
         Task DisconnectAsync();
 
         Task ResetTocoAsync();
+
+        void ResetConsumerState();
     }
 }

@@ -161,5 +161,8 @@ namespace Bioss.Ultrasound.Ble.Devices
         {
             Debug.WriteLine($"MyDevice ios: {message}");
         }
+
+        public void ResetConsumerState()
+        { }
     }
 }
