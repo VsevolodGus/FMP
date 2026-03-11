@@ -1,9 +1,8 @@
 ﻿using Bioss.Ultrasound.Ble.Commands;
 using Bioss.Ultrasound.Ble.Models;
-using Bioss.Ultrasound.Ble.ProtocolGenerations;
+using Bioss.Ultrasound.Services;
 using Bioss.Ultrasound.Services.Logging;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
-using Plugin.BLE;
 using Plugin.BLE.Abstractions;
 using Plugin.BLE.Abstractions.Contracts;
 using Plugin.BLE.Abstractions.EventArgs;
@@ -17,23 +16,19 @@ namespace Bioss.Ultrasound.Ble.Devices
 {
     public class MyDeviceAndroid : MyDeviceBase, IMyDevice
     {
-        private static readonly ConnectParameters connectParameters = new ConnectParameters(true, true);
 
-        private IDevice _device;
         private readonly HashSet<ICharacteristic> _subscribedToValueUpdated = new();
-        private IGeneration _guids;
         private bool _disconnecting;
 
         public event EventHandler<bool> ConnectedChanged;
 
-        public MyDeviceAndroid(ILogger logger) : base(logger, CrossBluetoothLE.Current.Adapter)
+        public MyDeviceAndroid(ILogger logger, DeviceStreamProcessor deviceStreamProcessor) : base(logger, deviceStreamProcessor)
         {
             _adapter.DeviceConnected += OnConnected;
             _adapter.DeviceDisconnected += OnDisconnected;
             _adapter.DeviceConnectionLost += OnConnectionLost;
         }
-        public bool IsConnected { get; private set; }
-        public string Name => _device?.Name;
+
        
 
         #region public
@@ -96,7 +91,7 @@ namespace Bioss.Ultrasound.Ble.Devices
                 ConnectedChanged?.Invoke(this, IsConnected);
 
                 _guids = await GuidsManager.GetGeneration(_device);
-                StartConsumer();
+                _streamProcessor.Start();
                 var services = await _device.GetServicesAsync();
                 //  подписываемся на все характеристики
                 foreach (var s in services)
@@ -165,14 +160,10 @@ namespace Bioss.Ultrasound.Ble.Devices
             if (source is null || source.Length == 0)
                 return;
 
-            // Лучше копировать, чтобы очередь жила независимо от BLE callback / native layer
             var data = new byte[source.Length];
             Buffer.BlockCopy(source, 0, data, 0, source.Length);
 
-            if (data.Length == 0)
-                return;
-
-            _incomingQueue.Enqueue(new BleSignal()
+            _streamProcessor.OnSignal(new BleSignal()
             {
                 Data = data,
             });
@@ -215,7 +206,7 @@ namespace Bioss.Ultrasound.Ble.Devices
                     }
                 }
 
-                await StopConsumerAsync().ConfigureAwait(false);
+                await _streamProcessor.StopAsync().ConfigureAwait(false);
             }
             finally
             {

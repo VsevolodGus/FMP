@@ -10,16 +10,16 @@ namespace Bioss.Ultrasound.DI.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
-            if (Device.RuntimePlatform == Device.iOS)
-                builder.RegisterType<MyDeviceIos>().As<IMyDevice>().SingleInstance();
-            else if (Device.RuntimePlatform == Device.Android)
+            //if (Device.RuntimePlatform == Device.iOS)
+            //    builder.RegisterType<MyDeviceIos>().As<IMyDevice>().SingleInstance();
+            //else 
+            if (Device.RuntimePlatform == Device.Android)
                 builder.RegisterType<MyDeviceAndroid>().As<IMyDevice>().SingleInstance();
             else
                 throw new NotImplementedException($"IMyDevice for platform {Device.RuntimePlatform} not implemented");
 
-
             builder.RegisterType<DevicesScaner>().SingleInstance();
-            //builder.RegisterType<Thermometer>().As<IThermometer>().SingleInstance();
+
         }
     }
 }

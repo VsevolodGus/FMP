@@ -63,8 +63,6 @@ namespace Bioss.Ultrasound.UI.ViewModels
             {
                 _appSettings.IsAutoResetToco = value;
                 OnPropertyChanged();
-
-                _autoResetTocoService.IsAutoResetToco = _appSettings.IsAutoResetToco;
             }
         }
 

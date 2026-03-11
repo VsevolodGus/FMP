@@ -2,6 +2,7 @@
 using Bioss.Ultrasound.Ble.Models;
 using Bioss.Ultrasound.Domain.Constants;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace Bioss.Ultrasound.Services
@@ -10,22 +11,25 @@ namespace Bioss.Ultrasound.Services
     {
         private const byte MAX_TOCO = 100;
         private const long MAX_MILLISECONDS_EXCEEDED = 3000;
+
         private readonly IMyDevice _device;
+        private readonly DeviceStreamProcessor _streamProcessor;
+        private readonly AppSettingsService _appSettingsService;
+        private readonly Stopwatch _stopwatch = new();
 
-        private Stopwatch _stopwatch = new Stopwatch();
-
-        public AutoResetTocoService(IMyDevice device)
+        public AutoResetTocoService(IMyDevice device,
+            DeviceStreamProcessor streamProcessor,
+            AppSettingsService appSettingsService)
         {
             _device = device;
-            _device.NewPackage += OnNewPackage;
+            _streamProcessor = streamProcessor;
+            _appSettingsService = appSettingsService;
+            _streamProcessor.PackageReady += OnNewPackage;
         }
-
-        public bool IsAutoResetToco { get; set; }
-        
-        
-        private async void OnNewPackage(object sender, Package package)
+           
+        private async Task OnNewPackage(Package package)
         {
-            if (!IsAutoResetToco)
+            if (!_appSettingsService.IsAutoResetToco)
                 return;
 
             var fhr = package.FHRPackage;

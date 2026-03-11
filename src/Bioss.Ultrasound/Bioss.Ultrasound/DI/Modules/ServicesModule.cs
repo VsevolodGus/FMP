@@ -13,6 +13,10 @@ namespace Bioss.Ultrasound.DI.Modules
     {
         protected override void Load(ContainerBuilder builder)
         {
+            builder.RegisterType<PacketAssembler>().SingleInstance();
+            builder.RegisterType<DeviceStreamProcessor>().SingleInstance();
+
+
             builder.RegisterType<AppSettingsService>().SingleInstance();
             builder.RegisterType<InfoSettingsService>().SingleInstance();
             builder.RegisterType<AutoResetTocoService>().SingleInstance();

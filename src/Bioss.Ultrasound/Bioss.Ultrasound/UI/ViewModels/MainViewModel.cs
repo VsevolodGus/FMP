@@ -61,6 +61,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         private readonly ILicenseService _licenseService;
         private readonly CatAnaService _catAnaService;
         private readonly ILogger _logger;
+        private readonly DeviceStreamProcessor _deviceStreamProcessor;
 
 
         private IDevice _selectedDevice;
@@ -110,7 +111,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
             ISystemVolume systemVolume,
             ILicenseService licenseService,
             CatAnaService catAnaService,
-            ILogger logger)
+            ILogger logger,
+            DeviceStreamProcessor deviceStreamProcessor)
         {
             _dialogs = dialogs;
             _devicesScaner = devicesScaner;
@@ -123,10 +125,11 @@ namespace Bioss.Ultrasound.UI.ViewModels
             _catAnaService = catAnaService;
             _licenseService = licenseService;
             _logger = logger;
+            _deviceStreamProcessor = deviceStreamProcessor;
 
+            _deviceStreamProcessor.PackageReady += OnNewPackage;
             _devicesScaner.Discovered += OnDeviceDiscovered;
             _device.ConnectedChanged += OnConnectedChanged;
-            _device.NewPackage += OnNewPackage;
 
             _pcmPlayer.Init();
             _pcmPlayer.Start();
@@ -382,6 +385,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
             };
 
             ClearChart();
+           
             _recordTimePassedHelper.Init(
                 _appSettings.IsAutoRecordTime,
                 (int)TimeSpan.FromMinutes(_appSettings.RecordTimeMinutes).TotalSeconds,
@@ -491,9 +495,8 @@ namespace Bioss.Ultrasound.UI.ViewModels
         /// <summary>
         /// Обработка полученного пакета, перевод сигналов датчика в запись
         /// </summary>
-        /// <param name="sender">устройство</param>
         /// <param name="package">пакет с данными датчиками</param>
-        private async void OnNewPackage(object sender, Package package)
+        private async Task OnNewPackage(Package package)
         {
             try
             {
@@ -679,7 +682,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
 
                 var duretionRecord = recordToSave.StopTime - recordToSave.StartTime;
                 _logger.Log($"Recording ended on the device{_device.Name}, the recording lasted {duretionRecord}");
-                _device.ResetConsumerState();
+                _deviceStreamProcessor.Reset();
             }
             catch (Exception ex)
             {
@@ -728,7 +731,7 @@ namespace Bioss.Ultrasound.UI.ViewModels
         /// </summary>
         private void ClearChart()
         {
-            _device.ResetConsumerState();
+            _deviceStreamProcessor.Start();
             _chartDrawer.Clear();
             _chartDrawer.InvalidatePlot();
 

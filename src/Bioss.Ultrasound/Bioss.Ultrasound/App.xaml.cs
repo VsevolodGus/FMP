@@ -3,7 +3,6 @@ using Bioss.Ultrasound.Data.Database;
 using Bioss.Ultrasound.DependencyExtensions;
 using Bioss.Ultrasound.DI;
 using Bioss.Ultrasound.Network;
-using Bioss.Ultrasound.Services;
 using Bioss.Ultrasound.Services.Logging;
 using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.Services.Sessions;
@@ -66,13 +65,6 @@ namespace Bioss.Ultrasound
             await ConnectDb;
             await _sessionService.GetCurrentSessionAsync();
             await _unsentLogDispatcher.SendAllUnsentAsync(false);
-            
-
-            // initialize hidden services
-            var autoresetToco = Injector.Container.Resolve<AutoResetTocoService>();
-            var appSettings = Injector.Container.Resolve<AppSettingsService>();
-
-            autoresetToco.IsAutoResetToco = appSettings.IsAutoResetToco;
         }
 
         private async void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
