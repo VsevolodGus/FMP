@@ -8,6 +8,8 @@ namespace Bioss.Ultrasound.Services
 {
     public sealed class QueuePump<T>
     {
+        private readonly object _stateLock = new object();
+
         private readonly ILogger _logger;
         private readonly ConcurrentQueue<T> _queue = new();
         private readonly Func<T, Task> _consumer;
@@ -16,7 +18,7 @@ namespace Bioss.Ultrasound.Services
         private CancellationTokenSource _cts;
         private Task _loopTask = Task.CompletedTask;
 
-        public QueuePump(Func<T, Task> consumer, ILogger logger,  int emptyDelayMs = 25)
+        public QueuePump(Func<T, Task> consumer, ILogger logger = null,  int emptyDelayMs = 25)
         {
             _consumer = consumer;
             _logger = logger;
@@ -25,14 +27,17 @@ namespace Bioss.Ultrasound.Services
 
         public void Start()
         {
-            if (_loopTask != null && !_loopTask.IsCompleted)
-                return;
+            lock (_stateLock)
+            {
+                if (_loopTask != null && !_loopTask.IsCompleted)
+                    return;
 
-            _cts?.Dispose();
-            _cts = new CancellationTokenSource();
-            var token = _cts.Token;
+                _cts?.Dispose();
+                _cts = new CancellationTokenSource();
 
-            _loopTask = Task.Run(() => LoopAsync(token), token);
+                var token = _cts.Token;
+                _loopTask = Task.Run(() => LoopAsync(token), token);
+            }
         }
 
         public void Enqueue(T item)
@@ -42,16 +47,24 @@ namespace Bioss.Ultrasound.Services
        
         public void Reset()
         {
-            _queue.Clear();
+            lock (_stateLock)
+            {
+                _queue.Clear();
+            }
         }
 
         public async Task StopAsync()
         {
-            var cts = _cts;
-            var task = _loopTask;
+            CancellationTokenSource cts;
+            Task task;
+            lock (_stateLock)
+            {
+                cts = _cts;
+                task = _loopTask;
 
-            _cts = null;
-            _loopTask = Task.CompletedTask;
+                _cts = null;
+                _loopTask = Task.CompletedTask;
+            }
 
             if (cts == null)
                 return;
@@ -102,7 +115,7 @@ namespace Bioss.Ultrasound.Services
             if (iterationNumber >= 500)
             {
                 iterationNumber = 0;
-                _logger.Log($"Blu queue size: {_queue.Count}");
+                _logger?.Log($"Blu queue size: {_queue.Count}");
             }
         }
     }

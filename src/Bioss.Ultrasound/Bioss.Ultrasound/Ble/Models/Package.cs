@@ -93,5 +93,12 @@ namespace Bioss.Ultrasound.Ble.Models
 
             return null;
         }
+
+
+        public static bool IsStart(byte[] data)
+            => data.Length >= 3
+                && data[0] == 0x55
+                && data[1] == 0xAA
+                && data[2] == 0x09;
     }
 }

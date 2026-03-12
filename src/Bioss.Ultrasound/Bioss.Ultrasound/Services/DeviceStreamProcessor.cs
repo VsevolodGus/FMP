@@ -10,7 +10,7 @@ namespace Bioss.Ultrasound.Services
         private readonly QueuePump<BleSignal> _queuePump;
         private readonly PacketAssembler _assembler;
 
-        public Func<Package, Task> PackageReady;
+        public Func<Package, Task> PackageReady { get; set; }
 
         public DeviceStreamProcessor(PacketAssembler assembler, ILogger logger)
         {
@@ -45,7 +45,7 @@ namespace Bioss.Ultrasound.Services
 
         private async Task ConsumeAsync(BleSignal data)
         {
-            var package = _assembler.Process(data.Data);
+            var package = _assembler.Process(data);
             if (PackageReady != null && package != null)
                 await PackageReady(package);
         }

@@ -9,17 +9,13 @@ namespace Bioss.Ultrasound.Services
         private const int bufferSize = 1024;
         private RingBuffer<byte> _buffer = new(bufferSize);
 
-        public Package Process(byte[] chunk)
+        public Package Process(BleSignal item)
         {
-            if (chunk is null || chunk.Length == 0)
+            if (item is null || item.Data is null || item.Data.Length == 0)
                 return null;
 
-            var isStart = chunk.Length >= 3
-                          && chunk[0] == 0x55
-                          && chunk[1] == 0xAA
-                          && chunk[2] == 0x09;
-
-            if (!isStart)
+            var chunk = item.Data;
+            if (!Package.IsStart(chunk))
             {
                 _buffer.Push(chunk);
                 return null;

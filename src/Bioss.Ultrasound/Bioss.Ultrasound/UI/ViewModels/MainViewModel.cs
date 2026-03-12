@@ -17,7 +17,6 @@ using Bioss.Ultrasound.Services.Logging.Abstracts;
 using Bioss.Ultrasound.UI.Helpers;
 using Bioss.Ultrasound.UI.Popups;
 using Libs.DI.ViewModels;
-using OpenTK.Input;
 using OxyPlot;
 using Plugin.BLE.Abstractions.Contracts;
 using Rg.Plugins.Popup.Services;
