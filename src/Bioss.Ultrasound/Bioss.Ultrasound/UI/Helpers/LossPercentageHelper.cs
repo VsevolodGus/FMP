@@ -3,7 +3,7 @@ using System;
 
 namespace Bioss.Ultrasound.UI.Helpers
 {
-    internal class LossPercentageHelper
+    public class LossPercentageHelper
     {
         private const byte ErrorValue = 0;
         private readonly TimeQueue<byte> _queue = new(TimeSpan.FromMinutes(1));

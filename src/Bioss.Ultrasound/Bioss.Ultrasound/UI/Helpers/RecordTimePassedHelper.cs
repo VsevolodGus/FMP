@@ -2,7 +2,7 @@
 
 namespace Bioss.Ultrasound.UI.Helpers
 {
-    internal class RecordTimePassedHelper
+    public class RecordTimePassedHelper
     {
         public bool IsAutoRecord { get; set; }
         public int TotalAutoRecordSeconds { get; set; }
