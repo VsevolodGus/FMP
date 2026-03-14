@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Bioss.Ultrasound.Domain.Models;
@@ -8,7 +7,6 @@ using Bioss.Ultrasound.Resources.Localization;
 using Bioss.Ultrasound.Services.Extensions;
 using Bioss.Ultrasound.UI.Helpers;
 using OxyPlot;
-using OxyPlot.Annotations;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using PdfSharpCore.Drawing;
@@ -19,133 +17,152 @@ namespace Bioss.Ultrasound.Services
 {
     public class OxyPdfHelper
     {
-        private SizeHelper _horizontalSize = SizeHelper.HorizontalSize;
-        private SizeHelper _verticalSize = SizeHelper.VerticalSize;
+        private readonly SizeHelper _horizontalSize = SizeHelper.HorizontalSize;
+        private readonly SizeHelper _verticalSize = SizeHelper.VerticalSize;
 
         public XUnit ChartLength => _horizontalSize.ChartLength;
         public XUnit ChartHeight => _verticalSize.ChartLength;
 
-        /// <summary>
-        /// Создание графика на одну страницу
-        /// </summary>
-        /// <param name="record">запись по которой будет строиться график</param>
-        /// <param name="plottingHelper"></param>
-        /// <param name="pageTimeMinutes">кол-во минут на странице</param>
-        /// <param name="pageNumber">номер страницы, чтобы пагинировать графики</param>
-        /// <returns>модельь графика на 1 страницу</returns>
-        public PlotModel GetPlotModel(Record record, PlottingHelper plottingHelper, double pageTimeMinutes, int pageNumber)
+        public PlotModel CreatePlotModel(Record record, PlottingHelper plottingHelper)
         {
-            var chartDrawer = new ChartDrawer(plottingHelper);
-
-            // Перенастраеваем график для того чтоб он принял стиль нужный в PDF
-            chartDrawer.IsPDF = true;
+            var chartDrawer = new ChartDrawer(plottingHelper)
+            {
+                IsPDF = true
+            };
 
             var lightGridColor = OxyColor.FromRgb(180, 180, 180);
 
-            var fhrAxes = chartDrawer.Model.Axes.First(a => a.Key == ChartDrawer.KEY_FHR);
-            fhrAxes.MajorStep = 30;
-            fhrAxes.MinorStep = 10;
-            fhrAxes.MinorGridlineStyle = LineStyle.Dot;
-            fhrAxes.MinorGridlineThickness = .5;
-            fhrAxes.MajorGridlineThickness = .5;
-            fhrAxes.MinorGridlineColor = lightGridColor;
-            fhrAxes.MajorGridlineColor = lightGridColor;
-            fhrAxes.FontSize = 10;
-            fhrAxes.Title = string.Empty; //  удаляем заголовок, так к OxyPlot не сохраняет Unicode в PDF
+            var fhrAxis = chartDrawer.Model.Axes.First(a => a.Key == ChartDrawer.KEY_FHR);
+            fhrAxis.MajorStep = 30;
+            fhrAxis.MinorStep = 10;
+            fhrAxis.MinorGridlineStyle = LineStyle.Dot;
+            fhrAxis.MinorGridlineThickness = .5;
+            fhrAxis.MajorGridlineThickness = .5;
+            fhrAxis.MinorGridlineColor = lightGridColor;
+            fhrAxis.MajorGridlineColor = lightGridColor;
+            fhrAxis.FontSize = 10;
+            fhrAxis.Title = string.Empty;
+
             var fhrLine = (LineSeries)chartDrawer.Model.Series.First(a => ((LineSeries)a).YAxisKey == ChartDrawer.KEY_FHR);
             fhrLine.StrokeThickness = 1;
 
-            var tocoAxes = chartDrawer.Model.Axes.First(a => a.Key == ChartDrawer.KEY_TOCO);
-            tocoAxes.MajorStep = 20;
-            tocoAxes.MinorStep = 10;
-            tocoAxes.MinorGridlineStyle = LineStyle.Dot;
-            tocoAxes.MinorGridlineThickness = .5;
-            tocoAxes.MajorGridlineThickness = .5;
-            tocoAxes.MinorGridlineColor = lightGridColor;
-            tocoAxes.MajorGridlineColor = lightGridColor;
-            tocoAxes.FontSize = 10;
+            var tocoAxis = chartDrawer.Model.Axes.First(a => a.Key == ChartDrawer.KEY_TOCO);
+            tocoAxis.MajorStep = 20;
+            tocoAxis.MinorStep = 10;
+            tocoAxis.MinorGridlineStyle = LineStyle.Dot;
+            tocoAxis.MinorGridlineThickness = .5;
+            tocoAxis.MajorGridlineThickness = .5;
+            tocoAxis.MinorGridlineColor = lightGridColor;
+            tocoAxis.MajorGridlineColor = lightGridColor;
+            tocoAxis.FontSize = 10;
+
             var tocoLine = (LineSeries)chartDrawer.Model.Series.First(a => ((LineSeries)a).YAxisKey == ChartDrawer.KEY_TOCO);
             tocoLine.StrokeThickness = 1;
 
-            var xAxes = chartDrawer.Model.Axes.First(a => a.Position == AxisPosition.Bottom);
-            xAxes.MinorGridlineThickness = .5;
-            xAxes.MajorGridlineThickness = 1;
-            xAxes.MinorGridlineColor = lightGridColor;
-            xAxes.MajorGridlineColor = OxyColors.Black;
-            xAxes.FontSize = 10;
-            xAxes.MajorStep = 3 * 60;
-            xAxes.MinorStep = 60;
-            xAxes.LabelFormatter = (d) => $"{d / 60}";
+            var xAxis = chartDrawer.Model.Axes.First(a => a.Position == AxisPosition.Bottom);
+            xAxis.MinorGridlineThickness = .5;
+            xAxis.MajorGridlineThickness = 1;
+            xAxis.MinorGridlineColor = lightGridColor;
+            xAxis.MajorGridlineColor = OxyColors.Black;
+            xAxis.FontSize = 10;
+            xAxis.MajorStep = 3 * 60;
+            xAxis.MinorStep = 60;
+            xAxis.LabelFormatter = d => $"{d / 60}";
 
-            //
             chartDrawer.ResetFhrMinMax(30, 240);
-            //
             chartDrawer.Fill(record);
-            plottingHelper.ResetAxisWithMin(TimeSpan.FromMinutes(pageTimeMinutes));
-            foreach(var annotaion in AddTimeBoxAnnotationsToModel(fhrAxes, xAxes, record.StartTime, pageNumber))
-                chartDrawer.Model.Annotations.Add(annotaion);
 
             return chartDrawer.Model;
         }
 
-        /// <summary>
-        /// Добавление квадратов с времени на мажорных линиях
-        /// Вызывать после вызова plottingHelper.ResetAxisWithMin
-        /// </summary>
-        /// <param name="fhrAxis">используется для рассчета размера коробки </param>
-        /// <param name="xAxis">используется для рассчета расположения квадратов</param>
-        /// <param name="startTime">время начала записи</param>
-        /// <param name="pageNumber">номер страницы</param>
-        /// <returns>анотации графика</returns>
-        private IEnumerable<TextAnnotation> AddTimeBoxAnnotationsToModel(Axis fhrAxis, Axis xAxis, DateTime startTime, int pageNumber)
+        public void PreparePage(PlotModel model, PlottingHelper plottingHelper, double pageStartMinutes)
         {
-            // Параметры сетки (должны совпадать с настройками в GetPlotModel)
-            var majorStepSeconds = xAxis.MajorStep;
-            var minorStepSeconds = xAxis.MinorStep;
+            plottingHelper.ResetAxisWithMin(TimeSpan.FromMinutes(pageStartMinutes));
+            model.InvalidatePlot(true);
+        }
 
-            double xMin = xAxis.ActualMinimum;
-            double xMax = xAxis.ActualMaximum;
+        /// <summary>
+        /// Рисует график как картинку в PDF.
+        /// </summary>
+        public void DrawChart(XGraphics graphics, PlotModel model)
+        {
+            var chartFileName = Path.GetTempFileName();
 
-            // Размеры квадрата в единицах данных
-            double boxWidthSeconds = majorStepSeconds * 0.5;
-            double boxHeightValue = (fhrAxis.ActualMaximum - fhrAxis.ActualMinimum) * 0.025;
-
-            // Позиция квадратов - выше графика
-            double boxTopValue = fhrAxis.ActualMaximum * 1.12;
-
-            var textPositionY = boxTopValue + boxHeightValue / 2;
-            // Добавляем квадраты для каждой мажорной линии сетки
-            // Пропускаем первую линию (0 минут) и добавляем для 3, 6, 9... минут
-            for (double xSeconds = 0; xSeconds < xMax - boxWidthSeconds; xSeconds += majorStepSeconds)
+            try
             {
-                // Пропускаем, если квадрат выйдет за границы графика
-                var seconds = xSeconds + (xMax + minorStepSeconds) * pageNumber;
-                if (seconds % xMax - boxWidthSeconds / 2 < xMin || seconds % xMax + boxWidthSeconds / 2 > xMax)
-                    continue;
+                SavePlotToPdfFile(chartFileName, model);
 
-                //Добавляем текст времени
-                var timeText = startTime.AddSeconds(seconds).ToString("HH:mm");
-                yield return new TextAnnotation
-                {
-                    Text = timeText,
-                    TextPosition = new DataPoint(seconds, textPositionY),
-                    FontSize = PdfOrderConstants.FontSizeGrafic,
-                    FontWeight = FontWeights.Bold,
-                    TextColor = OxyColors.Black,
-                    TextHorizontalAlignment = HorizontalAlignment.Center,
-                    TextVerticalAlignment = VerticalAlignment.Middle,
-                    Layer = AnnotationLayer.AboveSeries // Поверх квадрата
-                };
+                using var image = XImage.FromFile(chartFileName);
+
+                var top = XUnit.FromMillimeter(78).Point;
+                var left = XUnit.FromMillimeter(5).Point;
+
+                var width = image.PixelWidth * 72 / image.HorizontalResolution;
+                var height = image.PixelHeight * 72 / image.HorizontalResolution;
+
+                graphics.DrawImage(image, left, top, width, height);
+            }
+            finally
+            {
+                if (File.Exists(chartFileName))
+                    File.Delete(chartFileName);
             }
         }
 
+        /// <summary>
+        /// Рисует квадраты времени поверх уже вставленного изображения графика.
+        /// </summary>
+        public void DrawTimeBoxes(
+            XGraphics graphics,
+            DateTime startTime,
+            double pageStartMinutes,
+            double minutesCountInPage)
+        {
+            const double majorStepMinutes = 3.0;
+
+            // Эти координаты должны совпадать с позицией графика внутри PDF.
+            var imageLeft = XUnit.FromMillimeter(5).Point;
+            var imageTop = XUnit.FromMillimeter(78).Point;
+
+            var chartLeft = imageLeft + XUnit.FromMillimeter(17).Point;
+            var chartTop = imageTop + XUnit.FromMillimeter(1.5).Point;
+            var chartWidth = XUnit.FromMillimeter(260).Point;
+
+            var boxWidth = chartWidth * ((majorStepMinutes * 0.5) / minutesCountInPage);
+            var boxHeight = XUnit.FromMillimeter(5).Point;
+
+            var firstMajorMinute = Math.Ceiling(pageStartMinutes / majorStepMinutes) * majorStepMinutes;
+            if (Math.Abs(firstMajorMinute - pageStartMinutes) < 0.001)
+                firstMajorMinute += majorStepMinutes;
+
+            var pageEndMinutes = pageStartMinutes + minutesCountInPage;
+
+            var font = new XFont(
+                PdfOrderConstants.FontName,
+                PdfOrderConstants.FontSizeGrafic,
+                XFontStyle.Bold);
+
+            for (var minute = firstMajorMinute; minute < pageEndMinutes; minute += majorStepMinutes)
+            {
+                var offsetMinutes = minute - pageStartMinutes;
+                var centerX = chartLeft + (offsetMinutes / minutesCountInPage) * chartWidth;
+
+                var rect = new XRect(
+                    centerX - boxWidth / 2,
+                    chartTop,
+                    boxWidth,
+                    boxHeight);
+
+                graphics.DrawRectangle(XPens.Black, XBrushes.White, rect);
+
+                var timeText = startTime.AddMinutes(minute).ToString("HH:mm");
+                graphics.DrawString(timeText, font, XBrushes.Black, rect, XStringFormats.Center);
+            }
+        }
 
         /// <summary>
-        /// эта функция рисует заголовки для осей координат, так как OxyPlot не поддерживает Unicode
+        /// Рисует заголовки осей, так как OxyPlot не поддерживает Unicode в PDF как нужно.
         /// </summary>
-        /// <param name="graphics">данные графики ПДФ файла</param>
-        /// <param name="page">страница пдф</param>
-        /// <param name="recordingSpeed">масштаб графика</param>
         public void DrawChartTitles(XGraphics graphics, PdfPage page, int recordingSpeed)
         {
             var settings = new DrawStringSettings
@@ -158,10 +175,12 @@ namespace Bioss.Ultrasound.Services
                 Page = page,
             };
 
-            // X - min
-            settings.DrawString(PdfOrderConstants.FontSizeGrafic, 0, XStringAlignment.Far, string.Format(AppStrings.Settings_PdfRecordingSpeedFormat, recordingSpeed));
+            settings.DrawString(
+                PdfOrderConstants.FontSizeGrafic,
+                0,
+                XStringAlignment.Far,
+                string.Format(AppStrings.Settings_PdfRecordingSpeedFormat, recordingSpeed));
 
-            // Y - FHR
             var lineHeight = XUnit.FromMillimeter(2.5);
             var paddingTop = XUnit.FromMillimeter(_verticalSize.CanvasLength.Millimeter / 2 + 60);
             var paddingLeft = XUnit.FromMillimeter(9);
@@ -169,56 +188,56 @@ namespace Bioss.Ultrasound.Services
             var rotatePoint = new XPoint(paddingLeft, paddingTop);
 
             graphics.RotateAtTransform(-90, rotatePoint);
-            graphics.DrawString(AppStrings.Chart_FHRAxysTitle, page, paddingTop, paddingLeft, PdfOrderConstants.FontSizeGrafic, lineHeight, 0, XStringAlignment.Near);
+            graphics.DrawString(
+                AppStrings.Chart_FHRAxysTitle,
+                page,
+                paddingTop,
+                paddingLeft,
+                PdfOrderConstants.FontSizeGrafic,
+                lineHeight,
+                0,
+                XStringAlignment.Near);
             graphics.RotateAtTransform(90, rotatePoint);
         }
 
-        /// <summary>
-        /// Функция отрисовки графика как картинки в ПФД отчете
-        /// </summary>
-        /// <param name="gfx">настройки ПДФ файла</param>
-        /// <param name="model">модель графика</param>
-        public void DrawChart(XGraphics gfx, PlotModel model)
-        {
-            var chartFileName = Path.GetTempFileName();
-
-            SavePlotToPdfFile(chartFileName, model);
-
-            XImage image = XImage.FromFile(chartFileName);
-
-            var top = XUnit.FromMillimeter(78).Point;
-            var left = XUnit.FromMillimeter(5).Point;
-
-            double width = image.PixelWidth * 72 / image.HorizontalResolution;
-            double height = image.PixelHeight * 72 / image.HorizontalResolution;
-
-            gfx.DrawImage(image, left, top, width, height);
-        }
-        //  todo: нужно передавать размеры
         private void SavePlotToPdfFile(string fileName, PlotModel model)
         {
-            var fileName2 = Path.GetTempFileName();
-            using (var stream = File.OpenWrite(fileName2))
+            var tempFileName = Path.GetTempFileName();
+
+            try
             {
-                var width = _horizontalSize.CanvasLength.Point;
-                var height = _verticalSize.CanvasLength.Point;
+                using (var stream = File.OpenWrite(tempFileName))
+                {
+                    var width = _horizontalSize.CanvasLength.Point;
+                    var height = _verticalSize.CanvasLength.Point;
 
-                var chartBackground = OxyColors.White;
-                Export(model, stream, width, height, chartBackground);
+                    Export(model, stream, width, height, OxyColors.White);
+                }
+
+                // FIX oxyplot exporting to pdf
+                var doc = PdfReader.Open(tempFileName);
+                doc.Save(fileName);
             }
-
-            // FIX oxyplot exporting to pdf
-            var doc = PdfReader.Open(fileName2);
-            doc.Save(fileName);
+            finally
+            {
+                if (File.Exists(tempFileName))
+                    File.Delete(tempFileName);
+            }
         }
 
         private void Export(IPlotModel model, Stream stream, double width, double height, OxyColor background)
         {
-            var exporter = new PdfExporter { Width = width, Height = height, Background = background };
+            var exporter = new PdfExporter
+            {
+                Width = width,
+                Height = height,
+                Background = background
+            };
+
             exporter.Export(model, stream);
         }
 
-        class SizeHelper
+        private class SizeHelper
         {
             private readonly XUnit _axisLength = XUnit.FromMillimeter(17);
             private readonly XUnit _borderLength = XUnit.FromMillimeter(2.5);
@@ -235,14 +254,14 @@ namespace Bioss.Ultrasound.Services
             public XUnit CanvasLength => XUnit.FromPoint(_axisLength.Point + ChartLength.Point + _borderLength.Point);
 
             public static SizeHelper HorizontalSize => new(
-                        axisLength: XUnit.FromMillimeter(17),
-                        borderLength: XUnit.FromMillimeter(2.5),
-                        chartLength: XUnit.FromMillimeter(260));
+                axisLength: XUnit.FromMillimeter(17),
+                borderLength: XUnit.FromMillimeter(2.5),
+                chartLength: XUnit.FromMillimeter(260));
 
             public static SizeHelper VerticalSize => new(
-                        axisLength: XUnit.FromMillimeter(10.5),
-                        borderLength: XUnit.FromMillimeter(2.5),
-                        chartLength: XUnit.FromMillimeter(102));
+                axisLength: XUnit.FromMillimeter(10.5),
+                borderLength: XUnit.FromMillimeter(2.5),
+                chartLength: XUnit.FromMillimeter(102));
         }
     }
 }
